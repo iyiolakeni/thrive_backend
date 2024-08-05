@@ -1,0 +1,98 @@
+{
+    "sourceFile": "src/business/business.service.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 20,
+            "patches": [
+                {
+                    "date": 1722783364327,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1722783387360,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -33,9 +33,9 @@\n         return this.businessRepo.findOneBy({businessName})\r\n     }\r\n \r\n     async updateBusiness(businessName: string, updateBusinessdto: UpdateBusinessDto): Promise<Business>{\r\n-        await this.businessRepo.update(businessName, updateBusinessdto);\r\n+        // await this.businessRepo.update(businessName, updateBusinessdto);\r\n         return this.businessRepo.findOneBy({}) \r\n     }\r\n \r\n     async deleteBusiness(businessName: string): Promise<void>{\r\n"
+                },
+                {
+                    "date": 1722783395860,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -34,9 +34,10 @@\n     }\r\n \r\n     async updateBusiness(businessName: string, updateBusinessdto: UpdateBusinessDto): Promise<Business>{\r\n         // await this.businessRepo.update(businessName, updateBusinessdto);\r\n-        return this.businessRepo.findOneBy({}) \r\n+        // return this.businessRepo.findOneBy({}) \r\n+        const business = await \r\n     }\r\n \r\n     async deleteBusiness(businessName: string): Promise<void>{\r\n         await  this.businessRepo.delete(businessName);\r\n"
+                },
+                {
+                    "date": 1722783403855,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -35,9 +35,9 @@\n \r\n     async updateBusiness(businessName: string, updateBusinessdto: UpdateBusinessDto): Promise<Business>{\r\n         // await this.businessRepo.update(businessName, updateBusinessdto);\r\n         // return this.businessRepo.findOneBy({}) \r\n-        const business = await \r\n+        const business = await this.businessRepo.findOne()\r\n     }\r\n \r\n     async deleteBusiness(businessName: string): Promise<void>{\r\n         await  this.businessRepo.delete(businessName);\r\n"
+                },
+                {
+                    "date": 1722783411249,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -35,9 +35,9 @@\n \r\n     async updateBusiness(businessName: string, updateBusinessdto: UpdateBusinessDto): Promise<Business>{\r\n         // await this.businessRepo.update(businessName, updateBusinessdto);\r\n         // return this.businessRepo.findOneBy({}) \r\n-        const business = await this.businessRepo.findOne()\r\n+        const business = await this.businessRepo.findOne({where:{}})\r\n     }\r\n \r\n     async deleteBusiness(businessName: string): Promise<void>{\r\n         await  this.businessRepo.delete(businessName);\r\n"
+                },
+                {
+                    "date": 1722783418324,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -35,9 +35,9 @@\n \r\n     async updateBusiness(businessName: string, updateBusinessdto: UpdateBusinessDto): Promise<Business>{\r\n         // await this.businessRepo.update(businessName, updateBusinessdto);\r\n         // return this.businessRepo.findOneBy({}) \r\n-        const business = await this.businessRepo.findOne({where:{}})\r\n+        const business = await this.businessRepo.findOne({where:{businessName: businessName}})\r\n     }\r\n \r\n     async deleteBusiness(businessName: string): Promise<void>{\r\n         await  this.businessRepo.delete(businessName);\r\n"
+                },
+                {
+                    "date": 1722783424923,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -32,10 +32,10 @@\n     getBusiness(businessName: string): Promise<Business>{\r\n         return this.businessRepo.findOneBy({businessName})\r\n     }\r\n \r\n-    async updateBusiness(businessName: string, updateBusinessdto: UpdateBusinessDto): Promise<Business>{\r\n-        // await this.businessRepo.update(businessName, updateBusinessdto);\r\n+    async updateBusiness(name: string, updateBusinessdto: UpdateBusinessDto): Promise<Business>{\r\n+        // await this.businessRepo.update(name, updateBusinessdto);\r\n         // return this.businessRepo.findOneBy({}) \r\n         const business = await this.businessRepo.findOne({where:{businessName: businessName}})\r\n     }\r\n \r\n"
+                },
+                {
+                    "date": 1722783430727,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -32,10 +32,10 @@\n     getBusiness(businessName: string): Promise<Business>{\r\n         return this.businessRepo.findOneBy({businessName})\r\n     }\r\n \r\n-    async updateBusiness(name: string, updateBusinessdto: UpdateBusinessDto): Promise<Business>{\r\n-        // await this.businessRepo.update(name, updateBusinessdto);\r\n+    async updateBusiness(businessName: string, updateBusinessdto: UpdateBusinessDto): Promise<Business>{\r\n+        // await this.businessRepo.update(businessName, updateBusinessdto);\r\n         // return this.businessRepo.findOneBy({}) \r\n         const business = await this.businessRepo.findOne({where:{businessName: businessName}})\r\n     }\r\n \r\n"
+                },
+                {
+                    "date": 1722783439089,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -32,9 +32,9 @@\n     getBusiness(businessName: string): Promise<Business>{\r\n         return this.businessRepo.findOneBy({businessName})\r\n     }\r\n \r\n-    async updateBusiness(businessName: string, updateBusinessdto: UpdateBusinessDto): Promise<Business>{\r\n+    async updateBusiness(name: string, updateBusinessdto: UpdateBusinessDto): Promise<Business>{\r\n         // await this.businessRepo.update(businessName, updateBusinessdto);\r\n         // return this.businessRepo.findOneBy({}) \r\n         const business = await this.businessRepo.findOne({where:{businessName: businessName}})\r\n     }\r\n"
+                },
+                {
+                    "date": 1722783444719,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -33,11 +33,11 @@\n         return this.businessRepo.findOneBy({businessName})\r\n     }\r\n \r\n     async updateBusiness(name: string, updateBusinessdto: UpdateBusinessDto): Promise<Business>{\r\n-        // await this.businessRepo.update(businessName, updateBusinessdto);\r\n+        // await this.businessRepo.update(name, updateBusinessdto);\r\n         // return this.businessRepo.findOneBy({}) \r\n-        const business = await this.businessRepo.findOne({where:{businessName: businessName}})\r\n+        const business = await this.businessRepo.findOne({where:{businessName: name}})\r\n     }\r\n \r\n     async deleteBusiness(businessName: string): Promise<void>{\r\n         await  this.businessRepo.delete(businessName);\r\n"
+                },
+                {
+                    "date": 1722783451850,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -35,9 +35,10 @@\n \r\n     async updateBusiness(name: string, updateBusinessdto: UpdateBusinessDto): Promise<Business>{\r\n         // await this.businessRepo.update(name, updateBusinessdto);\r\n         // return this.businessRepo.findOneBy({}) \r\n-        const business = await this.businessRepo.findOne({where:{businessName: name}})\r\n+        const business = await this.businessRepo.findOne({where:{businessName: name}});\r\n+        \r\n     }\r\n \r\n     async deleteBusiness(businessName: string): Promise<void>{\r\n         await  this.businessRepo.delete(businessName);\r\n"
+                },
+                {
+                    "date": 1722783457095,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -36,9 +36,9 @@\n     async updateBusiness(name: string, updateBusinessdto: UpdateBusinessDto): Promise<Business>{\r\n         // await this.businessRepo.update(name, updateBusinessdto);\r\n         // return this.businessRepo.findOneBy({}) \r\n         const business = await this.businessRepo.findOne({where:{businessName: name}});\r\n-        \r\n+        if (!business)\r\n     }\r\n \r\n     async deleteBusiness(businessName: string): Promise<void>{\r\n         await  this.businessRepo.delete(businessName);\r\n"
+                },
+                {
+                    "date": 1722783467992,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -36,9 +36,11 @@\n     async updateBusiness(name: string, updateBusinessdto: UpdateBusinessDto): Promise<Business>{\r\n         // await this.businessRepo.update(name, updateBusinessdto);\r\n         // return this.businessRepo.findOneBy({}) \r\n         const business = await this.businessRepo.findOne({where:{businessName: name}});\r\n-        if (!business)\r\n+        if (!business){\r\n+            throw new Exception\r\n+        }\r\n     }\r\n \r\n     async deleteBusiness(businessName: string): Promise<void>{\r\n         await  this.businessRepo.delete(businessName);\r\n"
+                },
+                {
+                    "date": 1722783474056,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -37,9 +37,9 @@\n         // await this.businessRepo.update(name, updateBusinessdto);\r\n         // return this.businessRepo.findOneBy({}) \r\n         const business = await this.businessRepo.findOne({where:{businessName: name}});\r\n         if (!business){\r\n-            throw new Exception\r\n+            throw new NotFound\r\n         }\r\n     }\r\n \r\n     async deleteBusiness(businessName: string): Promise<void>{\r\n"
+                },
+                {
+                    "date": 1722783488021,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,5 +1,5 @@\n-import { ConflictException, Injectable } from '@nestjs/common';\r\n+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';\r\n import { InjectRepository } from '@nestjs/typeorm';\r\n import { Business } from 'src/entities/business.entity/business.entity';\r\n import { User } from 'src/entities/user.entity/user.entity';\r\n import { Repository } from 'typeorm';\r\n@@ -37,9 +37,9 @@\n         // await this.businessRepo.update(name, updateBusinessdto);\r\n         // return this.businessRepo.findOneBy({}) \r\n         const business = await this.businessRepo.findOne({where:{businessName: name}});\r\n         if (!business){\r\n-            throw new NotFound\r\n+            throw new NotFoundException(und)\r\n         }\r\n     }\r\n \r\n     async deleteBusiness(businessName: string): Promise<void>{\r\n"
+                },
+                {
+                    "date": 1722783498026,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -37,9 +37,9 @@\n         // await this.businessRepo.update(name, updateBusinessdto);\r\n         // return this.businessRepo.findOneBy({}) \r\n         const business = await this.businessRepo.findOne({where:{businessName: name}});\r\n         if (!business){\r\n-            throw new NotFoundException(und)\r\n+            throw new NotFoundException(`Business with name ${businessName} not found`);\r\n         }\r\n     }\r\n \r\n     async deleteBusiness(businessName: string): Promise<void>{\r\n"
+                },
+                {
+                    "date": 1722783505536,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -37,10 +37,11 @@\n         // await this.businessRepo.update(name, updateBusinessdto);\r\n         // return this.businessRepo.findOneBy({}) \r\n         const business = await this.businessRepo.findOne({where:{businessName: name}});\r\n         if (!business){\r\n-            throw new NotFoundException(`Business with name ${businessName} not found`);\r\n+            throw new NotFoundException(`Business with name ${name} not found`);\r\n         }\r\n+        \r\n     }\r\n \r\n     async deleteBusiness(businessName: string): Promise<void>{\r\n         await  this.businessRepo.delete(businessName);\r\n"
+                },
+                {
+                    "date": 1722783512722,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -39,9 +39,9 @@\n         const business = await this.businessRepo.findOne({where:{businessName: name}});\r\n         if (!business){\r\n             throw new NotFoundException(`Business with name ${name} not found`);\r\n         }\r\n-        \r\n+        Object.assign\r\n     }\r\n \r\n     async deleteBusiness(businessName: string): Promise<void>{\r\n         await  this.businessRepo.delete(businessName);\r\n"
+                },
+                {
+                    "date": 1722783517985,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -39,9 +39,9 @@\n         const business = await this.businessRepo.findOne({where:{businessName: name}});\r\n         if (!business){\r\n             throw new NotFoundException(`Business with name ${name} not found`);\r\n         }\r\n-        Object.assign\r\n+        Object.assign(business, upd)\r\n     }\r\n \r\n     async deleteBusiness(businessName: string): Promise<void>{\r\n         await  this.businessRepo.delete(businessName);\r\n"
+                },
+                {
+                    "date": 1722783528805,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -39,9 +39,10 @@\n         const business = await this.businessRepo.findOne({where:{businessName: name}});\r\n         if (!business){\r\n             throw new NotFoundException(`Business with name ${name} not found`);\r\n         }\r\n-        Object.assign(business, upd)\r\n+        Object.assign(business, updateBusinessdto);\r\n+        return busin\r\n     }\r\n \r\n     async deleteBusiness(businessName: string): Promise<void>{\r\n         await  this.businessRepo.delete(businessName);\r\n"
+                },
+                {
+                    "date": 1722783536398,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -40,9 +40,9 @@\n         if (!business){\r\n             throw new NotFoundException(`Business with name ${name} not found`);\r\n         }\r\n         Object.assign(business, updateBusinessdto);\r\n-        return busin\r\n+        return this.businessRepo.save(business);\r\n     }\r\n \r\n     async deleteBusiness(businessName: string): Promise<void>{\r\n         await  this.businessRepo.delete(businessName);\r\n"
+                }
+            ],
+            "date": 1722783364327,
+            "name": "Commit-0",
+            "content": "import { ConflictException, Injectable } from '@nestjs/common';\r\nimport { InjectRepository } from '@nestjs/typeorm';\r\nimport { Business } from 'src/entities/business.entity/business.entity';\r\nimport { User } from 'src/entities/user.entity/user.entity';\r\nimport { Repository } from 'typeorm';\r\nimport { CreateBusinessDto } from './dto/create-business.dto/create-business.dto';\r\nimport { UpdateBusinessDto } from './dto/update-business.dto/update-business.dto';\r\n\r\n@Injectable()\r\nexport class BusinessService {\r\n    constructor(\r\n        @InjectRepository(Business)\r\n        private businessRepo: Repository<Business>\r\n    ){}\r\n\r\n    async create(createBusinessDto: CreateBusinessDto): Promise<Business>{\r\n        const existingBusiness = await this.businessRepo.findOne({\r\n            where: {businessName: createBusinessDto.businessName}\r\n        });\r\n\r\n        if (existingBusiness){\r\n            throw new ConflictException('Business Already Exist, try another user or reset password');\r\n        }\r\n        const business = this.businessRepo.create(createBusinessDto);\r\n        return this.businessRepo.save(business);\r\n    }\r\n\r\n    getAllBusiness(): Promise<Business[]>{\r\n        return this.businessRepo.find();\r\n    }\r\n\r\n    getBusiness(businessName: string): Promise<Business>{\r\n        return this.businessRepo.findOneBy({businessName})\r\n    }\r\n\r\n    async updateBusiness(businessName: string, updateBusinessdto: UpdateBusinessDto): Promise<Business>{\r\n        await this.businessRepo.update(businessName, updateBusinessdto);\r\n        return this.businessRepo.findOneBy({}) \r\n    }\r\n\r\n    async deleteBusiness(businessName: string): Promise<void>{\r\n        await  this.businessRepo.delete(businessName);\r\n    }\r\n}\r\n"
+        }
+    ]
+}

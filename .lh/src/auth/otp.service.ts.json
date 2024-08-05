@@ -1,0 +1,34 @@
+{
+    "sourceFile": "src/auth/otp.service.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 4,
+            "patches": [
+                {
+                    "date": 1722786955372,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1722786966721,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,7 +1,7 @@\n // src/auth/otp.service.ts\r\n import { Injectable } from '@nestjs/common';\r\n-import * as otpGenerator from 'otp-generator';\r\n+import * as otpGenerator from 'ot';\r\n \r\n @Injectable()\r\n export class OtpService {\r\n   private otpStore: Map<string, string> = new Map();\r\n"
+                },
+                {
+                    "date": 1722786974252,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,7 +1,7 @@\n // src/auth/otp.service.ts\r\n import { Injectable } from '@nestjs/common';\r\n-import * as otpGenerator from 'ot';\r\n+import * as otpGenerator from 'otp';\r\n \r\n @Injectable()\r\n export class OtpService {\r\n   private otpStore: Map<string, string> = new Map();\r\n"
+                },
+                {
+                    "date": 1722787000277,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,7 +1,7 @@\n // src/auth/otp.service.ts\r\n import { Injectable } from '@nestjs/common';\r\n-import * as otpGenerator from 'otp';\r\n+import * as otpGenerator from 'otp-generator';\r\n \r\n @Injectable()\r\n export class OtpService {\r\n   private otpStore: Map<string, string> = new Map();\r\n"
+                },
+                {
+                    "date": 1722787063320,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -8,9 +8,8 @@\n \r\n   generateOtp(phone: string): string {\r\n     const otp = otpGenerator.generate(6, { digits: true, alphabets: false, upperCase: false, specialChars: false });\r\n     this.otpStore.set(phone, otp);\r\n-    // Set a timeout to remove OTP after a certain time (e.g., 5 minutes)\r\n     setTimeout(() => this.otpStore.delete(phone), 300000);\r\n     return otp;\r\n   }\r\n \r\n"
+                }
+            ],
+            "date": 1722786955372,
+            "name": "Commit-0",
+            "content": "// src/auth/otp.service.ts\r\nimport { Injectable } from '@nestjs/common';\r\nimport * as otpGenerator from 'otp-generator';\r\n\r\n@Injectable()\r\nexport class OtpService {\r\n  private otpStore: Map<string, string> = new Map();\r\n\r\n  generateOtp(phone: string): string {\r\n    const otp = otpGenerator.generate(6, { digits: true, alphabets: false, upperCase: false, specialChars: false });\r\n    this.otpStore.set(phone, otp);\r\n    // Set a timeout to remove OTP after a certain time (e.g., 5 minutes)\r\n    setTimeout(() => this.otpStore.delete(phone), 300000);\r\n    return otp;\r\n  }\r\n\r\n  verifyOtp(phone: string, otp: string): boolean {\r\n    const storedOtp = this.otpStore.get(phone);\r\n    if (storedOtp === otp) {\r\n      this.otpStore.delete(phone);\r\n      return true;\r\n    }\r\n    return false;\r\n  }\r\n}\r\n"
+        }
+    ]
+}

@@ -1,0 +1,210 @@
+{
+    "sourceFile": "src/user/user.service.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 48,
+            "patches": [
+                {
+                    "date": 1722531868453,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1722531873699,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,6 @@\n import { Injectable } from '@nestjs/common';\r\n \r\n @Injectable()\r\n export class UserService {\r\n-    \r\n+    constructor()\r\n }\r\n"
+                },
+                {
+                    "date": 1722531906138,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,9 @@\n import { Injectable } from '@nestjs/common';\r\n+import { InjectRepository } from '@nestjs/typeorm';\r\n \r\n @Injectable()\r\n export class UserService {\r\n-    constructor()\r\n+    constructor(\r\n+        @InjectRepository\r\n+    )\r\n }\r\n"
+                },
+                {
+                    "date": 1722531911312,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,7 +3,7 @@\n \r\n @Injectable()\r\n export class UserService {\r\n     constructor(\r\n-        @InjectRepository\r\n+        @InjectRepository(User)\r\n     )\r\n }\r\n"
+                },
+                {
+                    "date": 1722531930421,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,7 +3,7 @@\n \r\n @Injectable()\r\n export class UserService {\r\n     constructor(\r\n-        @InjectRepository(User)\r\n+        @InjectRepository(user)\r\n     )\r\n }\r\n"
+                },
+                {
+                    "date": 1722531937742,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,9 +1,11 @@\n import { Injectable } from '@nestjs/common';\r\n import { InjectRepository } from '@nestjs/typeorm';\r\n+import { User } from 'src/entities/user.entity/user.entity';\r\n \r\n @Injectable()\r\n export class UserService {\r\n     constructor(\r\n-        @InjectRepository(user)\r\n+        @InjectRepository(User),\r\n+        \r\n     )\r\n }\r\n"
+                },
+                {
+                    "date": 1722531947490,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -4,8 +4,8 @@\n \r\n @Injectable()\r\n export class UserService {\r\n     constructor(\r\n-        @InjectRepository(User),\r\n-        \r\n+        @InjectRepository(User)\r\n+        private userRepo\r\n     )\r\n }\r\n"
+                },
+                {
+                    "date": 1722531954796,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,11 +1,12 @@\n import { Injectable } from '@nestjs/common';\r\n import { InjectRepository } from '@nestjs/typeorm';\r\n import { User } from 'src/entities/user.entity/user.entity';\r\n+import { Repository } from 'typeorm';\r\n \r\n @Injectable()\r\n export class UserService {\r\n     constructor(\r\n         @InjectRepository(User)\r\n-        private userRepo\r\n+        private userRepo: Repository\r\n     )\r\n }\r\n"
+                },
+                {
+                    "date": 1722531961198,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -6,7 +6,7 @@\n @Injectable()\r\n export class UserService {\r\n     constructor(\r\n         @InjectRepository(User)\r\n-        private userRepo: Repository\r\n-    )\r\n+        private userRepo: Repository<User>\r\n+    ){}\r\n }\r\n"
+                },
+                {
+                    "date": 1722531968073,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -8,5 +8,7 @@\n     constructor(\r\n         @InjectRepository(User)\r\n         private userRepo: Repository<User>\r\n     ){}\r\n+\r\n+    async \r\n }\r\n"
+                },
+                {
+                    "date": 1722531980289,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,14 +1,15 @@\n import { Injectable } from '@nestjs/common';\r\n import { InjectRepository } from '@nestjs/typeorm';\r\n import { User } from 'src/entities/user.entity/user.entity';\r\n import { Repository } from 'typeorm';\r\n+import { CreateUserDto } from './dto/create-user.dto/create-user.dto';\r\n \r\n @Injectable()\r\n export class UserService {\r\n     constructor(\r\n         @InjectRepository(User)\r\n         private userRepo: Repository<User>\r\n     ){}\r\n \r\n-    async \r\n+    async create(createUserDto: CreateUserDto)\r\n }\r\n"
+                },
+                {
+                    "date": 1722531986957,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -10,6 +10,6 @@\n         @InjectRepository(User)\r\n         private userRepo: Repository<User>\r\n     ){}\r\n \r\n-    async create(createUserDto: CreateUserDto)\r\n+    async create(createUserDto: CreateUserDto): Promise<User>\r\n }\r\n"
+                },
+                {
+                    "date": 1722532002440,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -10,6 +10,8 @@\n         @InjectRepository(User)\r\n         private userRepo: Repository<User>\r\n     ){}\r\n \r\n-    async create(createUserDto: CreateUserDto): Promise<User>\r\n+    async create(createUserDto: CreateUserDto): Promise<User>{\r\n+        const user = this.userRepo.c\r\n+    }\r\n }\r\n"
+                },
+                {
+                    "date": 1722532008448,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -11,7 +11,7 @@\n         private userRepo: Repository<User>\r\n     ){}\r\n \r\n     async create(createUserDto: CreateUserDto): Promise<User>{\r\n-        const user = this.userRepo.c\r\n+        const user = this.userRepo.create(createUserDto)\r\n     }\r\n }\r\n"
+                },
+                {
+                    "date": 1722532014667,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -11,7 +11,8 @@\n         private userRepo: Repository<User>\r\n     ){}\r\n \r\n     async create(createUserDto: CreateUserDto): Promise<User>{\r\n-        const user = this.userRepo.create(createUserDto)\r\n+        const user = this.userRepo.create(createUserDto);\r\n+        return this.userRepo.\r\n     }\r\n }\r\n"
+                },
+                {
+                    "date": 1722532022322,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -12,7 +12,7 @@\n     ){}\r\n \r\n     async create(createUserDto: CreateUserDto): Promise<User>{\r\n         const user = this.userRepo.create(createUserDto);\r\n-        return this.userRepo.\r\n+        return this.userRepo.save()\r\n     }\r\n }\r\n"
+                },
+                {
+                    "date": 1722532035080,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -12,7 +12,9 @@\n     ){}\r\n \r\n     async create(createUserDto: CreateUserDto): Promise<User>{\r\n         const user = this.userRepo.create(createUserDto);\r\n-        return this.userRepo.save()\r\n+        return this.userRepo.save(user);\r\n     }\r\n+\r\n+    async findAll\r\n }\r\n"
+                },
+                {
+                    "date": 1722532047444,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -15,6 +15,6 @@\n         const user = this.userRepo.create(createUserDto);\r\n         return this.userRepo.save(user);\r\n     }\r\n \r\n-    async findAll\r\n+    async getAllUsers\r\n }\r\n"
+                },
+                {
+                    "date": 1722532056500,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -15,6 +15,6 @@\n         const user = this.userRepo.create(createUserDto);\r\n         return this.userRepo.save(user);\r\n     }\r\n \r\n-    async getAllUsers\r\n+    async getAllUsers(): Promise<User[]>\r\n }\r\n"
+                },
+                {
+                    "date": 1722532064462,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -15,6 +15,8 @@\n         const user = this.userRepo.create(createUserDto);\r\n         return this.userRepo.save(user);\r\n     }\r\n \r\n-    async getAllUsers(): Promise<User[]>\r\n+    async getAllUsers(): Promise<User[]>{\r\n+        return this.userRepo\r\n+    }\r\n }\r\n"
+                },
+                {
+                    "date": 1722532071259,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -16,7 +16,7 @@\n         return this.userRepo.save(user);\r\n     }\r\n \r\n     async getAllUsers(): Promise<User[]>{\r\n-        return this.userRepo\r\n+        return this.userRepo.find()\r\n     }\r\n }\r\n"
+                },
+                {
+                    "date": 1722532078865,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -16,7 +16,9 @@\n         return this.userRepo.save(user);\r\n     }\r\n \r\n     async getAllUsers(): Promise<User[]>{\r\n-        return this.userRepo.find()\r\n+        return this.userRepo.find();\r\n     }\r\n+\r\n+    async \r\n }\r\n"
+                },
+                {
+                    "date": 1722532107297,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -10,15 +10,15 @@\n         @InjectRepository(User)\r\n         private userRepo: Repository<User>\r\n     ){}\r\n \r\n-    async create(createUserDto: CreateUserDto): Promise<User>{\r\n+    create(createUserDto: CreateUserDto): Promise<User>{\r\n         const user = this.userRepo.create(createUserDto);\r\n         return this.userRepo.save(user);\r\n     }\r\n \r\n-    async getAllUsers(): Promise<User[]>{\r\n+    getAllUsers(): Promise<User[]>{\r\n         return this.userRepo.find();\r\n     }\r\n \r\n-    async \r\n+    getUser\r\n }\r\n"
+                },
+                {
+                    "date": 1722532131398,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -19,6 +19,6 @@\n     getAllUsers(): Promise<User[]>{\r\n         return this.userRepo.find();\r\n     }\r\n \r\n-    getUser\r\n+    getUser(): Promise\r\n }\r\n"
+                },
+                {
+                    "date": 1722532137355,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -19,6 +19,6 @@\n     getAllUsers(): Promise<User[]>{\r\n         return this.userRepo.find();\r\n     }\r\n \r\n-    getUser(): Promise\r\n+    getUser(): Promise<User\r\n }\r\n"
+                },
+                {
+                    "date": 1722532142542,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -19,6 +19,6 @@\n     getAllUsers(): Promise<User[]>{\r\n         return this.userRepo.find();\r\n     }\r\n \r\n-    getUser(): Promise<User\r\n+    getUser()\r\n }\r\n"
+                },
+                {
+                    "date": 1722532149449,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -19,6 +19,6 @@\n     getAllUsers(): Promise<User[]>{\r\n         return this.userRepo.find();\r\n     }\r\n \r\n-    getUser()\r\n+    getUser(username: string\r\n }\r\n"
+                },
+                {
+                    "date": 1722532159928,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -19,6 +19,8 @@\n     getAllUsers(): Promise<User[]>{\r\n         return this.userRepo.find();\r\n     }\r\n \r\n-    getUser(username: string\r\n+    getUser(username: string): Promise<User>{\r\n+        \r\n+    }\r\n }\r\n"
+                },
+                {
+                    "date": 1722532166752,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -20,7 +20,7 @@\n         return this.userRepo.find();\r\n     }\r\n \r\n     getUser(username: string): Promise<User>{\r\n-        \r\n+        return this.userRepo.find\r\n     }\r\n }\r\n"
+                },
+                {
+                    "date": 1722532171935,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -20,7 +20,7 @@\n         return this.userRepo.find();\r\n     }\r\n \r\n     getUser(username: string): Promise<User>{\r\n-        return this.userRepo.find\r\n+        return this.userRepo.findOneBy()\r\n     }\r\n }\r\n"
+                },
+                {
+                    "date": 1722532188620,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -20,7 +20,9 @@\n         return this.userRepo.find();\r\n     }\r\n \r\n     getUser(username: string): Promise<User>{\r\n-        return this.userRepo.findOneBy()\r\n+        return this.userRepo.findOneBy({username});\r\n     }\r\n+\r\n+    async updateUser\r\n }\r\n"
+                },
+                {
+                    "date": 1722532199231,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -23,6 +23,6 @@\n     getUser(username: string): Promise<User>{\r\n         return this.userRepo.findOneBy({username});\r\n     }\r\n \r\n-    async updateUser\r\n+    async updateUser()\r\n }\r\n"
+                },
+                {
+                    "date": 1722532205691,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -23,6 +23,6 @@\n     getUser(username: string): Promise<User>{\r\n         return this.userRepo.findOneBy({username});\r\n     }\r\n \r\n-    async updateUser()\r\n+    async updateUser(username: string)\r\n }\r\n"
+                },
+                {
+                    "date": 1722532211388,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -23,6 +23,6 @@\n     getUser(username: string): Promise<User>{\r\n         return this.userRepo.findOneBy({username});\r\n     }\r\n \r\n-    async updateUser(username: string)\r\n+    async updateUser(username: string, updateuserDto)\r\n }\r\n"
+                },
+                {
+                    "date": 1722532216490,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -23,6 +23,6 @@\n     getUser(username: string): Promise<User>{\r\n         return this.userRepo.findOneBy({username});\r\n     }\r\n \r\n-    async updateUser(username: string, updateuserDto)\r\n+    async updateUser(username: string, updateuserDto: Upd)\r\n }\r\n"
+                },
+                {
+                    "date": 1722532221745,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -23,6 +23,6 @@\n     getUser(username: string): Promise<User>{\r\n         return this.userRepo.findOneBy({username});\r\n     }\r\n \r\n-    async updateUser(username: string, updateuserDto: Upd)\r\n+    async updateUser(username: string, updateuserDto: Updateuser)\r\n }\r\n"
+                },
+                {
+                    "date": 1722532227481,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -2,8 +2,9 @@\n import { InjectRepository } from '@nestjs/typeorm';\r\n import { User } from 'src/entities/user.entity/user.entity';\r\n import { Repository } from 'typeorm';\r\n import { CreateUserDto } from './dto/create-user.dto/create-user.dto';\r\n+import { UpdateUserDto } from './dto/update-user.dto/update-user.dto';\r\n \r\n @Injectable()\r\n export class UserService {\r\n     constructor(\r\n@@ -23,6 +24,6 @@\n     getUser(username: string): Promise<User>{\r\n         return this.userRepo.findOneBy({username});\r\n     }\r\n \r\n-    async updateUser(username: string, updateuserDto: Updateuser)\r\n+    async updateUser(username: string, updateuserDto: UpdateUserDto): Promise\r\n }\r\n"
+                },
+                {
+                    "date": 1722532232986,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -24,6 +24,8 @@\n     getUser(username: string): Promise<User>{\r\n         return this.userRepo.findOneBy({username});\r\n     }\r\n \r\n-    async updateUser(username: string, updateuserDto: UpdateUserDto): Promise\r\n+    async updateUser(username: string, updateuserDto: UpdateUserDto): Promise<User>{\r\n+        \r\n+    }\r\n }\r\n"
+                },
+                {
+                    "date": 1722532239210,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -25,7 +25,7 @@\n         return this.userRepo.findOneBy({username});\r\n     }\r\n \r\n     async updateUser(username: string, updateuserDto: UpdateUserDto): Promise<User>{\r\n-        \r\n+        await this.userRepo.\r\n     }\r\n }\r\n"
+                },
+                {
+                    "date": 1722532247057,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -25,7 +25,7 @@\n         return this.userRepo.findOneBy({username});\r\n     }\r\n \r\n     async updateUser(username: string, updateuserDto: UpdateUserDto): Promise<User>{\r\n-        await this.userRepo.\r\n+        await this.userRepo.update(username, updateuserDto)\r\n     }\r\n }\r\n"
+                },
+                {
+                    "date": 1722532259064,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -25,7 +25,8 @@\n         return this.userRepo.findOneBy({username});\r\n     }\r\n \r\n     async updateUser(username: string, updateuserDto: UpdateUserDto): Promise<User>{\r\n-        await this.userRepo.update(username, updateuserDto)\r\n+        await this.userRepo.update(username, updateuserDto);\r\n+        return this.userRepo.find\r\n     }\r\n }\r\n"
+                },
+                {
+                    "date": 1722532264464,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -26,7 +26,7 @@\n     }\r\n \r\n     async updateUser(username: string, updateuserDto: UpdateUserDto): Promise<User>{\r\n         await this.userRepo.update(username, updateuserDto);\r\n-        return this.userRepo.find\r\n+        return this.userRepo.findOneBy({})\r\n     }\r\n }\r\n"
+                },
+                {
+                    "date": 1722532274155,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -26,7 +26,9 @@\n     }\r\n \r\n     async updateUser(username: string, updateuserDto: UpdateUserDto): Promise<User>{\r\n         await this.userRepo.update(username, updateuserDto);\r\n-        return this.userRepo.findOneBy({})\r\n+        return this.userRepo.findOneBy({});\r\n     }\r\n+\r\n+    async deleterUser\r\n }\r\n"
+                },
+                {
+                    "date": 1722532286066,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -29,6 +29,6 @@\n         await this.userRepo.update(username, updateuserDto);\r\n         return this.userRepo.findOneBy({});\r\n     }\r\n \r\n-    async deleterUser\r\n+    async deleterUser(username: string): Promise<void\r\n }\r\n"
+                },
+                {
+                    "date": 1722532294120,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -29,6 +29,8 @@\n         await this.userRepo.update(username, updateuserDto);\r\n         return this.userRepo.findOneBy({});\r\n     }\r\n \r\n-    async deleterUser(username: string): Promise<void\r\n+    async deleterUser(username: string): Promise<void>{\r\n+        await this.userRepo\r\n+    }\r\n }\r\n"
+                },
+                {
+                    "date": 1722532300763,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -30,7 +30,7 @@\n         return this.userRepo.findOneBy({});\r\n     }\r\n \r\n     async deleterUser(username: string): Promise<void>{\r\n-        await this.userRepo\r\n+        await this.userRepo.delete(username);\r\n     }\r\n }\r\n"
+                },
+                {
+                    "date": 1722534335119,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -13,8 +13,9 @@\n     ){}\r\n \r\n     create(createUserDto: CreateUserDto): Promise<User>{\r\n         const user = this.userRepo.create(createUserDto);\r\n+        \r\n         return this.userRepo.save(user);\r\n     }\r\n \r\n     getAllUsers(): Promise<User[]>{\r\n"
+                },
+                {
+                    "date": 1722534344651,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -13,9 +13,9 @@\n     ){}\r\n \r\n     create(createUserDto: CreateUserDto): Promise<User>{\r\n         const user = this.userRepo.create(createUserDto);\r\n-        if\r\n+        if \r\n         return this.userRepo.save(user);\r\n     }\r\n \r\n     getAllUsers(): Promise<User[]>{\r\n"
+                },
+                {
+                    "date": 1722534556418,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -16,9 +16,9 @@\n         const existingUser = await this.userRepo.findOne({\r\n             where: {username: createUserDto.username}\r\n         });\r\n \r\n-        if()\r\n+        if(e)\r\n         const user = this.userRepo.create(createUserDto);\r\n         return this.userRepo.save(user);\r\n     }\r\n \r\n"
+                }
+            ],
+            "date": 1722531868453,
+            "name": "Commit-0",
+            "content": "import { Injectable } from '@nestjs/common';\r\n\r\n@Injectable()\r\nexport class UserService {\r\n    \r\n}\r\n"
+        }
+    ]
+}
