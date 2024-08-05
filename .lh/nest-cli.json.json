@@ -1,0 +1,22 @@
+{
+    "sourceFile": "nest-cli.json",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 1,
+            "patches": [
+                {
+                    "date": 1722861496978,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1722861505457,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -0,0 +1,10 @@\n+{\r\n+  \"$schema\": \"https://json.schemastore.org/nest-cli\",\r\n+  \"collection\": \"@nestjs/schematics\",\r\n+  \"sourceRoot\": \"src\",\r\n+  \"compilerOptions\": {\r\n+    \"webpack\": false,\r\n+    \"deleteOutDir\": true,\r\n+    \r\n+  }\r\n+}\r\n"
+                }
+            ],
+            "date": 1722861496978,
+            "name": "Commit-0",
+            "content": "{\r\n  \"$schema\": \"https://json.schemastore.org/nest-cli\",\r\n  \"collection\": \"@nestjs/schematics\",\r\n  \"sourceRoot\": \"src\",\r\n  \"compilerOptions\": {\r\n    \"\"\r\n    \"deleteOutDir\": true\r\n  }\r\n}\r\n"
+        }
+    ]
+}
