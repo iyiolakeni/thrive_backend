@@ -1,33 +1,31 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { UserType } from "src/entities/enum";
 
 export class CreateUserDto {
-    @ApiProperty()
-    firstName: string;
+	@ApiProperty()
+	firstName: string;
 
-    @ApiProperty()
-    lastName: string;
+	@ApiProperty()
+	lastName: string;
 
-    @ApiProperty()
-    username: string;
+	@ApiProperty()
+	username: string;
 
-    @ApiProperty()
-    email: string
+	@ApiProperty()
+	email: string;
 
-    @ApiProperty()
-    password: string
+	@ApiProperty()
+	password: string;
 
-    @ApiProperty()
-    phoneNo: string
+	@ApiProperty()
+	phoneNo: string;
 
-    @ApiProperty()
-    isActive: boolean
+	@ApiProperty()
+	dob: Date;
 
-    @ApiProperty()
-    lastLogin: Date;
+	@ApiProperty({ enum: UserType })
+	userType: UserType;
 
-    @ApiProperty()
-    dob: Date 
-
-    @ApiProperty()
-    registrationDate: Date
+	// @ApiProperty()
+	registrationDate: Date;
 }

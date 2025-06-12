@@ -1,10 +1,8 @@
-import { AuthService } from './auth.service';
-import { LoginDto } from 'src/user/dto/login.dto';
+import { AuthService } from "./auth.service";
+import { LoginDto } from "src/user/dto/login.dto";
 export declare class AuthController {
     private authService;
     constructor(authService: AuthService);
-    login(loginDto: LoginDto): Promise<{
-        access_token: string;
-    }>;
+    login(loginDto: LoginDto, meta: any): Promise<import("../models/response.dto").InvalidCredentialsResponse | import("../models/response.dto").NotFoundResponse | import("../models/response.dto").LoginResponse>;
 }
 //# sourceMappingURL=auth.controller.d.ts.map

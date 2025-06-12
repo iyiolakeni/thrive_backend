@@ -1,5 +1,7 @@
+import { UserType } from "../enum";
+import { LoginDetails } from "../login.entity/logindetails.entity";
 export declare class User {
-    id: number;
+    id: string;
     firstName: string;
     lastName: string;
     username: string;
@@ -7,8 +9,9 @@ export declare class User {
     phoneNo: string;
     password: string;
     isActive: boolean;
-    lastLogin: Date;
     dob: Date;
+    userType: UserType;
     registrationDate: Date;
+    loginHistory: LoginDetails[];
 }
 //# sourceMappingURL=user.entity.d.ts.map

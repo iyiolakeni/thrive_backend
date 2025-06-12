@@ -1,3 +1,4 @@
+import { UserType } from "src/entities/enum";
 export declare class CreateUserDto {
     firstName: string;
     lastName: string;
@@ -5,9 +6,8 @@ export declare class CreateUserDto {
     email: string;
     password: string;
     phoneNo: string;
-    isActive: boolean;
-    lastLogin: Date;
     dob: Date;
+    userType: UserType;
     registrationDate: Date;
 }
 //# sourceMappingURL=create-user.dto.d.ts.map

@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateUserDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
+const enum_1 = require("../../../entities/enum");
 class CreateUserDto {
 }
 exports.CreateUserDto = CreateUserDto;
@@ -40,18 +41,10 @@ __decorate([
 ], CreateUserDto.prototype, "phoneNo", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", Boolean)
-], CreateUserDto.prototype, "isActive", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", Date)
-], CreateUserDto.prototype, "lastLogin", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
     __metadata("design:type", Date)
 ], CreateUserDto.prototype, "dob", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", Date)
-], CreateUserDto.prototype, "registrationDate", void 0);
+    (0, swagger_1.ApiProperty)({ enum: enum_1.UserType }),
+    __metadata("design:type", String)
+], CreateUserDto.prototype, "userType", void 0);
 //# sourceMappingURL=create-user.dto.js.map

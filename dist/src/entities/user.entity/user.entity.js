@@ -11,12 +11,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const typeorm_1 = require("typeorm");
+const enum_1 = require("../enum");
+const logindetails_entity_1 = require("../login.entity/logindetails.entity");
 let User = class User {
 };
 exports.User = User;
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)(),
-    __metadata("design:type", Number)
+    (0, typeorm_1.PrimaryGeneratedColumn)("uuid"),
+    __metadata("design:type", String)
 ], User.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
@@ -49,15 +51,21 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", Date)
-], User.prototype, "lastLogin", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", Date)
 ], User.prototype, "dob", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({ type: "enum", enum: enum_1.UserType, default: enum_1.UserType.USER }),
+    __metadata("design:type", String)
+], User.prototype, "userType", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" }),
     __metadata("design:type", Date)
 ], User.prototype, "registrationDate", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => logindetails_entity_1.LoginDetails, (loginDetails) => loginDetails.user, {
+        cascade: true,
+    }),
+    __metadata("design:type", Array)
+], User.prototype, "loginHistory", void 0);
 exports.User = User = __decorate([
     (0, typeorm_1.Entity)()
 ], User);
