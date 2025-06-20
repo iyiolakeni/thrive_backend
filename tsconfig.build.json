@@ -1,11 +1,14 @@
 {
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "outDir": "./dist",
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "inlineSources": true
-  },
-  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"outDir": "./dist",
+		"declaration": true,
+		"declarationMap": true,
+		"sourceMap": true,
+		"paths": {
+			"src/*": ["src/*"]
+		},
+		"inlineSources": true
+	},
+	"exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
 }
