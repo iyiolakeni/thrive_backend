@@ -1,6 +1,6 @@
 import { Module, Global } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { User } from "src/entities/user.entity/User.entity";
+import { User } from "src/entities/user.entity/user.entity";
 import { SharedService } from "./shared-service.service";
 import { Business } from "src/entities/business.entity/business.entity";
 import { ProductCategory } from "src/product-categories/entities/product-category";

@@ -1,4 +1,4 @@
-import { User } from "src/entities/user.entity/User.entity";
+import { User } from "src/entities/user.entity/user.entity";
 import { Product } from "src/products/entities/products.entity";
 import { TransactionDetail } from "src/transaction-details/entities/transaction-detail.entity";
 import {

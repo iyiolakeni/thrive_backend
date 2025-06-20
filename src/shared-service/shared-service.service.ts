@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import axios from "axios";
 import { randomBytes } from "crypto";
 import { Business } from "src/entities/business.entity/business.entity";
-import { User } from "src/entities/user.entity/User.entity";
+import { User } from "src/entities/user.entity/user.entity";
 import {
 	DataResponse,
 	InvalidCredentialsResponse,

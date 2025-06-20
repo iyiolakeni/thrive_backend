@@ -14,7 +14,7 @@ import {
 import { UserService } from "./user.service";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { CreateUserDto } from "./dto/create-user.dto/create-user.dto";
-import { User } from "src/entities/user.entity/User.entity";
+import { User } from "src/entities/user.entity/user.entity";
 import { UpdateUserDto } from "./dto/update-user.dto/update-user.dto";
 import { JwtAwthGuard } from "src/auth/jwt-auth.guard";
 import {
