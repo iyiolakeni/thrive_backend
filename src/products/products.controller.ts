@@ -17,7 +17,7 @@ import {
 	NotFoundResponse,
 	SuccessResponse,
 } from "src/models/response.dto";
-import { Product } from "./entities/Product.entity";
+import { Product } from "./entities/product.entity";
 
 @Controller("products")
 @ApiTags("Products")

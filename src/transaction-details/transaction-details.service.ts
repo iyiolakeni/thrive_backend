@@ -3,9 +3,9 @@ import { CreateTransactionDetailDto } from "./dto/create-transaction-detail.dto"
 import { UpdateTransactionDetailDto } from "./dto/update-transaction-detail.dto";
 import { DataResponse, NotFoundResponse } from "src/models/response.dto";
 import { InjectRepository } from "@nestjs/typeorm";
-import { TransactionDetail } from "./entities/TransactionDetail.entity";
 import { Repository } from "typeorm";
 import axios from "axios";
+import { TransactionDetail } from "./entities/TransactionDetail.entity";
 
 @Injectable()
 export class TransactionDetailsService {

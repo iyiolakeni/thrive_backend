@@ -12,7 +12,7 @@ import {
 } from "src/models/response.dto";
 import { UserResponse } from "src/models/userResponse.dto";
 import { ProductCategory } from "src/product-categories/entities/ProductCategory";
-import { Product } from "src/products/entities/Product.entity";
+import { Product } from "src/products/entities/product.entity";
 import { PaymentDto } from "src/purchase/dto/payment.dto";
 import { PurchaseDto } from "src/purchase/dto/purchase.dto";
 import { Purchase } from "src/purchase/entities/purchase.entity";

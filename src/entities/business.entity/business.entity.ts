@@ -7,7 +7,7 @@ import {
 	PrimaryGeneratedColumn,
 } from "typeorm";
 import { User } from "../user.entity/User.entity";
-import { Product } from "src/products/entities/Product.entity";
+import { Product } from "src/products/entities/product.entity";
 
 @Entity()
 export class Business {
