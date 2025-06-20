@@ -5,9 +5,6 @@
 	"compilerOptions": {
 		"webpack": false,
 		"deleteOutDir": true,
-		"tsConfigPath": "tsconfig.build.json",
-		"pathMappings": {
-			"src/*": ["src/*"]
-		}
+		"tsConfigPath": "tsconfig.build.json"
 	}
 }
