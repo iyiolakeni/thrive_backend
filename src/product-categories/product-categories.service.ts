@@ -9,7 +9,7 @@ import {
 	SuccessResponse,
 } from "src/models/response.dto";
 import { InjectRepository } from "@nestjs/typeorm";
-import { ProductCategory } from "./entities/product-category.entity";
+import { ProductCategory } from "./entities/ProductCategory";
 import { Repository } from "typeorm";
 import { SearchFilterDto } from "./dto/search-filter.dto";
 

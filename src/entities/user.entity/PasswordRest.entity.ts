@@ -5,7 +5,7 @@ import {
 	ManyToOne,
 	PrimaryGeneratedColumn,
 } from "typeorm";
-import { User } from "./user.entity";
+import { User } from "./User.entity";
 
 @Entity()
 export class PasswordRest {

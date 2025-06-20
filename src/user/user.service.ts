@@ -1,5 +1,5 @@
 import { InjectRepository } from "@nestjs/typeorm";
-import { User } from "src/entities/user.entity/user.entity";
+import { User } from "src/entities/user.entity/User.entity";
 import { Repository } from "typeorm";
 import { CreateUserDto } from "./dto/create-user.dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto/update-user.dto";
@@ -15,7 +15,7 @@ import {
 	SuccessResponse,
 } from "src/models/response.dto";
 import { Injectable, Logger } from "@nestjs/common";
-import { PasswordRest } from "src/entities/user.entity/password.entity";
+import { PasswordRest } from "src/entities/user.entity/PasswordRest.entity";
 import { getuid } from "process";
 import { EmailService } from "src/email/email.service";
 import { ResetPasswordDto } from "./dto/reset_password.dto";

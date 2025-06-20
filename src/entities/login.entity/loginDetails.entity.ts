@@ -6,7 +6,7 @@ import {
 	ManyToOne,
 	PrimaryGeneratedColumn,
 } from "typeorm";
-import { User } from "../user.entity/user.entity";
+import { User } from "../user.entity/User.entity";
 
 @Entity()
 export class LoginDetails {

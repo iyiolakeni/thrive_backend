@@ -2,9 +2,9 @@ import { Module } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { UserController } from "./user.controller";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { User } from "src/entities/user.entity/user.entity";
-import { LoginDetails } from "src/entities/login.entity/logindetails.entity";
-import { PasswordRest } from "src/entities/user.entity/password.entity";
+import { User } from "src/entities/user.entity/User.entity";
+import { LoginDetails } from "src/entities/login.entity/LoginDetails.entity";
+import { PasswordRest } from "src/entities/user.entity/PasswordRest.entity";
 import { EmailService } from "src/email/email.service";
 
 @Module({

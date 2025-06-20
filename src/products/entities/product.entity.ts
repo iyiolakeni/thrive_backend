@@ -1,5 +1,5 @@
-import { Business } from "src/entities/business.entity/business.entity";
-import { ProductCategory } from "src/product-categories/entities/product-category.entity";
+import { Business } from "src/entities/business.entity/Business.entity";
+import { ProductCategory } from "src/product-categories/entities/ProductCategory";
 import {
 	Column,
 	Entity,

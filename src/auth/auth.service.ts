@@ -2,7 +2,7 @@ import { ConflictException, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { UserService } from "src/user/user.service";
 import * as bcrypt from "bcrypt";
-import { User } from "src/entities/user.entity/user.entity";
+import { User } from "src/entities/user.entity/User.entity";
 import { LoginDto } from "src/user/dto/login.dto";
 import {
 	DataResponse,
@@ -14,7 +14,7 @@ import { UserResponse } from "src/models/userResponse.dto";
 import { ConfigService } from "@nestjs/config";
 import { SharedService } from "src/shared-service/shared-service.service";
 import { InjectRepository } from "@nestjs/typeorm";
-import { LoginDetails } from "src/entities/login.entity/logindetails.entity";
+import { LoginDetails } from "src/entities/login.entity/LoginDetails.entity";
 import { Repository } from "typeorm";
 import { LoginDetailsDto } from "src/user/dto/logindetails.dto";
 
