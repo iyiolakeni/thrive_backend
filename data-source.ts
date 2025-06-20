@@ -1,6 +1,6 @@
 import { LoginDetails } from "src/entities/login.entity/login-details.entity";
 import { PasswordRest } from "src/entities/user.entity/password-rest.entity";
-import { User } from "src/entities/user.entity/User.entity";
+import { User } from "src/entities/user.entity/user.entity";
 import { ProductCategory } from "src/product-categories/entities/product-category";
 import { Product } from "src/products/entities/products.entity";
 import { Purchase } from "src/purchase/entities/purchase.entity";

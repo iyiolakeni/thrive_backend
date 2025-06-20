@@ -6,7 +6,7 @@ import {
 	OneToOne,
 	PrimaryGeneratedColumn,
 } from "typeorm";
-import { User } from "../user.entity/User.entity";
+import { User } from "../user.entity/user.entity";
 import { Product } from "src/products/entities/products.entity";
 
 @Entity()
