@@ -27,6 +27,7 @@ import { EmailDto } from "src/email/dto/email.dto";
 import { ResetPasswordDto } from "./dto/reset_password.dto";
 import { UserResponse } from "src/models/userResponse.dto";
 import { SearchFilterDto } from "src/product-categories/dto/search-filter.dto";
+import { UserDto } from "./dto/create-user.dto/user.dto";
 
 @Controller("User")
 @ApiTags("User Details")
@@ -48,7 +49,7 @@ export class UserController {
 	}
 
 	@Get("all")
-	getAllusers(): Promise<User[]> {
+	getAllusers(): Promise<UserDto[]> {
 		return this.userService.getAllUsers();
 	}
 

@@ -16,11 +16,11 @@ import {
 } from "src/models/response.dto";
 import { Injectable, Logger } from "@nestjs/common";
 import { PasswordRest } from "src/entities/user.entity/password-rest.entity";
-import { getuid } from "process";
 import { EmailService } from "src/email/email.service";
 import { ResetPasswordDto } from "./dto/reset_password.dto";
 import { UserResponse } from "src/models/userResponse.dto";
 import { SearchFilterDto } from "src/product-categories/dto/search-filter.dto";
+import { UserDto } from "./dto/create-user.dto/user.dto";
 
 @Injectable()
 export class UserService {
@@ -120,8 +120,32 @@ export class UserService {
 		);
 	}
 
-	getAllUsers(): Promise<User[]> {
-		return this.userRepo.find();
+	async getAllUsers(): Promise<UserDto[]> {
+		const user = await this.userRepo.find({ where: { isActive: true } });
+		if (!user) {
+			this.logger.error("No active users found");
+			return Promise.reject(new NotFoundResponse("No active users found"));
+		}
+
+		this.logger.log(`Found ${user} active users`);
+		const updatedUsers = user.map((user) => {
+			return {
+				id: user.id,
+				firstName: user.firstName,
+				lastName: user.lastName,
+				username: user.username,
+				email: user.email,
+				phoneNo: user.phoneNo,
+				isActive: user.isActive,
+				dob: user.dob,
+				userType: user.userType,
+				isVerified: user.isVerified,
+				registrationDate: user.registrationDate,
+			} as UserDto;
+		});
+
+		this.logger.log(`Returning ${updatedUsers.length} active users`);
+		return updatedUsers;
 	}
 
 	getUser(username: string): Promise<User> {
