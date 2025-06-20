@@ -1,0 +1,38 @@
+{
+    "sourceFile": "src/products/products.controller.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 5,
+            "patches": [
+                {
+                    "date": 1749974600559,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1749987055632,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -10,35 +10,49 @@\n import { ProductsService } from \"./products.service\";\r\n import { CreateProductDto } from \"./dto/create-product.dto\";\r\n import { UpdateProductDto } from \"./dto/update-product.dto\";\r\n import { ApiTags } from \"@nestjs/swagger\";\r\n+import {\r\n+\tDataResponse,\r\n+\tInvalidCredentialsResponse,\r\n+\tNotFoundResponse,\r\n+\tSuccessResponse,\r\n+} from \"src/models/response.dto\";\r\n+import { Product } from \"./entities/product.entity\";\r\n \r\n @Controller(\"products\")\r\n @ApiTags(\"Products Category\")\r\n export class ProductsController {\r\n \tconstructor(private readonly productsService: ProductsService) {}\r\n \r\n \t@Post()\r\n-\tcreate(@Body() createProductDto: CreateProductDto) {\r\n+\tasync create(\r\n+\t\t@Body() createProductDto: CreateProductDto\r\n+\t): Promise<SuccessResponse | InvalidCredentialsResponse> {\r\n \t\treturn this.productsService.create(createProductDto);\r\n \t}\r\n \r\n \t@Get()\r\n-\tfindAll() {\r\n+\tasync findAll(): Promise<DataResponse<Product[]> | NotFoundResponse> {\r\n \t\treturn this.productsService.findAll();\r\n \t}\r\n \r\n \t@Get(\":id\")\r\n-\tfindOne(@Param(\"id\") id: string) {\r\n-\t\treturn this.productsService.findOne(+id);\r\n+\tasync findOne(\r\n+\t\t@Param(\"id\") id: string\r\n+\t): Promise<DataResponse<Product> | NotFoundResponse> {\r\n+\t\treturn this.productsService.findOne(id);\r\n \t}\r\n \r\n \t@Patch(\":id\")\r\n-\tupdate(@Param(\"id\") id: string, @Body() updateProductDto: UpdateProductDto) {\r\n-\t\treturn this.productsService.update(+id, updateProductDto);\r\n+\tasync update(\r\n+\t\t@Param(\"id\") id: string,\r\n+\t\t@Body() updateProductDto: UpdateProductDto\r\n+\t): Promise<SuccessResponse | NotFoundResponse> {\r\n+\t\treturn this.productsService.update(id, updateProductDto);\r\n \t}\r\n \r\n \t@Delete(\":id\")\r\n \tremove(@Param(\"id\") id: string) {\r\n-\t\treturn this.productsService.remove(+id);\r\n+\t\treturn this.productsService.remove(id);\r\n \t}\r\n }\r\n"
+                },
+                {
+                    "date": 1749987170186,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -54,5 +54,13 @@\n \t@Delete(\":id\")\r\n \tremove(@Param(\"id\") id: string) {\r\n \t\treturn this.productsService.remove(id);\r\n \t}\r\n+\r\n+\t@Post(\"restock/:id\")\r\n+\tasync restock(\r\n+\t\t@Param(\"id\") id: string,\r\n+\t\t@Body(\"quantity\") quantity: number\r\n+\t): Promise<SuccessResponse | NotFoundResponse> {\r\n+\t\treturn this.productsService.reStockProduct(id, quantity);\r\n+\t}\r\n }\r\n"
+                },
+                {
+                    "date": 1749987211972,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -23,36 +23,36 @@\n @ApiTags(\"Products Category\")\r\n export class ProductsController {\r\n \tconstructor(private readonly productsService: ProductsService) {}\r\n \r\n-\t@Post()\r\n+\t@Post(\"create\")\r\n \tasync create(\r\n \t\t@Body() createProductDto: CreateProductDto\r\n \t): Promise<SuccessResponse | InvalidCredentialsResponse> {\r\n \t\treturn this.productsService.create(createProductDto);\r\n \t}\r\n \r\n-\t@Get()\r\n+\t@Get(\"all\")\r\n \tasync findAll(): Promise<DataResponse<Product[]> | NotFoundResponse> {\r\n \t\treturn this.productsService.findAll();\r\n \t}\r\n \r\n-\t@Get(\":id\")\r\n+\t@Get(\"get-all/:id\")\r\n \tasync findOne(\r\n \t\t@Param(\"id\") id: string\r\n \t): Promise<DataResponse<Product> | NotFoundResponse> {\r\n \t\treturn this.productsService.findOne(id);\r\n \t}\r\n \r\n-\t@Patch(\":id\")\r\n+\t@Patch(\"update/:id\")\r\n \tasync update(\r\n \t\t@Param(\"id\") id: string,\r\n \t\t@Body() updateProductDto: UpdateProductDto\r\n \t): Promise<SuccessResponse | NotFoundResponse> {\r\n \t\treturn this.productsService.update(id, updateProductDto);\r\n \t}\r\n \r\n-\t@Delete(\":id\")\r\n+\t@Delete(\"delete/:id\")\r\n \tremove(@Param(\"id\") id: string) {\r\n \t\treturn this.productsService.remove(id);\r\n \t}\r\n \r\n"
+                },
+                {
+                    "date": 1749987797018,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -9,9 +9,9 @@\n } from \"@nestjs/common\";\r\n import { ProductsService } from \"./products.service\";\r\n import { CreateProductDto } from \"./dto/create-product.dto\";\r\n import { UpdateProductDto } from \"./dto/update-product.dto\";\r\n-import { ApiTags } from \"@nestjs/swagger\";\r\n+import { ApiBody, ApiTags } from \"@nestjs/swagger\";\r\n import {\r\n \tDataResponse,\r\n \tInvalidCredentialsResponse,\r\n \tNotFoundResponse,\r\n@@ -56,8 +56,9 @@\n \t\treturn this.productsService.remove(id);\r\n \t}\r\n \r\n \t@Post(\"restock/:id\")\r\n+\t@ApiBody({ schema: { properties: { quantity: { type: \"number\" } } } })\r\n \tasync restock(\r\n \t\t@Param(\"id\") id: string,\r\n \t\t@Body(\"quantity\") quantity: number\r\n \t): Promise<SuccessResponse | NotFoundResponse> {\r\n"
+                },
+                {
+                    "date": 1750238610252,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -19,9 +19,9 @@\n } from \"src/models/response.dto\";\r\n import { Product } from \"./entities/product.entity\";\r\n \r\n @Controller(\"products\")\r\n-@ApiTags(\"Products Category\")\r\n+@ApiTags(\"Products\")\r\n export class ProductsController {\r\n \tconstructor(private readonly productsService: ProductsService) {}\r\n \r\n \t@Post(\"create\")\r\n"
+                }
+            ],
+            "date": 1749974600559,
+            "name": "Commit-0",
+            "content": "import {\r\n\tController,\r\n\tGet,\r\n\tPost,\r\n\tBody,\r\n\tPatch,\r\n\tParam,\r\n\tDelete,\r\n} from \"@nestjs/common\";\r\nimport { ProductsService } from \"./products.service\";\r\nimport { CreateProductDto } from \"./dto/create-product.dto\";\r\nimport { UpdateProductDto } from \"./dto/update-product.dto\";\r\nimport { ApiTags } from \"@nestjs/swagger\";\r\n\r\n@Controller(\"products\")\r\n@ApiTags(\"Products Category\")\r\nexport class ProductsController {\r\n\tconstructor(private readonly productsService: ProductsService) {}\r\n\r\n\t@Post()\r\n\tcreate(@Body() createProductDto: CreateProductDto) {\r\n\t\treturn this.productsService.create(createProductDto);\r\n\t}\r\n\r\n\t@Get()\r\n\tfindAll() {\r\n\t\treturn this.productsService.findAll();\r\n\t}\r\n\r\n\t@Get(\":id\")\r\n\tfindOne(@Param(\"id\") id: string) {\r\n\t\treturn this.productsService.findOne(+id);\r\n\t}\r\n\r\n\t@Patch(\":id\")\r\n\tupdate(@Param(\"id\") id: string, @Body() updateProductDto: UpdateProductDto) {\r\n\t\treturn this.productsService.update(+id, updateProductDto);\r\n\t}\r\n\r\n\t@Delete(\":id\")\r\n\tremove(@Param(\"id\") id: string) {\r\n\t\treturn this.productsService.remove(+id);\r\n\t}\r\n}\r\n"
+        }
+    ]
+}

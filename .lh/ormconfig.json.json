@@ -1,0 +1,86 @@
+{
+    "sourceFile": "ormconfig.json",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 17,
+            "patches": [
+                {
+                    "date": 1722535649354,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1722535662949,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -0,0 +1,10 @@\n+{\r\n+    \"type\": 'postgres',\r\n+    \"host\": process.env.POSTGRES_HOST,\r\n+    \"port\": 5432,\r\n+    \"username\": process.env.POSTGRES_USER,\r\n+    \"password\": process.env.POSTGRES_PASSWORD,\r\n+    \"database\": process.env.POSTGRES_DATABASE,\r\n+    \"url\": process.env.POSTGRES_URL,\r\n+    \"entities\": [User]\r\n+}\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722535731587,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,20 +1,10 @@\n {\r\n-    \"type\": 'postgres',\r\n+    \"type\": '\"postgres\"',\r\n     \"host\": process.env.POSTGRES_HOST,\r\n     \"port\": 5432,\r\n     \"username\": process.env.POSTGRES_USER,\r\n     \"password\": process.env.POSTGRES_PASSWORD,\r\n     \"database\": process.env.POSTGRES_DATABASE,\r\n     \"url\": process.env.POSTGRES_URL,\r\n     \"entities\": [User]\r\n-}\n-{\r\n-    type: 'postgres',\r\n-    host: process.env.POSTGRES_HOST,\r\n-    port: 5432,\r\n-    username: process.env.POSTGRES_USER,\r\n-    password: process.env.POSTGRES_PASSWORD,\r\n-    database: process.env.POSTGRES_DATABASE,\r\n-    url: process.env.POSTGRES_URL,\r\n-    entities: [User]\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722535738117,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -0,0 +1,10 @@\n+{\r\n+    \"type\": \"postgres\",\r\n+    \"host\": process.env.POSTGRES_HOST,\r\n+    \"port\": 5432,\r\n+    \"username\": process.env.POSTGRES_USER,\r\n+    \"password\": process.env.POSTGRES_PASSWORD,\r\n+    \"database\": process.env.POSTGRES_DATABASE,\r\n+    \"url\": process.env.POSTGRES_URL,\r\n+    \"entities\": [User]\r\n+}\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722536128259,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -4,17 +4,7 @@\n     \"port\": 5432,\r\n     \"username\": process.env.POSTGRES_USER,\r\n     \"password\": process.env.POSTGRES_PASSWORD,\r\n     \"database\": process.env.POSTGRES_DATABASE,\r\n-    \"url\": process.env.POSTGRES_URL,\r\n+    \"url\": \"\",\r\n     \"entities\": [User]\r\n-}\n-{\r\n-    \"type\": '\"postgres\"',\r\n-    \"host\": process.env.POSTGRES_HOST,\r\n-    \"port\": 5432,\r\n-    \"username\": process.env.POSTGRES_USER,\r\n-    \"password\": process.env.POSTGRES_PASSWORD,\r\n-    \"database\": process.env.POSTGRES_DATABASE,\r\n-    \"url\": process.env.POSTGRES_URL,\r\n-    \"entities\": [User]\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722536144389,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -4,7 +4,7 @@\n     \"port\": 5432,\r\n     \"username\": process.env.POSTGRES_USER,\r\n     \"password\": process.env.POSTGRES_PASSWORD,\r\n     \"database\": process.env.POSTGRES_DATABASE,\r\n-    \"url\": \"\",\r\n+    \"url\": \"postgres://default:pguX9yMWco8T@ep-lucky-frost-a402y3x7-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require\",\r\n     \"entities\": [User]\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722536159244,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,8 +3,8 @@\n     \"host\": process.env.POSTGRES_HOST,\r\n     \"port\": 5432,\r\n     \"username\": process.env.POSTGRES_USER,\r\n     \"password\": process.env.POSTGRES_PASSWORD,\r\n-    \"database\": process.env.POSTGRES_DATABASE,\r\n+    \"database\": \"verceldb\",\r\n     \"url\": \"postgres://default:pguX9yMWco8T@ep-lucky-frost-a402y3x7-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require\",\r\n     \"entities\": [User]\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722536176151,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,9 +1,9 @@\n {\r\n     \"type\": \"postgres\",\r\n     \"host\": process.env.POSTGRES_HOST,\r\n     \"port\": 5432,\r\n-    \"username\": process.env.POSTGRES_USER,\r\n+    \"username\": process.env.\"default\",\r\n     \"password\": process.env.POSTGRES_PASSWORD,\r\n     \"database\": \"verceldb\",\r\n     \"url\": \"postgres://default:pguX9yMWco8T@ep-lucky-frost-a402y3x7-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require\",\r\n     \"entities\": [User]\r\n"
+                },
+                {
+                    "date": 1722536190084,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -0,0 +1,9 @@\n+{\r\n+    \"type\": \"postgres\",\r\n+    \"host\":     \"port\": 5432,\r\n+    \"username\": \"default\",\r\n+    \"password\": RD,\r\n+    \"database\": \"verceldb\",\r\n+    \"url\": \"postgres://default:pguX9yMWco8T@ep-lucky-frost-a402y3x7-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require\",\r\n+    \"entities\": [User]\r\n+}\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722536201157,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -0,0 +1,10 @@\n+{\r\n+    \"type\": \"postgres\",\r\n+    \"host\": \r\n+    \"port\": 5432,\r\n+    \"username\": \"default\",\r\n+    \"password\": ,\r\n+    \"database\": \"verceldb\",\r\n+    \"url\": \"postgres://default:pguX9yMWco8T@ep-lucky-frost-a402y3x7-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require\",\r\n+    \"entities\": [User]\r\n+}\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722536211814,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -0,0 +1,10 @@\n+{\r\n+    \"type\": \"postgres\",\r\n+    \"host\": \"ep-lucky-frost-a402y3x7-pooler.us-east-1.aws.neon.tech\" ,\r\n+    \"port\": 5432,\r\n+    \"username\": \"default\",\r\n+    \"password\": ,\r\n+    \"database\": \"verceldb\",\r\n+    \"url\": \"postgres://default:pguX9yMWco8T@ep-lucky-frost-a402y3x7-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require\",\r\n+    \"entities\": [User]\r\n+}\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722536217402,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -0,0 +1,10 @@\n+{\r\n+    \"type\": \"postgres\",\r\n+    \"host\": \"ep-lucky-frost-a402y3x7-pooler.us-east-1.aws.neon.tech\" ,\r\n+    \"port\": 5432,\r\n+    \"username\": \"default\",\r\n+    \"password\": \"pguX9yMWco8T\",\r\n+    \"database\": \"verceldb\",\r\n+    \"url\": \"postgres://default:pguX9yMWco8T@ep-lucky-frost-a402y3x7-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require\",\r\n+    \"entities\": [User]\r\n+}\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722536243613,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -5,45 +5,6 @@\n     \"username\": \"default\",\r\n     \"password\": \"pguX9yMWco8T\",\r\n     \"database\": \"verceldb\",\r\n     \"url\": \"postgres://default:pguX9yMWco8T@ep-lucky-frost-a402y3x7-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require\",\r\n-    \"entities\": [User]\r\n-}\n-{\r\n-    \"type\": \"postgres\",\r\n-    \"host\": \"ep-lucky-frost-a402y3x7-pooler.us-east-1.aws.neon.tech\" ,\r\n-    \"port\": 5432,\r\n-    \"username\": \"default\",\r\n-    \"password\": ,\r\n-    \"database\": \"verceldb\",\r\n-    \"url\": \"postgres://default:pguX9yMWco8T@ep-lucky-frost-a402y3x7-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require\",\r\n-    \"entities\": [User]\r\n-}\n-{\r\n-    \"type\": \"postgres\",\r\n-    \"host\": \r\n-    \"port\": 5432,\r\n-    \"username\": \"default\",\r\n-    \"password\": ,\r\n-    \"database\": \"verceldb\",\r\n-    \"url\": \"postgres://default:pguX9yMWco8T@ep-lucky-frost-a402y3x7-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require\",\r\n-    \"entities\": [User]\r\n-}\n-{\r\n-    \"type\": \"postgres\",\r\n-    \"host\":     \"port\": 5432,\r\n-    \"username\": \"default\",\r\n-    \"password\": RD,\r\n-    \"database\": \"verceldb\",\r\n-    \"url\": \"postgres://default:pguX9yMWco8T@ep-lucky-frost-a402y3x7-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require\",\r\n-    \"entities\": [User]\r\n-}\n-{\r\n-    \"type\": \"postgres\",\r\n-    \"host\": process.env.POSTGRES_HOST,\r\n-    \"port\": 5432,\r\n-    \"username\": process.env.\"default\",\r\n-    \"password\": process.env.POSTGRES_PASSWORD,\r\n-    \"database\": \"verceldb\",\r\n-    \"url\": \"postgres://default:pguX9yMWco8T@ep-lucky-frost-a402y3x7-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require\",\r\n-    \"entities\": [User]\r\n+    \"entities\": [\"User\"]\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722536250709,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -5,6 +5,6 @@\n     \"username\": \"default\",\r\n     \"password\": \"pguX9yMWco8T\",\r\n     \"database\": \"verceldb\",\r\n     \"url\": \"postgres://default:pguX9yMWco8T@ep-lucky-frost-a402y3x7-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require\",\r\n-    \"entities\": [\"User\"]\r\n+    \"entities\": ['src/']\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722536258716,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -0,0 +1,10 @@\n+{\r\n+    \"type\": \"postgres\",\r\n+    \"host\": \"ep-lucky-frost-a402y3x7-pooler.us-east-1.aws.neon.tech\" ,\r\n+    \"port\": 5432,\r\n+    \"username\": \"default\",\r\n+    \"password\": \"pguX9yMWco8T\",\r\n+    \"database\": \"verceldb\",\r\n+    \"url\": \"postgres://default:pguX9yMWco8T@ep-lucky-frost-a402y3x7-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require\",\r\n+    \"entities\": ['src/entities/user.entity/user.entity.ts']\r\n+}\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722536264922,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -0,0 +1,10 @@\n+{\r\n+    \"type\": \"postgres\",\r\n+    \"host\": \"ep-lucky-frost-a402y3x7-pooler.us-east-1.aws.neon.tech\" ,\r\n+    \"port\": 5432,\r\n+    \"username\": \"default\",\r\n+    \"password\": \"pguX9yMWco8T\",\r\n+    \"database\": \"verceldb\",\r\n+    \"url\": \"postgres://default:pguX9yMWco8T@ep-lucky-frost-a402y3x7-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require\",\r\n+    \"entities\": ['src/entities/user.entity/user.entity.ts', '']\r\n+}\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722536273096,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -5,6 +5,6 @@\n     \"username\": \"default\",\r\n     \"password\": \"pguX9yMWco8T\",\r\n     \"database\": \"verceldb\",\r\n     \"url\": \"postgres://default:pguX9yMWco8T@ep-lucky-frost-a402y3x7-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require\",\r\n-    \"entities\": ['src/entities/user.entity/user.entity.ts', 'src/']\r\n+    \"entities\": ['src/entities/user.entity/user.entity.ts', 'src/entities/business.entity/business.entity.ts']\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722536288210,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -0,0 +1,10 @@\n+{\r\n+    \"type\": \"postgres\",\r\n+    \"host\": \"ep-lucky-frost-a402y3x7-pooler.us-east-1.aws.neon.tech\" ,\r\n+    \"port\": 5432,\r\n+    \"username\": \"default\",\r\n+    \"password\": \"pguX9yMWco8T\",\r\n+    \"database\": \"verceldb\",\r\n+    \"url\": \"postgres://default:pguX9yMWco8T@ep-lucky-frost-a402y3x7-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require\",\r\n+    \"entities\": [\"src/entities/user.entity/user.entity.ts', 'src/entities/business.entity/business.entity.ts']\r\n+}\n\\ No newline at end of file\n"
+                }
+            ],
+            "date": 1722535649354,
+            "name": "Commit-0",
+            "content": "{\r\n    type: 'postgres',\r\n    host: process.env.POSTGRES_HOST,\r\n    port: 5432,\r\n    username: process.env.POSTGRES_USER,\r\n    password: process.env.POSTGRES_PASSWORD,\r\n    database: process.env.POSTGRES_DATABASE,\r\n    url: process.env.POSTGRES_URL,\r\n    entities: [User]\r\n}"
+        }
+    ]
+}

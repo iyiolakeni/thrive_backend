@@ -1,0 +1,30 @@
+{
+    "sourceFile": "src/purchase/purchase.service.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 3,
+            "patches": [
+                {
+                    "date": 1749992575604,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1749992782822,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -16,9 +16,9 @@\n \r\n \tcreate(createPurchaseDto: CreatePurchaseDto) {\r\n \t\treturn this.sharedService.purchaseProduct(\r\n \t\t\tcreatePurchaseDto.userId,\r\n-\t\t\tcreatePurchaseDto.puchaseDto\r\n+\t\t\tcreatePurchaseDto.purchaseDto\r\n \t\t);\r\n \t}\r\n \r\n \tfindAll() {\r\n"
+                },
+                {
+                    "date": 1749994101370,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -4,8 +4,9 @@\n import { InjectRepository } from \"@nestjs/typeorm\";\r\n import { Purchase } from \"./entities/purchase.entity\";\r\n import { Repository } from \"typeorm\";\r\n import { SharedService } from \"src/shared-service/shared-service.service\";\r\n+import { PurchaseDto } from \"./dto/purchase.dto\";\r\n \r\n @Injectable()\r\n export class PurchaseService {\r\n \tconstructor(\r\n@@ -13,13 +14,10 @@\n \t\tprivate purchaseRepo: Repository<Purchase>,\r\n \t\tprivate sharedService: SharedService\r\n \t) {}\r\n \r\n-\tcreate(createPurchaseDto: CreatePurchaseDto) {\r\n-\t\treturn this.sharedService.purchaseProduct(\r\n-\t\t\tcreatePurchaseDto.userId,\r\n-\t\t\tcreatePurchaseDto.purchaseDto\r\n-\t\t);\r\n+\tcreate(userId: string, createPurchaseDto: PurchaseDto[]): Promise<Purchase> {\r\n+\t\treturn this.sharedService.purchaseProduct(userId, createPurchaseDto);\r\n \t}\r\n \r\n \tfindAll() {\r\n \t\treturn `This action returns all purchase`;\r\n"
+                },
+                {
+                    "date": 1750253632712,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -5,8 +5,14 @@\n import { Purchase } from \"./entities/purchase.entity\";\r\n import { Repository } from \"typeorm\";\r\n import { SharedService } from \"src/shared-service/shared-service.service\";\r\n import { PurchaseDto } from \"./dto/purchase.dto\";\r\n+import {\r\n+\tDataResponse,\r\n+\tInvalidCredentialsResponse,\r\n+\tNotFoundResponse,\r\n+\tSuccessResponse,\r\n+} from \"src/models/response.dto\";\r\n \r\n @Injectable()\r\n export class PurchaseService {\r\n \tconstructor(\r\n@@ -14,10 +20,30 @@\n \t\tprivate purchaseRepo: Repository<Purchase>,\r\n \t\tprivate sharedService: SharedService\r\n \t) {}\r\n \r\n-\tcreate(userId: string, createPurchaseDto: PurchaseDto[]): Promise<Purchase> {\r\n-\t\treturn this.sharedService.purchaseProduct(userId, createPurchaseDto);\r\n+\tasync create(\r\n+\t\tuserId: string,\r\n+\t\tcreatePurchaseDto: PurchaseDto[]\r\n+\t): Promise<\r\n+\t\tDataResponse<\r\n+\t\t\t| Purchase[]\r\n+\t\t\t| NotFoundResponse\r\n+\t\t\t| SuccessResponse\r\n+\t\t\t| InvalidCredentialsResponse\r\n+\t\t>\r\n+\t> {\r\n+\t\treturn this.sharedService.purchaseProduct(\r\n+\t\t\tuserId,\r\n+\t\t\tcreatePurchaseDto\r\n+\t\t) as Promise<\r\n+\t\t\tDataResponse<\r\n+\t\t\t\t| Purchase[]\r\n+\t\t\t\t| NotFoundResponse\r\n+\t\t\t\t| SuccessResponse\r\n+\t\t\t\t| InvalidCredentialsResponse\r\n+\t\t\t>\r\n+\t\t>;\r\n \t}\r\n \r\n \tfindAll() {\r\n \t\treturn `This action returns all purchase`;\r\n"
+                }
+            ],
+            "date": 1749992575604,
+            "name": "Commit-0",
+            "content": "import { Injectable } from \"@nestjs/common\";\r\nimport { CreatePurchaseDto } from \"./dto/create-purchase.dto\";\r\nimport { UpdatePurchaseDto } from \"./dto/update-purchase.dto\";\r\nimport { InjectRepository } from \"@nestjs/typeorm\";\r\nimport { Purchase } from \"./entities/purchase.entity\";\r\nimport { Repository } from \"typeorm\";\r\nimport { SharedService } from \"src/shared-service/shared-service.service\";\r\n\r\n@Injectable()\r\nexport class PurchaseService {\r\n\tconstructor(\r\n\t\t@InjectRepository(Purchase)\r\n\t\tprivate purchaseRepo: Repository<Purchase>,\r\n\t\tprivate sharedService: SharedService\r\n\t) {}\r\n\r\n\tcreate(createPurchaseDto: CreatePurchaseDto) {\r\n\t\treturn this.sharedService.purchaseProduct(\r\n\t\t\tcreatePurchaseDto.userId,\r\n\t\t\tcreatePurchaseDto.puchaseDto\r\n\t\t);\r\n\t}\r\n\r\n\tfindAll() {\r\n\t\treturn `This action returns all purchase`;\r\n\t}\r\n\r\n\tfindOne(id: number) {\r\n\t\treturn `This action returns a #${id} purchase`;\r\n\t}\r\n\r\n\tupdate(id: number, updatePurchaseDto: UpdatePurchaseDto) {\r\n\t\treturn `This action updates a #${id} purchase`;\r\n\t}\r\n\r\n\tremove(id: number) {\r\n\t\treturn `This action removes a #${id} purchase`;\r\n\t}\r\n}\r\n"
+        }
+    ]
+}
