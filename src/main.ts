@@ -4,6 +4,7 @@ import { AppModule } from "./app.module";
 import * as dotenv from "dotenv";
 import { Logger, ValidationPipe } from "@nestjs/common";
 import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
+import "tsconfig-paths/register";
 
 dotenv.config();
 
