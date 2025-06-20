@@ -1,5 +1,6 @@
 import { UserType } from "../enum";
 import { LoginDetails } from "../login.entity/logindetails.entity";
+import { Business } from "../business.entity/business.entity";
 export declare class User {
     id: string;
     firstName: string;
@@ -13,5 +14,7 @@ export declare class User {
     userType: UserType;
     registrationDate: Date;
     loginHistory: LoginDetails[];
+    isVerified: boolean;
+    business: Business;
 }
 //# sourceMappingURL=user.entity.d.ts.map

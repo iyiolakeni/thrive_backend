@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 19,
+            "activePatchIndex": 22,
             "patches": [
                 {
                     "date": 1722542558806,
@@ -84,6 +84,18 @@
                 {
                     "date": 1722761408795,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -19,19 +19,19 @@\n     @Column()\r\n     businessname: string;\r\n   \r\n     @Column()\r\n-    businessaddress: string;\r\n+    businessAddress: string;\r\n   \r\n     @Column()\r\n-    registrationnumber: string;\r\n+    registrationNumber: string;\r\n   \r\n     // Store Information\r\n     @Column()\r\n     storeName: string;\r\n   \r\n     @Column('text')\r\n-    storedescription: string;\r\n+    storeDescription: string;\r\n   \r\n     @Column({ nullable: true })\r\n     storeLogo?: string; // Assume it's a URL or file path\r\n   \r\n"
+                },
+                {
+                    "date": 1749908667852,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -44,19 +44,14 @@\n     bankAccountNumber: string;\r\n   \r\n     @Column()\r\n     bankAccountName: string;\r\n-  \r\n-    @Column({ nullable: true })\r\n-    swiftCode?: string;\r\n-  \r\n+\r\n     // Legal and Compliance\r\n     @Column({ default: true })\r\n     vendorAgreement: boolean;\r\n   \r\n     // Product Information\r\n-    @Column('simple-array')\r\n-    productCategories: string[];\r\n   \r\n     // Shipping and Return Policy\r\n     @Column({default: true})\r\n     returnPolicy: boolean\r\n"
+                },
+                {
+                    "date": 1749909921074,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,38 +1,22 @@\n-import { Column, Entity, PrimaryGeneratedColumn } from \"typeorm\";\r\n+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from \"typeorm\";\r\n+import { User } from \"../user.entity/user.entity\";\r\n \r\n @Entity()\r\n export class Business {\r\n \t@PrimaryGeneratedColumn()\r\n \tid: number;\r\n \r\n-\t// Personal Information\r\n-\t@Column()\r\n-\tfullName: string;\r\n-\r\n-\t@Column()\r\n-\temail: string;\r\n-\r\n-\t@Column()\r\n-\tphone: string;\r\n-\r\n \t// Business Information\r\n \t@Column()\r\n \tbusinessName: string;\r\n \r\n \t@Column()\r\n \tbusinessAddress: string;\r\n \r\n \t@Column()\r\n-\tregistrationNumber: string;\r\n+\tregistrationNumber?: string;\r\n \r\n-\t// Store Information\r\n-\t@Column()\r\n-\tstoreName: string;\r\n-\r\n-\t@Column(\"text\")\r\n-\tstoreDescription: string;\r\n-\r\n \t@Column({ nullable: true })\r\n \tstoreLogo?: string; // Assume it's a URL or file path\r\n \r\n \t// Banking Information\r\n@@ -48,10 +32,15 @@\n \t// Legal and Compliance\r\n \t@Column({ default: true })\r\n \tvendorAgreement: boolean;\r\n \r\n-\t// Product Information\r\n-\r\n \t// Shipping and Return Policy\r\n \t@Column({ default: true })\r\n-\treturnPolicy: boolean;\r\n+    returnPolicy: boolean;\r\n+    \r\n+\t@OneToOne(() => User)\r\n+    @JoinColumn({ name: 'userId' })\r\n+\tuser: User;\r\n+\r\n+    @Column()\r\n+    userId: string;\r\n }\r\n"
+                },
+                {
+                    "date": 1749910092534,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -43,10 +43,10 @@\n \t@Column({ default: true })\r\n \treturnPolicy: boolean;\r\n \r\n \t@OneToOne(() => User)\r\n-\t@JoinColumn({ name: \"userId\" })\r\n+\t@JoinColumn({ name: \"email\" })\r\n \tuser: User;\r\n \r\n \t@Column()\r\n-\tuserId: string;\r\n+\temail: string;\r\n }\r\n"
                 }
             ],
             "date": 1722542558806,

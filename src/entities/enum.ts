@@ -3,3 +3,9 @@ export enum UserType {
 	VENDOR = "VENDOR",
 	ADMIN = "ADMIN",
 }
+
+export enum ProductCategoryType {
+	PHYSICAL = "PHYSICAL",
+	DIGITAL = "DIGITAL",
+	SERVICE = "SERVICE",
+}

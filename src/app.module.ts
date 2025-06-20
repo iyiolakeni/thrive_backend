@@ -13,6 +13,15 @@ import { LoginDetails } from "./entities/login.entity/logindetails.entity";
 import { LoggerModule } from "./logger/logger.module";
 import { EmailModule } from "./email/email.module";
 import { PasswordRest } from "./entities/user.entity/password.entity";
+import { ProductCategoriesModule } from "./product-categories/product-categories.module";
+import { ProductCategory } from "./product-categories/entities/product-category.entity";
+import { ProductsModule } from "./products/products.module";
+import { Product } from "./products/entities/product.entity";
+import { SharedServiceModule } from "./shared-service/shared-service.module";
+import { PurchaseModule } from "./purchase/purchase.module";
+import { TransactionDetailsModule } from "./transaction-details/transaction-details.module";
+import { Purchase } from "./purchase/entities/purchase.entity";
+import { TransactionDetail } from "./transaction-details/entities/transaction-detail.entity";
 
 @Module({
 	imports: [
@@ -27,17 +36,32 @@ import { PasswordRest } from "./entities/user.entity/password.entity";
 			username: process.env.POSTGRES_USER,
 			password: process.env.POSTGRES_PASSWORD,
 			database: process.env.POSTGRES_DATABASE,
+			ssl: true,
 			// url: process.env.POSTGRES_URL,
-			entities: [User, LoginDetails, PasswordRest],
+			// entities: [
+			// 	User,
+			// 	LoginDetails,
+			// 	PasswordRest,
+			// 	ProductCategory,
+			// 	Business,
+			// 	Product,
+			// 	Purchase,
+			// 	TransactionDetail,
+			// ],
+			autoLoadEntities: true,
 			synchronize: false,
 		}),
-		// TypeOrmModule.forFeature([User, LoginDetails]),
 		UserModule,
 		BusinessModule,
 		AuthModule,
 		CatalogModule,
 		LoggerModule,
 		EmailModule,
+		ProductCategoriesModule,
+		ProductsModule,
+		SharedServiceModule,
+		PurchaseModule,
+		TransactionDetailsModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

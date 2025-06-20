@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/purchase/purchase.module.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1749992645433,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1749992645432,
+            "name": "Commit-0",
+            "content": "import { Module } from \"@nestjs/common\";\r\nimport { PurchaseService } from \"./purchase.service\";\r\nimport { PurchaseController } from \"./purchase.controller\";\r\nimport { TypeOrmModule } from \"@nestjs/typeorm\";\r\nimport { Purchase } from \"./entities/purchase.entity\";\r\n\r\n@Module({\r\n\timports: [TypeOrmModule.forFeature([Purchase])],\r\n\tcontrollers: [PurchaseController],\r\n\tproviders: [PurchaseService],\r\n})\r\nexport class PurchaseModule {}\r\n"
+        }
+    ]
+}

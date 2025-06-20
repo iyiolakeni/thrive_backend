@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 11,
+            "activePatchIndex": 12,
             "patches": [
                 {
                     "date": 1722542773466,
@@ -52,6 +52,10 @@
                 {
                     "date": 1749726959279,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,5 +1,6 @@\n import { LoginDetails } from \"src/entities/login.entity/logindetails.entity\";\r\n+import { PasswordRest } from \"src/entities/user.entity/password.entity\";\r\n import { User } from \"src/entities/user.entity/user.entity\";\r\n import { DataSource } from \"typeorm\";\r\n \r\n export const AppDataSource = new DataSource({\r\n@@ -9,9 +10,9 @@\n \tusername: \"postgres\",\r\n \tpassword: \"admin\",\r\n \tdatabase: \"Thrive_DB\",\r\n \t// url: \"postgres://default:pguX9yMWco8T@ep-lucky-frost-a402y3x7-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require\",\r\n-\tentities: [User, LoginDetails],\r\n+\tentities: [User, LoginDetails, PasswordRest],\r\n \tmigrations: [\"src/migration/**/*.ts\"],\r\n \tlogging: true,\r\n \tsynchronize: false,\r\n });\r\n"
+                },
+                {
+                    "date": 1749825147159,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,7 +1,8 @@\n import { LoginDetails } from \"src/entities/login.entity/logindetails.entity\";\r\n import { PasswordRest } from \"src/entities/user.entity/password.entity\";\r\n import { User } from \"src/entities/user.entity/user.entity\";\r\n+import { ProductCategory } from \"src/product-categories/entities/product-category.entity\";\r\n import { DataSource } from \"typeorm\";\r\n \r\n export const AppDataSource = new DataSource({\r\n \ttype: \"postgres\",\r\n@@ -10,9 +11,9 @@\n \tusername: \"postgres\",\r\n \tpassword: \"admin\",\r\n \tdatabase: \"Thrive_DB\",\r\n \t// url: \"postgres://default:pguX9yMWco8T@ep-lucky-frost-a402y3x7-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require\",\r\n-\tentities: [User, LoginDetails, PasswordRest],\r\n+\tentities: [User, LoginDetails, PasswordRest, ProductCategory],\r\n \tmigrations: [\"src/migration/**/*.ts\"],\r\n \tlogging: true,\r\n \tsynchronize: false,\r\n });\r\n"
                 }
             ],
             "date": 1722542773466,

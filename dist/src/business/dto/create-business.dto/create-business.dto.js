@@ -17,18 +17,6 @@ exports.CreateBusinessDto = CreateBusinessDto;
 __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
-], CreateBusinessDto.prototype, "fullName", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", String)
-], CreateBusinessDto.prototype, "email", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", String)
-], CreateBusinessDto.prototype, "phone", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", String)
 ], CreateBusinessDto.prototype, "businessName", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)(),
@@ -39,21 +27,9 @@ __decorate([
     __metadata("design:type", String)
 ], CreateBusinessDto.prototype, "registrationNumber", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", String)
-], CreateBusinessDto.prototype, "storeName", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", String)
-], CreateBusinessDto.prototype, "storeDescription", void 0);
-__decorate([
     (0, swagger_1.ApiProperty)({ nullable: true }),
     __metadata("design:type", String)
 ], CreateBusinessDto.prototype, "storeLogo", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", String)
-], CreateBusinessDto.prototype, "bankName", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
@@ -61,21 +37,17 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
-], CreateBusinessDto.prototype, "bankAccountName", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ nullable: true }),
-    __metadata("design:type", String)
-], CreateBusinessDto.prototype, "swiftCode", void 0);
+], CreateBusinessDto.prototype, "bank_code", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ default: true }),
     __metadata("design:type", Boolean)
 ], CreateBusinessDto.prototype, "vendorAgreement", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", Array)
-], CreateBusinessDto.prototype, "productCategories", void 0);
-__decorate([
     (0, swagger_1.ApiProperty)({ default: true }),
     __metadata("design:type", Boolean)
 ], CreateBusinessDto.prototype, "returnPolicy", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
+], CreateBusinessDto.prototype, "email", void 0);
 //# sourceMappingURL=create-business.dto.js.map

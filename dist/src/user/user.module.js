@@ -13,7 +13,6 @@ const user_controller_1 = require("./user.controller");
 const typeorm_1 = require("@nestjs/typeorm");
 const user_entity_1 = require("../entities/user.entity/user.entity");
 const logindetails_entity_1 = require("../entities/login.entity/logindetails.entity");
-const shared_service_service_1 = require("../shared-service/shared-service.service");
 const password_entity_1 = require("../entities/user.entity/password.entity");
 const email_service_1 = require("../email/email.service");
 let UserModule = class UserModule {
@@ -22,13 +21,9 @@ exports.UserModule = UserModule;
 exports.UserModule = UserModule = __decorate([
     (0, common_1.Module)({
         imports: [typeorm_1.TypeOrmModule.forFeature([user_entity_1.User, logindetails_entity_1.LoginDetails, password_entity_1.PasswordRest])],
-        providers: [user_service_1.UserService, shared_service_service_1.SharedService, email_service_1.EmailService],
+        providers: [user_service_1.UserService, email_service_1.EmailService],
         controllers: [user_controller_1.UserController],
-        exports: [
-            user_service_1.UserService,
-            shared_service_service_1.SharedService,
-            typeorm_1.TypeOrmModule.forFeature([user_entity_1.User, logindetails_entity_1.LoginDetails]),
-        ],
+        exports: [user_service_1.UserService, typeorm_1.TypeOrmModule.forFeature([user_entity_1.User, logindetails_entity_1.LoginDetails])],
     })
 ], UserModule);
 //# sourceMappingURL=user.module.js.map

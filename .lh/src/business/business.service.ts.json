@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 20,
+            "activePatchIndex": 23,
             "patches": [
                 {
                     "date": 1722783364327,
@@ -88,6 +88,18 @@
                 {
                     "date": 1722783536398,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -40,9 +40,9 @@\n         if (!business){\r\n             throw new NotFoundException(`Business with name ${name} not found`);\r\n         }\r\n         Object.assign(business, updateBusinessdto);\r\n-        return busin\r\n+        return this.businessRepo.save(business);\r\n     }\r\n \r\n     async deleteBusiness(businessName: string): Promise<void>{\r\n         await  this.businessRepo.delete(businessName);\r\n"
+                },
+                {
+                    "date": 1749910442764,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -4,17 +4,29 @@\n import { User } from 'src/entities/user.entity/user.entity';\r\n import { Repository } from 'typeorm';\r\n import { CreateBusinessDto } from './dto/create-business.dto/create-business.dto';\r\n import { UpdateBusinessDto } from './dto/update-business.dto/update-business.dto';\r\n+import { SharedService } from 'src/shared-service/shared-service.service';\r\n+import { InvalidCredentialsResponse, NotFoundResponse, SuccessResponse } from 'src/models/response.dto';\r\n \r\n @Injectable()\r\n export class BusinessService {\r\n     constructor(\r\n         @InjectRepository(Business)\r\n-        private businessRepo: Repository<Business>\r\n+        private businessRepo: Repository<Business>,\r\n+        private sharedService: SharedService\r\n     ){}\r\n \r\n-    async create(createBusinessDto: CreateBusinessDto): Promise<Business>{\r\n+    async create(createBusinessDto: CreateBusinessDto): Promise<SuccessResponse | NotFoundResponse | InvalidCredentialsResponse>{\r\n+        if (!createBusinessDto) {\r\n+            return new InvalidCredentialsResponse('Invalid business data provided', \"Invalid Details\", 400);\r\n+        }\r\n+\r\n+        const user = await this.sharedService.findOneByEmail(createBusinessDto.email);\r\n+        if (!user) {\r\n+            throw new NotFoundException(`User with email ${createBusinessDto.email} not found`);\r\n+        }\r\n+\r\n         const existingBusiness = await this.businessRepo.findOne({\r\n             where: {businessName: createBusinessDto.businessName}\r\n         });\r\n \r\n"
+                },
+                {
+                    "date": 1749910635486,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -38,9 +38,9 @@\n \t\tconst user = await this.sharedService.findOneByEmail(\r\n \t\t\tcreateBusinessDto.email\r\n \t\t);\r\n \t\tif (!user) {\r\n-\t\t\tthrow new NotFoundException(\r\n+\t\t\tthrow new NotFoundResponse(\r\n \t\t\t\t`User with email ${createBusinessDto.email} not found`\r\n \t\t\t);\r\n \t\t}\r\n \r\n@@ -53,9 +53,13 @@\n \t\t\t\t\"Business Already Exist, try another user or reset password\"\r\n \t\t\t);\r\n \t\t}\r\n \t\tconst business = this.businessRepo.create(createBusinessDto);\r\n-\t\treturn this.businessRepo.save(business);\r\n+        await this.businessRepo.save(business);\r\n+        return new SuccessResponse(\r\n+            \"Business created successfully\",\r\n+            200\r\n+        )\r\n \t}\r\n \r\n \tgetAllBusiness(): Promise<Business[]> {\r\n \t\treturn this.businessRepo.find();\r\n"
+                },
+                {
+                    "date": 1749912491744,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -10,8 +10,9 @@\n import { CreateBusinessDto } from \"./dto/create-business.dto/create-business.dto\";\r\n import { UpdateBusinessDto } from \"./dto/update-business.dto/update-business.dto\";\r\n import { SharedService } from \"src/shared-service/shared-service.service\";\r\n import {\r\n+    DataResponse,\r\n \tInvalidCredentialsResponse,\r\n \tNotFoundResponse,\r\n \tSuccessResponse,\r\n } from \"src/models/response.dto\";\r\n@@ -37,13 +38,22 @@\n \r\n \t\tconst user = await this.sharedService.findOneByEmail(\r\n \t\t\tcreateBusinessDto.email\r\n \t\t);\r\n-\t\tif (!user) {\r\n+\t\tif (!user || 'error' in user) {\r\n \t\t\tthrow new NotFoundResponse(\r\n \t\t\t\t`User with email ${createBusinessDto.email} not found`\r\n \t\t\t);\r\n \t\t}\r\n+\t\t\r\n+        const foundUser = user instanceof DataResponse ? user.data : null;\r\n+\t\tif (foundUser.userType !== \"VENDOR\") {\r\n+\t\t\treturn new InvalidCredentialsResponse(\r\n+\t\t\t\t\"User is not registered as a business\",\r\n+\t\t\t\t\"Invalid Role\",\r\n+\t\t\t\t400\r\n+\t\t\t);\r\n+\t\t}\r\n \r\n \t\tconst existingBusiness = await this.businessRepo.findOne({\r\n \t\t\twhere: { businessName: createBusinessDto.businessName },\r\n \t\t});\r\n"
                 }
             ],
             "date": 1722783364327,

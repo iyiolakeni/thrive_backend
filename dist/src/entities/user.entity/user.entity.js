@@ -13,6 +13,7 @@ exports.User = void 0;
 const typeorm_1 = require("typeorm");
 const enum_1 = require("../enum");
 const logindetails_entity_1 = require("../login.entity/logindetails.entity");
+const business_entity_1 = require("../business.entity/business.entity");
 let User = class User {
 };
 exports.User = User;
@@ -33,7 +34,7 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "username", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({ unique: true }),
     __metadata("design:type", String)
 ], User.prototype, "email", void 0);
 __decorate([
@@ -41,7 +42,7 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "phoneNo", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({ unique: true }),
     __metadata("design:type", String)
 ], User.prototype, "password", void 0);
 __decorate([
@@ -66,6 +67,16 @@ __decorate([
     }),
     __metadata("design:type", Array)
 ], User.prototype, "loginHistory", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: false }),
+    __metadata("design:type", Boolean)
+], User.prototype, "isVerified", void 0);
+__decorate([
+    (0, typeorm_1.OneToOne)(() => business_entity_1.Business, (business) => business.user, {
+        cascade: true,
+    }),
+    __metadata("design:type", business_entity_1.Business)
+], User.prototype, "business", void 0);
 exports.User = User = __decorate([
     (0, typeorm_1.Entity)()
 ], User);

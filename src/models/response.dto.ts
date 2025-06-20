@@ -24,6 +24,31 @@ export class DataResponse<T> extends SuccessResponse {
 	}
 }
 
+export class SearchResponse<T> extends DataResponse<T[]> {
+	meta: {
+		total: number;
+		page: number;
+		limit: number;
+		totalPages: number;
+	};
+
+	constructor(
+		data: T[],
+		meta: {
+			total: number;
+			page: number;
+			limit: number;
+			totalPages: number;
+		},
+		message = "Data retrieved successfully",
+		statusCode = 200
+	) {
+		super(data, message, 200);
+		this.meta = meta;
+		this.statusCode = 200; // Ensure status code is set to 200 OK
+	}
+}
+
 export class CreatedResponse<T> extends DataResponse<T> {
 	constructor(data: T, message = "Resource created successfully") {
 		super(data, message, 201);

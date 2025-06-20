@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/transaction-details/transaction-details.service.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1750267774505,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1750267774505,
+            "name": "Commit-0",
+            "content": "import { Injectable, Logger } from \"@nestjs/common\";\r\nimport { CreateTransactionDetailDto } from \"./dto/create-transaction-detail.dto\";\r\nimport { UpdateTransactionDetailDto } from \"./dto/update-transaction-detail.dto\";\r\nimport { DataResponse, NotFoundResponse } from \"src/models/response.dto\";\r\nimport { InjectRepository } from \"@nestjs/typeorm\";\r\nimport { TransactionDetail } from \"./entities/transaction-detail.entity\";\r\nimport { Repository } from \"typeorm\";\r\nimport axios from \"axios\";\r\n\r\n@Injectable()\r\nexport class TransactionDetailsService {\r\n\tprivate readonly logger = new Logger(TransactionDetailsService.name);\r\n\tprivate readonly paystackUrl = process.env.PAYSTACK_URL;\r\n\tprivate readonly paystackSecretKey = process.env.PAYSTACK_SECRET_KEY;\r\n\r\n\tconstructor(\r\n\t\t@InjectRepository(TransactionDetail)\r\n\t\tprivate readonly transactionRepo: Repository<TransactionDetail>\r\n\t) {}\r\n\r\n\tasync verifyTransaction(\r\n\t\treference: string\r\n\t): Promise<DataResponse<any> | NotFoundResponse> {\r\n\t\tthis.logger.log(`Verifying transaction with reference: ${reference}`);\r\n\r\n\t\tif (!reference) {\r\n\t\t\tthis.logger.error(\"Reference is required for transaction verification\");\r\n\t\t\treturn Promise.resolve(new NotFoundResponse(\"Reference is required\"));\r\n\t\t}\r\n\r\n\t\tconst foundTransaction = this.transactionRepo.findOne({\r\n\t\t\twhere: { paymentReference: reference },\r\n\t\t});\r\n\t\tif (!foundTransaction) {\r\n\t\t\tthis.logger.error(`Transaction with reference ${reference} not found`);\r\n\t\t\treturn new NotFoundResponse(\r\n\t\t\t\t`Transaction with reference ${reference} not found`\r\n\t\t\t);\r\n\t\t}\r\n\r\n\t\tthis.logger.log(\r\n\t\t\t`Transaction with reference ${reference} found, proceeding to verify`\r\n\t\t);\r\n\r\n\t\tconst headers = {\r\n\t\t\tAuthorization: `Bearer ${this.paystackSecretKey}`,\r\n\t\t\t\"Content-Type\": \"application/json\",\r\n\t\t};\r\n\t\tconst url = `${this.paystackUrl}/transaction/verify/${reference}`;\r\n\t\tconst response = await axios.get(url, { headers });\r\n\t\tthis.logger.log(`Transaction verification response: ${response.data}`);\r\n\r\n\t\tif (response.data.status) {\r\n\t\t\tthis.logger.log(\r\n\t\t\t\t`Transaction with reference ${reference} verified successfully`\r\n\t\t\t);\r\n\t\t\treturn new DataResponse(response.data);\r\n\t\t} else {\r\n\t\t\tthis.logger.error(\r\n\t\t\t\t`Transaction verification failed for reference ${reference}`\r\n\t\t\t);\r\n\t\t\treturn new NotFoundResponse(\r\n\t\t\t\t`Transaction verification failed for reference ${reference}`\r\n\t\t\t);\r\n\t\t}\r\n\t}\r\n\r\n\tfindAll() {\r\n\t\treturn `This action returns all transactionDetails`;\r\n\t}\r\n\r\n\tfindOne(id: number) {\r\n\t\treturn `This action returns a #${id} transactionDetail`;\r\n\t}\r\n\r\n\tupdate(id: number, updateTransactionDetailDto: UpdateTransactionDetailDto) {\r\n\t\treturn `This action updates a #${id} transactionDetail`;\r\n\t}\r\n\r\n\tremove(id: number) {\r\n\t\treturn `This action removes a #${id} transactionDetail`;\r\n\t}\r\n}\r\n"
+        }
+    ]
+}

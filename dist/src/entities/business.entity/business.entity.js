@@ -11,25 +11,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Business = void 0;
 const typeorm_1 = require("typeorm");
+const user_entity_1 = require("../user.entity/user.entity");
+const product_entity_1 = require("../../products/entities/product.entity");
 let Business = class Business {
 };
 exports.Business = Business;
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)(),
-    __metadata("design:type", Number)
+    (0, typeorm_1.PrimaryGeneratedColumn)("uuid"),
+    __metadata("design:type", String)
 ], Business.prototype, "id", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], Business.prototype, "fullName", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], Business.prototype, "email", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], Business.prototype, "phone", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
@@ -42,14 +32,6 @@ __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], Business.prototype, "registrationNumber", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], Business.prototype, "storeName", void 0);
-__decorate([
-    (0, typeorm_1.Column)('text'),
-    __metadata("design:type", String)
-], Business.prototype, "storeDescription", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
@@ -65,23 +47,48 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], Business.prototype, "bankAccountName", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", String)
-], Business.prototype, "swiftCode", void 0);
+], Business.prototype, "bank_code", void 0);
 __decorate([
     (0, typeorm_1.Column)({ default: true }),
     __metadata("design:type", Boolean)
 ], Business.prototype, "vendorAgreement", void 0);
 __decorate([
-    (0, typeorm_1.Column)('simple-array'),
-    __metadata("design:type", Array)
-], Business.prototype, "productCategories", void 0);
-__decorate([
     (0, typeorm_1.Column)({ default: true }),
     __metadata("design:type", Boolean)
 ], Business.prototype, "returnPolicy", void 0);
+__decorate([
+    (0, typeorm_1.OneToOne)(() => user_entity_1.User, (user) => user.business),
+    (0, typeorm_1.JoinColumn)({ name: "userId" }),
+    __metadata("design:type", user_entity_1.User)
+], Business.prototype, "user", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], Business.prototype, "userId", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: false }),
+    __metadata("design:type", Boolean)
+], Business.prototype, "isVerified", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" }),
+    __metadata("design:type", Date)
+], Business.prototype, "registrationDate", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: "timestamp", nullable: true }),
+    __metadata("design:type", Date)
+], Business.prototype, "verificationDate", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: false }),
+    __metadata("design:type", Boolean)
+], Business.prototype, "isActive", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: "timestamp", nullable: true }),
+    __metadata("design:type", Date)
+], Business.prototype, "modificationDate", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => product_entity_1.Product, (products) => products.business),
+    __metadata("design:type", Array)
+], Business.prototype, "products", void 0);
 exports.Business = Business = __decorate([
     (0, typeorm_1.Entity)()
 ], Business);

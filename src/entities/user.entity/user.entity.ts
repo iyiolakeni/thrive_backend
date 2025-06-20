@@ -1,6 +1,13 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+	Column,
+	Entity,
+	OneToMany,
+	PrimaryGeneratedColumn,
+	OneToOne,
+} from "typeorm";
 import { UserType } from "../enum";
 import { LoginDetails } from "../login.entity/logindetails.entity";
+import { Business } from "../business.entity/business.entity";
 
 @Entity()
 export class User {
@@ -16,13 +23,13 @@ export class User {
 	@Column({ unique: true })
 	username: string;
 
-	@Column()
+	@Column({ unique: true })
 	email: string;
 
 	@Column()
 	phoneNo: string;
 
-	@Column()
+	@Column({ unique: true })
 	password: string;
 
 	@Column({ default: true })
@@ -41,4 +48,12 @@ export class User {
 		cascade: true,
 	})
 	loginHistory: LoginDetails[];
+
+	@Column({ default: false })
+	isVerified: boolean;
+
+	@OneToOne(() => Business, (business) => business.user, {
+		cascade: true,
+	})
+	business: Business;
 }

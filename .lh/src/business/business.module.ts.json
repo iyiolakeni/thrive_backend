@@ -1,0 +1,26 @@
+{
+    "sourceFile": "src/business/business.module.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1749910442737,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1749911880186,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -5,9 +5,9 @@\n import { Business } from \"src/entities/business.entity/business.entity\";\n import { SharedService } from \"src/shared-service/shared-service.service\";\n \n @Module({\n-\timports: [TypeOrmModule.forFeature([Business])],\n+\timports: [TypeOrmModule.forFeature([Business]), SharedService],\n \tproviders: [BusinessService, SharedService],\n \tcontrollers: [BusinessController],\n })\n export class BusinessModule {}\n"
+                },
+                {
+                    "date": 1749911916924,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,11 +3,12 @@\n import { BusinessController } from \"./business.controller\";\n import { TypeOrmModule } from \"@nestjs/typeorm\";\n import { Business } from \"src/entities/business.entity/business.entity\";\n import { SharedService } from \"src/shared-service/shared-service.service\";\n+import { UserModule } from \"src/user/user.module\";\n \n @Module({\n-\timports: [TypeOrmModule.forFeature([Business]), SharedService],\n+\timports: [TypeOrmModule.forFeature([Business]), UserModule],\n \tproviders: [BusinessService, SharedService],\n \tcontrollers: [BusinessController],\n })\n export class BusinessModule {}\n"
+                }
+            ],
+            "date": 1749910442737,
+            "name": "Commit-0",
+            "content": "import { Module } from '@nestjs/common';\nimport { BusinessService } from './business.service';\nimport { BusinessController } from './business.controller';\nimport { TypeOrmModule } from '@nestjs/typeorm';\nimport { Business } from 'src/entities/business.entity/business.entity';\nimport { SharedService } from 'src/shared-service/shared-service.service';\n\n@Module({\n  imports: [TypeOrmModule.forFeature([Business])],\n  providers: [BusinessService, SharedService],\n  controllers: [BusinessController]\n})\nexport class BusinessModule {}\n"
+        }
+    ]
+}

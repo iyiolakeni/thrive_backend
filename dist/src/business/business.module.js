@@ -19,7 +19,7 @@ exports.BusinessModule = BusinessModule = __decorate([
     (0, common_1.Module)({
         imports: [typeorm_1.TypeOrmModule.forFeature([business_entity_1.Business])],
         providers: [business_service_1.BusinessService],
-        controllers: [business_controller_1.BusinessController]
+        controllers: [business_controller_1.BusinessController],
     })
 ], BusinessModule);
 //# sourceMappingURL=business.module.js.map

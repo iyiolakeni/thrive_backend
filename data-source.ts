@@ -1,17 +1,35 @@
+import { Business } from "src/entities/business.entity/business.entity";
 import { LoginDetails } from "src/entities/login.entity/logindetails.entity";
 import { PasswordRest } from "src/entities/user.entity/password.entity";
 import { User } from "src/entities/user.entity/user.entity";
+import { ProductCategory } from "src/product-categories/entities/product-category.entity";
+import { Product } from "src/products/entities/product.entity";
+import { Purchase } from "src/purchase/entities/purchase.entity";
+import { TransactionDetail } from "src/transaction-details/entities/transaction-detail.entity";
 import { DataSource } from "typeorm";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 export const AppDataSource = new DataSource({
 	type: "postgres",
-	host: "localhost",
+	host: process.env.POSTGRES_HOST,
 	port: 5432,
-	username: "postgres",
-	password: "admin",
-	database: "Thrive_DB",
+	username: process.env.POSTGRES_USER,
+	password: process.env.POSTGRES_PASSWORD,
+	database: process.env.POSTGRES_DATABASE,
+	ssl: true,
 	// url: "postgres://default:pguX9yMWco8T@ep-lucky-frost-a402y3x7-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require",
-	entities: [User, LoginDetails, PasswordRest],
+	entities: [
+		User,
+		LoginDetails,
+		PasswordRest,
+		ProductCategory,
+		Business,
+		Product,
+		Purchase,
+		TransactionDetail,
+	],
 	migrations: ["src/migration/**/*.ts"],
 	logging: true,
 	synchronize: false,

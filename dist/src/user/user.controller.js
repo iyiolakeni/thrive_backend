@@ -21,6 +21,7 @@ const update_user_dto_1 = require("./dto/update-user.dto/update-user.dto");
 const jwt_auth_guard_1 = require("../auth/jwt-auth.guard");
 const email_dto_1 = require("../email/dto/email.dto");
 const reset_password_dto_1 = require("./dto/reset_password.dto");
+const search_filter_dto_1 = require("../product-categories/dto/search-filter.dto");
 let UserController = class UserController {
     constructor(userService) {
         this.userService = userService;
@@ -54,17 +55,32 @@ let UserController = class UserController {
     async resetPassword(resetDetails) {
         return this.userService.resetPassword(resetDetails);
     }
+    async getUserById(id) {
+        return this.userService.getUserById(id);
+    }
+    async searchUser(searchFilter) {
+        return this.userService.search(searchFilter);
+    }
+    async activateUser(username) {
+        return this.userService.activateUser(username);
+    }
+    async deactivateUser(username) {
+        return this.userService.deactivateUser(username);
+    }
+    async verifyEmail(token) {
+        return this.userService.verifyUser(token);
+    }
 };
 exports.UserController = UserController;
 __decorate([
-    (0, common_1.Post)(),
+    (0, common_1.Post)("create"),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "create", null);
 __decorate([
-    (0, common_1.Get)(),
+    (0, common_1.Get)("all"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
@@ -72,14 +88,14 @@ __decorate([
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAwthGuard),
     (0, swagger_1.ApiBearerAuth)(),
-    (0, common_1.Get)(":username"),
+    (0, common_1.Get)("get-user/:username"),
     __param(0, (0, common_1.Param)("username")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "getUser", null);
 __decorate([
-    (0, common_1.Patch)(":username"),
+    (0, common_1.Patch)("update/:username"),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAwthGuard),
     (0, swagger_1.ApiBearerAuth)(),
     __param(0, (0, common_1.Param)("username")),
@@ -89,7 +105,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "updateUser", null);
 __decorate([
-    (0, common_1.Delete)(":username"),
+    (0, common_1.Delete)("delete/:username"),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAwthGuard),
     __param(0, (0, common_1.Param)("username")),
     __metadata("design:type", Function),
@@ -110,6 +126,41 @@ __decorate([
     __metadata("design:paramtypes", [reset_password_dto_1.ResetPasswordDto]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "resetPassword", null);
+__decorate([
+    (0, common_1.Get)("get-user/:id"),
+    __param(0, (0, common_1.Param)("id")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "getUserById", null);
+__decorate([
+    (0, common_1.Post)("search"),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [search_filter_dto_1.SearchFilterDto]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "searchUser", null);
+__decorate([
+    (0, common_1.Post)("activate/:username"),
+    __param(0, (0, common_1.Param)("username")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "activateUser", null);
+__decorate([
+    (0, common_1.Post)("deactivate/:username"),
+    __param(0, (0, common_1.Param)("username")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "deactivateUser", null);
+__decorate([
+    (0, common_1.Post)("verify-email/:token"),
+    __param(0, (0, common_1.Param)("token")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "verifyEmail", null);
 exports.UserController = UserController = __decorate([
     (0, common_1.Controller)("User"),
     (0, swagger_1.ApiTags)("User Details"),

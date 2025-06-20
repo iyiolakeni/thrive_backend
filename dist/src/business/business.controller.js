@@ -28,7 +28,7 @@ let BusinessController = class BusinessController {
         }
         catch (error) {
             if (error instanceof common_1.ConflictException) {
-                throw new common_1.HttpException('Business Already Exist, try another or reset details', common_1.HttpStatus.CONFLICT);
+                throw new common_1.HttpException("Business Already Exist, try another or reset details", common_1.HttpStatus.CONFLICT);
             }
             throw error;
         }
@@ -45,46 +45,85 @@ let BusinessController = class BusinessController {
     async deleteBusiness(businessName) {
         return this.businessService.deleteBusiness(businessName);
     }
+    async verifyBusiness(id) {
+        return this.businessService.verifyBusiness(id);
+    }
+    async activateBusiness(id) {
+        return this.businessService.activateBusiness(id);
+    }
+    async deactivateBusiness(id) {
+        return this.businessService.deactivateBusiness(id);
+    }
+    async getAllBanks() {
+        return this.businessService.getAllBanks();
+    }
 };
 exports.BusinessController = BusinessController;
 __decorate([
-    (0, common_1.Post)(),
+    (0, common_1.Post)("create"),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_business_dto_1.CreateBusinessDto]),
     __metadata("design:returntype", Promise)
 ], BusinessController.prototype, "create", null);
 __decorate([
-    (0, common_1.Get)(),
+    (0, common_1.Get)("all"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], BusinessController.prototype, "getAllBusiness", null);
 __decorate([
-    (0, common_1.Get)(':businessName'),
-    __param(0, (0, common_1.Param)('businessName')),
+    (0, common_1.Get)(":businessName"),
+    __param(0, (0, common_1.Param)("businessName")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], BusinessController.prototype, "getBusinessDetails", null);
 __decorate([
-    (0, common_1.Patch)(':businessName'),
-    __param(0, (0, common_1.Param)('businessName')),
+    (0, common_1.Patch)(":businessName"),
+    __param(0, (0, common_1.Param)("businessName")),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, update_business_dto_1.UpdateBusinessDto]),
     __metadata("design:returntype", Promise)
 ], BusinessController.prototype, "updateBusiness", null);
 __decorate([
-    (0, common_1.Delete)(':businessName'),
-    __param(0, (0, common_1.Param)('businessName')),
+    (0, common_1.Delete)(":businessName"),
+    __param(0, (0, common_1.Param)("businessName")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], BusinessController.prototype, "deleteBusiness", null);
+__decorate([
+    (0, common_1.Patch)("verify-business/:id"),
+    __param(0, (0, common_1.Param)("id")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], BusinessController.prototype, "verifyBusiness", null);
+__decorate([
+    (0, common_1.Patch)("activate-business/:id"),
+    __param(0, (0, common_1.Param)("id")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], BusinessController.prototype, "activateBusiness", null);
+__decorate([
+    (0, common_1.Patch)("deactivate-business/:id"),
+    __param(0, (0, common_1.Param)("id")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], BusinessController.prototype, "deactivateBusiness", null);
+__decorate([
+    (0, common_1.Post)("banks"),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], BusinessController.prototype, "getAllBanks", null);
 exports.BusinessController = BusinessController = __decorate([
-    (0, common_1.Controller)('Business'),
-    (0, swagger_1.ApiTags)('Business Details'),
+    (0, common_1.Controller)("Business"),
+    (0, swagger_1.ApiTags)("Business Details"),
     __metadata("design:paramtypes", [business_service_1.BusinessService])
 ], BusinessController);
 //# sourceMappingURL=business.controller.js.map

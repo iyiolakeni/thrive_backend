@@ -7,9 +7,11 @@ import * as bcrypt from "bcrypt";
 import * as crypto from "crypto";
 import {
 	ConflictResponse,
+	DataResponse,
 	ErrorResponse,
 	InvalidCredentialsResponse,
 	NotFoundResponse,
+	SearchResponse,
 	SuccessResponse,
 } from "src/models/response.dto";
 import { Injectable, Logger } from "@nestjs/common";
@@ -17,11 +19,14 @@ import { PasswordRest } from "src/entities/user.entity/password.entity";
 import { getuid } from "process";
 import { EmailService } from "src/email/email.service";
 import { ResetPasswordDto } from "./dto/reset_password.dto";
+import { UserResponse } from "src/models/userResponse.dto";
+import { SearchFilterDto } from "src/product-categories/dto/search-filter.dto";
 
 @Injectable()
 export class UserService {
 	private readonly logger = new Logger(UserService.name);
 	private readonly secret: Buffer;
+	private readonly url = process.env.FRONT_END_URL;
 
 	constructor(
 		@InjectRepository(User)
@@ -37,11 +42,9 @@ export class UserService {
 		return this.userRepo.findOneBy({ email });
 	}
 
-	// async findOneByPhone(phoneNo: string): Promise<User | undefined>{
-	//     return this.userRepo.findOne({where:{phoneNo}})
-	// }
-
-	async create(createUserDto: CreateUserDto): Promise<User> {
+	async create(
+		createUserDto: CreateUserDto
+	): Promise<User | ErrorResponse | SuccessResponse> {
 		const existingUser = await this.userRepo.findOne({
 			where: { username: createUserDto.username },
 		});
@@ -75,12 +78,46 @@ export class UserService {
 				"Username already taken, kinldy try another username"
 			);
 		}
-		const user = this.userRepo.create(createUserDto);
+		const token = this.generateToken(createUserDto.email);
+		this.logger.log(
+			`Generated token for user ${createUserDto.email}: ${token}`
+		);
+
+		const sendEmail = await this.emailService.sendEmail({
+			to: createUserDto.email,
+			subject: "Verify Your Email Address",
+			templateName: "verify_email",
+			context: {
+				userName: createUserDto.firstName,
+				companyName: "Thrive",
+				currentYear: new Date().getFullYear(),
+				companyAddress: "123 Thrive St, Thrive City, TC 12345",
+				supportEmail: "" + process.env.SUPPORT_EMAIL,
+				verificationUrl: `${this.url}?token=${token}`,
+			},
+		});
+
+		this.logger.log("Email sent response: ", sendEmail);
+		if (sendEmail instanceof ErrorResponse) {
+			return new ErrorResponse(
+				"Failed to send verification email",
+				"Email Sending Error",
+				500
+			);
+		}
+
 		const salt = await bcrypt.genSalt();
+		const user = this.userRepo.create(createUserDto);
 		if (createUserDto.password) {
 			user.password = await bcrypt.hash(user.password, salt);
 		}
-		return this.userRepo.save(user);
+
+		await this.userRepo.save(user);
+		this.logger.log(`User ${user.username} created successfully`);
+
+		return new SuccessResponse(
+			"User created successfully. Please check your email to verify your account."
+		);
 	}
 
 	getAllUsers(): Promise<User[]> {
@@ -163,7 +200,7 @@ export class UserService {
 			templateName: "password_rest",
 			context: {
 				name: user.username,
-				resetLink: `https://thrive.com/reset-password?token=${uniqueToken}`,
+				resetLink: `${this.url}}/reset-password?token=${uniqueToken}`,
 			},
 		});
 
@@ -303,5 +340,157 @@ export class UserService {
 
 		this.logger.log(`Password reset successfully for user ${user.username}`);
 		return new SuccessResponse("Password reset successfully");
+	}
+
+	async getUserById(id: string): Promise<UserResponse | NotFoundResponse> {
+		const user = await this.userRepo.findOneBy({ id });
+		if (!user) {
+			this.logger.error(`User with ID ${id} not found`);
+			return new NotFoundResponse("User not found");
+		}
+		return user;
+	}
+
+	async verifyUser(token: string): Promise<UserResponse | NotFoundResponse> {
+		this.logger.log(`Verifying user with token: ${token}`);
+
+		const email = this.verifyToken(token);
+		if (email instanceof InvalidCredentialsResponse) {
+			this.logger.error("Invalid token provided for user verification");
+			return new InvalidCredentialsResponse(
+				"Unverified User",
+				"User verification failed. Invalid token.",
+				401
+			);
+		}
+
+		const user = await this.userRepo.findOneBy({ email });
+
+		if (user.isVerified) {
+			this.logger.warn(`User with email ${email} is already verified`);
+			return new NotFoundResponse(
+				"User already verified",
+				"User Verification Error"
+			);
+		}
+
+		if (!user) {
+			this.logger.error(`User with email ${email} not found`);
+			return new NotFoundResponse("User not found");
+		}
+
+		if (user.isVerified) {
+			this.logger.warn(`User with email ${email} is already verified`);
+			return new NotFoundResponse("User already verified");
+		}
+
+		user.isVerified = true;
+		await this.userRepo.update(user.id, { isVerified: true });
+		this.logger.log(`User with email ${email} verified successfully`);
+		return {
+			id: user.id,
+			username: user.username,
+			firstName: user.firstName,
+			lastName: user.lastName,
+			email: user.email,
+		};
+	}
+
+	async search(
+		searchFilter: SearchFilterDto
+	): Promise<
+		| SearchResponse<UserResponse[]>
+		| SearchResponse<UserResponse>
+		| ErrorResponse
+	> {
+		this.logger.log(
+			`Searching users with filter: ${JSON.stringify(searchFilter)}`
+		);
+
+		const { searchTerm, sortBy, sortOrder, page, limit } = searchFilter;
+
+		const queryBuilder = this.userRepo.createQueryBuilder("user");
+
+		if (searchTerm) {
+			queryBuilder.where("user.username LIKE :searchTerm", {
+				searchTerm: `%${searchTerm}%`,
+			});
+		}
+
+		if (page && limit) {
+			queryBuilder.skip((page - 1) * limit).take(limit);
+		}
+
+		if (sortBy && sortOrder) {
+			if (!["ASC", "DESC"].includes(sortOrder.toUpperCase())) {
+				this.logger.error("Invalid sort order provided");
+				return new ErrorResponse(
+					"Invalid sort order. Use 'ASC' or 'DESC'.",
+					"Sort Order Error",
+					400
+				);
+			}
+
+			if (!["username", "email", "phoneNo"].includes(sortBy)) {
+				this.logger.error("Invalid sort field provided");
+				return new ErrorResponse(
+					"Invalid sort field. Use 'username', 'email', or 'phoneNo'.",
+					"Invalid Sort Field",
+					400
+				);
+			}
+
+			queryBuilder.orderBy(
+				`user.${sortBy}`,
+				sortOrder.toUpperCase() as "ASC" | "DESC"
+			);
+		}
+
+		const [users, total] = await queryBuilder.getManyAndCount();
+
+		if (users.length === 0) {
+			this.logger.warn("No users found matching the search criteria");
+			return new ErrorResponse("No users found", "Search Error", 404);
+		}
+
+		this.logger.log(`Found ${users.length} users matching the search criteria`);
+
+		return new SearchResponse(
+			users,
+			{
+				total,
+				page: page || 1,
+				limit: limit || 10,
+				totalPages: Math.ceil(total / (limit || 10)),
+			},
+			"User Search Results",
+			200
+		);
+	}
+
+	async activateUser(username: string): Promise<User | NotFoundResponse> {
+		this.logger.log(`Activating user with username: ${username}`);
+		const user = await this.userRepo.findOneBy({ username });
+		if (!user) {
+			this.logger.error(`User with username ${username} not found`);
+			return new NotFoundResponse("User not found");
+		}
+		user.isActive = true;
+		await this.userRepo.update(user.id, { isActive: true });
+		this.logger.log(`User ${username} activated successfully`);
+		return user;
+	}
+
+	async deactivateUser(username: string): Promise<User | NotFoundResponse> {
+		this.logger.log(`Deactivating user with username: ${username}`);
+		const user = await this.userRepo.findOneBy({ username });
+		if (!user) {
+			this.logger.error(`User with username ${username} not found`);
+			return new NotFoundResponse("User not found");
+		}
+		user.isActive = false;
+		await this.userRepo.update(user.id, { isActive: false });
+		this.logger.log(`User ${username} deactivated successfully`);
+		return user;
 	}
 }

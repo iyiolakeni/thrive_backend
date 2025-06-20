@@ -1,20 +1,23 @@
+import { User } from "../user.entity/user.entity";
+import { Product } from "src/products/entities/product.entity";
 export declare class Business {
-    id: number;
-    fullName: string;
-    email: string;
-    phone: string;
+    id: string;
     businessName: string;
     businessAddress: string;
-    registrationNumber: string;
-    storeName: string;
-    storeDescription: string;
+    registrationNumber?: string;
     storeLogo?: string;
     bankName: string;
     bankAccountNumber: string;
-    bankAccountName: string;
-    swiftCode?: string;
+    bank_code: string;
     vendorAgreement: boolean;
-    productCategories: string[];
     returnPolicy: boolean;
+    user: User;
+    userId: string;
+    isVerified: boolean;
+    registrationDate: Date;
+    verificationDate?: Date;
+    isActive: boolean;
+    modificationDate?: Date;
+    products: Product[];
 }
 //# sourceMappingURL=business.entity.d.ts.map

@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 3,
+            "activePatchIndex": 4,
             "patches": [
                 {
                     "date": 1725169669099,
@@ -20,6 +20,10 @@
                 {
                     "date": 1749746242423,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -41,8 +41,9 @@\n .env.test.local\n .env.production.local\n .env.local\n /.emv\n+\n # temp directory\n .temp\n .tmp\n \n"
+                },
+                {
+                    "date": 1749746939434,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -41,9 +41,9 @@\n .env.test.local\n .env.production.local\n .env.local\n /.emv\n-\n+.env.json\n # temp directory\n .temp\n .tmp\n \n@@ -54,4 +54,8 @@\n *.pid.lock\n \n # Diagnostic reports (https://nodejs.org/api/report.html)\n report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json\n+.env\n+.env\n+.env.*\n+*.pem\n"
                 }
             ],
             "date": 1725169669099,
