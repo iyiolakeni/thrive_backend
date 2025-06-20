@@ -29,9 +29,6 @@ import { TransactionDetailsModule } from "./transaction-details/transaction-deta
 			password: process.env.POSTGRES_PASSWORD,
 			database: process.env.POSTGRES_DATABASE,
 			ssl: true,
-			// entities: [
-			// 	__dirname + "/**/*.entity{.ts,.js}",
-			// ],
 			autoLoadEntities: true,
 			synchronize: false,
 		}),
