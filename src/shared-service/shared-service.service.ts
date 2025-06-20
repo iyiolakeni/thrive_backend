@@ -2,7 +2,7 @@ import { Inject, Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import axios from "axios";
 import { randomBytes } from "crypto";
-import { Business } from "src/entities/business.entity/Business.entity";
+import { Business } from "src/entities/business.entity/business.entity";
 import { User } from "src/entities/user.entity/User.entity";
 import {
 	DataResponse,
@@ -11,12 +11,12 @@ import {
 	SuccessResponse,
 } from "src/models/response.dto";
 import { UserResponse } from "src/models/userResponse.dto";
-import { ProductCategory } from "src/product-categories/entities/ProductCategory";
-import { Product } from "src/products/entities/product.entity";
+import { ProductCategory } from "src/product-categories/entities/product-category";
+import { Product } from "src/products/entities/products.entity";
 import { PaymentDto } from "src/purchase/dto/payment.dto";
 import { PurchaseDto } from "src/purchase/dto/purchase.dto";
 import { Purchase } from "src/purchase/entities/purchase.entity";
-import { TransactionDetail } from "src/transaction-details/entities/TransactionDetail.entity";
+import { TransactionDetail } from "src/transaction-details/entities/transaction-detail.entity";
 import { Repository } from "typeorm";
 
 @Injectable()

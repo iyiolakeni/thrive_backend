@@ -15,7 +15,7 @@ import {
 	SuccessResponse,
 } from "src/models/response.dto";
 import { Injectable, Logger } from "@nestjs/common";
-import { PasswordRest } from "src/entities/user.entity/PasswordRest.entity";
+import { PasswordRest } from "src/entities/user.entity/password-rest.entity";
 import { getuid } from "process";
 import { EmailService } from "src/email/email.service";
 import { ResetPasswordDto } from "./dto/reset_password.dto";

@@ -6,8 +6,8 @@ import {
 	OneToOne,
 } from "typeorm";
 import { UserType } from "../enum";
-import { LoginDetails } from "../login.entity/LoginDetails.entity";
-import { Business } from "../business.entity/Business.entity";
+import { LoginDetails } from "../login.entity/login-details.entity";
+import { Business } from "../business.entity/business.entity";
 
 @Entity()
 export class User {

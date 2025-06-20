@@ -14,7 +14,7 @@ import { UserResponse } from "src/models/userResponse.dto";
 import { ConfigService } from "@nestjs/config";
 import { SharedService } from "src/shared-service/shared-service.service";
 import { InjectRepository } from "@nestjs/typeorm";
-import { LoginDetails } from "src/entities/login.entity/LoginDetails.entity";
+import { LoginDetails } from "src/entities/login.entity/login-details.entity";
 import { Repository } from "typeorm";
 import { LoginDetailsDto } from "src/user/dto/logindetails.dto";
 

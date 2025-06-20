@@ -13,7 +13,7 @@ import {
 import { ApiTags } from "@nestjs/swagger";
 import { BusinessService } from "./business.service";
 import { CreateBusinessDto } from "./dto/create-business.dto/create-business.dto";
-import { Business } from "src/entities/business.entity/Business.entity";
+import { Business } from "src/entities/business.entity/business.entity";
 import { UpdateBusinessDto } from "./dto/update-business.dto/update-business.dto";
 import {
 	DataResponse,
