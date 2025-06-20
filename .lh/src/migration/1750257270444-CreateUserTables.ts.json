@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/migration/1750257270444-CreateUserTables.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1750257929392,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1750257929392,
+            "name": "Commit-0",
+            "content": "import { MigrationInterface, QueryRunner } from \"typeorm\";\n\nexport class CreateUserTables1750257270444 implements MigrationInterface {\n\tname = \"CreateUserTables1750257270444\";\n\n\tpublic async up(queryRunner: QueryRunner): Promise<void> {\n\t\tawait queryRunner.query(\n\t\t\t`ALTER TABLE \"purchase\" DROP CONSTRAINT \"FK_cb285a8faba02c1504d14af3eaa\"`\n\t\t);\n\t\tawait queryRunner.query(\n\t\t\t`ALTER TABLE \"transaction_detail\" DROP CONSTRAINT \"PK_bafdd7fde2ed67494cf9cd9ec2a\"`\n\t\t);\n\t\tawait queryRunner.query(\n\t\t\t`ALTER TABLE \"transaction_detail\" DROP COLUMN \"id\"`\n\t\t);\n\t\tawait queryRunner.query(\n\t\t\t`ALTER TABLE \"transaction_detail\" ADD CONSTRAINT \"PK_e0947b770a56e455a6a22df5931\" PRIMARY KEY (\"paymentReference\")`\n\t\t);\n\t\tawait queryRunner.query(\n\t\t\t`ALTER TABLE \"transaction_detail\" DROP CONSTRAINT \"UQ_e0947b770a56e455a6a22df5931\"`\n\t\t);\n\t\tawait queryRunner.query(\n\t\t\t`ALTER TABLE \"purchase\" DROP CONSTRAINT \"FK_cb285a8faba02c1504d14af3eaa\"`\n\t\t);\n\t\tawait queryRunner.query(\n\t\t\t`ALTER TABLE \"purchase\" DROP COLUMN \"paymentReference\"`\n\t\t);\n\t\tawait queryRunner.query(\n\t\t\t`ALTER TABLE \"purchase\" ADD \"paymentReference\" character varying NOT NULL`\n\t\t);\n\t\tawait queryRunner.query(\n\t\t\t`ALTER TABLE \"purchase\" ADD CONSTRAINT \"FK_cb285a8faba02c1504d14af3eaa\" FOREIGN KEY (\"paymentReference\") REFERENCES \"transaction_detail\"(\"paymentReference\") ON DELETE NO ACTION ON UPDATE NO ACTION`\n\t\t);\n\t}\n\n\tpublic async down(queryRunner: QueryRunner): Promise<void> {\n\t\tawait queryRunner.query(\n\t\t\t`ALTER TABLE \"purchase\" DROP CONSTRAINT \"FK_cb285a8faba02c1504d14af3eaa\"`\n\t\t);\n\t\tawait queryRunner.query(\n\t\t\t`ALTER TABLE \"purchase\" DROP CONSTRAINT \"FK_cb285a8faba02c1504d14af3eaa\"`\n\t\t);\n\t\tawait queryRunner.query(\n\t\t\t`ALTER TABLE \"purchase\" DROP COLUMN \"paymentReference\"`\n\t\t);\n\t\tawait queryRunner.query(\n\t\t\t`ALTER TABLE \"purchase\" ADD \"paymentReference\" uuid NOT NULL`\n\t\t);\n\t\tawait queryRunner.query(\n\t\t\t`ALTER TABLE \"purchase\" ADD CONSTRAINT \"FK_cb285a8faba02c1504d14af3eaa\" FOREIGN KEY (\"paymentReference\") REFERENCES \"transaction_detail\"(\"id\") ON DELETE NO ACTION ON UPDATE NO ACTION`\n\t\t);\n\t\tawait queryRunner.query(\n\t\t\t`ALTER TABLE \"transaction_detail\" ADD CONSTRAINT \"UQ_e0947b770a56e455a6a22df5931\" UNIQUE (\"paymentReference\")`\n\t\t);\n\t\tawait queryRunner.query(\n\t\t\t`ALTER TABLE \"transaction_detail\" DROP CONSTRAINT \"PK_e0947b770a56e455a6a22df5931\"`\n\t\t);\n\t\tawait queryRunner.query(\n\t\t\t`ALTER TABLE \"transaction_detail\" ADD \"id\" uuid NOT NULL DEFAULT uuid_generate_v4()`\n\t\t);\n\t\tawait queryRunner.query(\n\t\t\t`ALTER TABLE \"transaction_detail\" ADD CONSTRAINT \"PK_bafdd7fde2ed67494cf9cd9ec2a\" PRIMARY KEY (\"id\")`\n\t\t);\n\t}\n}\n"
+        }
+    ]
+}

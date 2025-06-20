@@ -1,0 +1,22 @@
+{
+    "sourceFile": "src/products/products.module.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 1,
+            "patches": [
+                {
+                    "date": 1749974600569,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1749975357870,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -2,13 +2,11 @@\n import { ProductsService } from \"./products.service\";\r\n import { ProductsController } from \"./products.controller\";\r\n import { TypeOrmModule } from \"@nestjs/typeorm\";\r\n import { Product } from \"./entities/product.entity\";\r\n-import { SharedServiceModule } from \"src/shared-service/shared-service.module\";\r\n-import { SharedService } from \"src/shared-service/shared-service.service\";\r\n \r\n @Module({\r\n-\timports: [TypeOrmModule.forFeature([Product]), SharedServiceModule],\r\n+\timports: [TypeOrmModule.forFeature([Product])],\r\n \tcontrollers: [ProductsController],\r\n-\tproviders: [ProductsService, SharedService],\r\n+\tproviders: [ProductsService],\r\n })\r\n export class ProductsModule {}\r\n"
+                }
+            ],
+            "date": 1749974600569,
+            "name": "Commit-0",
+            "content": "import { Module } from \"@nestjs/common\";\r\nimport { ProductsService } from \"./products.service\";\r\nimport { ProductsController } from \"./products.controller\";\r\nimport { TypeOrmModule } from \"@nestjs/typeorm\";\r\nimport { Product } from \"./entities/product.entity\";\r\nimport { SharedServiceModule } from \"src/shared-service/shared-service.module\";\r\nimport { SharedService } from \"src/shared-service/shared-service.service\";\r\n\r\n@Module({\r\n\timports: [TypeOrmModule.forFeature([Product]), SharedServiceModule],\r\n\tcontrollers: [ProductsController],\r\n\tproviders: [ProductsService, SharedService],\r\n})\r\nexport class ProductsModule {}\r\n"
+        }
+    ]
+}

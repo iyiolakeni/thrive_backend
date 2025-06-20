@@ -1,0 +1,126 @@
+{
+    "sourceFile": "src/auth/local.strategy.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 27,
+            "patches": [
+                {
+                    "date": 1722786061144,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1722786073430,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,3 +1,4 @@\n import { Injectable } from \"@nestjs/common\";\r\n \r\n-@Injectable()\n\\ No newline at end of file\n+@Injectable()\r\n+export class LocalStrategy extends passp\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722786079629,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,4 +1,5 @@\n import { Injectable } from \"@nestjs/common\";\r\n+import { PassportStrategy } from \"@nestjs/passport\";\r\n \r\n @Injectable()\r\n\\ No newline at end of file\n-export class LocalStrategy extends passp\n+export class LocalStrategy extends PassportStrategy(strategy)\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722786092818,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,5 +1,5 @@\n import { Injectable } from \"@nestjs/common\";\r\n import { PassportStrategy } from \"@nestjs/passport\";\r\n \r\n @Injectable()\r\n-export class LocalStrategy extends PassportStrategy(strategy)\n\\ No newline at end of file\n+export class LocalStrategy extends PassportStrategy(Stra)\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722786160538,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,5 +1,6 @@\n import { Injectable } from \"@nestjs/common\";\r\n import { PassportStrategy } from \"@nestjs/passport\";\r\n+import \r\n \r\n @Injectable()\r\n\\ No newline at end of file\n-export class LocalStrategy extends PassportStrategy(Stra)\n+export class LocalStrategy extends PassportStrategy(Strategy)\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722786167033,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,6 @@\n import { Injectable } from \"@nestjs/common\";\r\n import { PassportStrategy } from \"@nestjs/passport\";\r\n-import \r\n+import {Strategty\r\n \r\n @Injectable()\r\n export class LocalStrategy extends PassportStrategy(Strategy)\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722786173405,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,5 @@\n import { Injectable } from \"@nestjs/common\";\r\n import { PassportStrategy } from \"@nestjs/passport\";\r\n-import {Strategty\r\n-\r\n+import {Strategy}\r\n @Injectable()\r\n export class LocalStrategy extends PassportStrategy(Strategy)\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722786179289,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,5 +1,5 @@\n import { Injectable } from \"@nestjs/common\";\r\n import { PassportStrategy } from \"@nestjs/passport\";\r\n-import {Strategy}\r\n+import {Strategy} from 'pas'\r\n @Injectable()\r\n export class LocalStrategy extends PassportStrategy(Strategy)\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722786186473,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,5 +1,6 @@\n import { Injectable } from \"@nestjs/common\";\r\n import { PassportStrategy } from \"@nestjs/passport\";\r\n-import {Strategy} from 'pas'\r\n+import {Strategy} from 'passport-local'\r\n+\r\n @Injectable()\r\n export class LocalStrategy extends PassportStrategy(Strategy)\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722786194279,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -2,5 +2,7 @@\n import { PassportStrategy } from \"@nestjs/passport\";\r\n import {Strategy} from 'passport-local'\r\n \r\n @Injectable()\r\n-export class LocalStrategy extends PassportStrategy(Strategy)\n\\ No newline at end of file\n+export class LocalStrategy extends PassportStrategy(Strategy){\r\n+    constructor\r\n+}\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722786201569,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,6 +3,8 @@\n import {Strategy} from 'passport-local'\r\n \r\n @Injectable()\r\n export class LocalStrategy extends PassportStrategy(Strategy){\r\n-    constructor\r\n+    constructor(\r\n+        priva\r\n+    )\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722786217844,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -4,7 +4,7 @@\n \r\n @Injectable()\r\n export class LocalStrategy extends PassportStrategy(Strategy){\r\n     constructor(\r\n-        priva\r\n+        private authS\r\n     )\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722786227543,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,10 +1,11 @@\n import { Injectable } from \"@nestjs/common\";\r\n import { PassportStrategy } from \"@nestjs/passport\";\r\n import {Strategy} from 'passport-local'\r\n+import { AuthService } from \"./auth.service\";\r\n \r\n @Injectable()\r\n export class LocalStrategy extends PassportStrategy(Strategy){\r\n     constructor(\r\n-        private authS\r\n+        private authService: AuthService\r\n     )\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722786234934,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -6,6 +6,8 @@\n @Injectable()\r\n export class LocalStrategy extends PassportStrategy(Strategy){\r\n     constructor(\r\n         private authService: AuthService\r\n-    )\r\n+    ){\r\n+        super\r\n+    }\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722786240727,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -7,7 +7,7 @@\n export class LocalStrategy extends PassportStrategy(Strategy){\r\n     constructor(\r\n         private authService: AuthService\r\n     ){\r\n-        super\r\n+        super({usernameField})\r\n     }\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722786288012,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -7,7 +7,9 @@\n export class LocalStrategy extends PassportStrategy(Strategy){\r\n     constructor(\r\n         private authService: AuthService\r\n     ){\r\n-        super({usernameField})\r\n+        super({usernameField: 'email'})\r\n     }\r\n+\r\n+    async validate\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722786296498,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -10,6 +10,6 @@\n     ){\r\n         super({usernameField: 'email'})\r\n     }\r\n \r\n-    async validate\r\n+    async validate(email: string, password: string)\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722786312773,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -10,6 +10,6 @@\n     ){\r\n         super({usernameField: 'email'})\r\n     }\r\n \r\n-    async validate(email: string, password: string)\r\n+    async validate(email: string, password: string): Promise<any>\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722786318045,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -10,6 +10,8 @@\n     ){\r\n         super({usernameField: 'email'})\r\n     }\r\n \r\n-    async validate(email: string, password: string): Promise<any>\r\n+    async validate(email: string, password: string): Promise<any>{\r\n+        const user = \r\n+    }\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722786326003,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -11,7 +11,7 @@\n         super({usernameField: 'email'})\r\n     }\r\n \r\n     async validate(email: string, password: string): Promise<any>{\r\n-        const user = \r\n+        const user = ?\r\n     }\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722795744146,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -11,7 +11,7 @@\n         super({usernameField: 'email'})\r\n     }\r\n \r\n     async validate(email: string, password: string): Promise<any>{\r\n-        const user = ?\r\n+        const user = await \r\n     }\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722795749720,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -11,7 +11,7 @@\n         super({usernameField: 'email'})\r\n     }\r\n \r\n     async validate(email: string, password: string): Promise<any>{\r\n-        const user = await \r\n+        const user = await this.authService.validateUser\r\n     }\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722795757114,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -11,7 +11,7 @@\n         super({usernameField: 'email'})\r\n     }\r\n \r\n     async validate(email: string, password: string): Promise<any>{\r\n-        const user = await this.authService.validateUser\r\n+        const user = await this.authService.validateUser(email, password)\r\n     }\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722795764911,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -11,7 +11,8 @@\n         super({usernameField: 'email'})\r\n     }\r\n \r\n     async validate(email: string, password: string): Promise<any>{\r\n-        const user = await this.authService.validateUser(email, password)\r\n+        const user = await this.authService.validateUser(email, password);\r\n+        \r\n     }\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722795771640,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -12,7 +12,7 @@\n     }\r\n \r\n     async validate(email: string, password: string): Promise<any>{\r\n         const user = await this.authService.validateUser(email, password);\r\n-        \r\n+        if(!user)\r\n     }\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722795777267,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -12,7 +12,9 @@\n     }\r\n \r\n     async validate(email: string, password: string): Promise<any>{\r\n         const user = await this.authService.validateUser(email, password);\r\n-        if(!user)\r\n+        if(!user){\r\n+            throe\r\n+        }\r\n     }\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722795783126,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,5 +1,5 @@\n-import { Injectable } from \"@nestjs/common\";\r\n+import { Injectable, UnauthorizedException } from \"@nestjs/common\";\r\n import { PassportStrategy } from \"@nestjs/passport\";\r\n import {Strategy} from 'passport-local'\r\n import { AuthService } from \"./auth.service\";\r\n \r\n@@ -13,8 +13,8 @@\n \r\n     async validate(email: string, password: string): Promise<any>{\r\n         const user = await this.authService.validateUser(email, password);\r\n         if(!user){\r\n-            throe\r\n+            throw new UnauthorizedException();\r\n         }\r\n     }\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722855135182,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -12,9 +12,11 @@\n     }\r\n \r\n     async validate(email: string, password: string): Promise<any>{\r\n         const user = await this.authService.validateUser(email, password);\r\n+        console.log(user)\r\n         if(!user){\r\n             throw new UnauthorizedException();\r\n         }\r\n+        return user;\r\n     }\r\n }\n\\ No newline at end of file\n"
+                }
+            ],
+            "date": 1722786061144,
+            "name": "Commit-0",
+            "content": "import { Injectable } from \"@nestjs/common\";\r\n\r\n@Injectable()"
+        }
+    ]
+}

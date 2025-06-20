@@ -1,0 +1,30 @@
+{
+    "sourceFile": "src/user/dto/login.dto.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 3,
+            "patches": [
+                {
+                    "date": 1722796749464,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1722796761640,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,3 +1,8 @@\n+import { ApiProperty } from \"@nestjs/swagger\";\r\n+\r\n export class LoginDto{\r\n-    @\r\n+    @ApiProperty()\r\n+    email: string\r\n+    \r\n+    @ApiProperty()\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722796767921,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -2,7 +2,8 @@\n \r\n export class LoginDto{\r\n     @ApiProperty()\r\n     email: string\r\n-    \r\n+\r\n     @ApiProperty()\r\n+    password: string\r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1722856768830,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,8 +1,8 @@\n import { ApiProperty } from \"@nestjs/swagger\";\r\n \r\n export class LoginDto{\r\n-    @ApiProperty({e})\r\n+    @ApiProperty({ex})\r\n     email: string\r\n \r\n     @ApiProperty()\r\n     password: string\r\n"
+                }
+            ],
+            "date": 1722796749464,
+            "name": "Commit-0",
+            "content": "export class LoginDto{\r\n    @\r\n}"
+        }
+    ]
+}

@@ -1,0 +1,26 @@
+{
+    "sourceFile": "src/main.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1722529566602,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1722529566807,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,8 +3,8 @@\n \r\n async function bootstrap() {\r\n   const app = await NestFactory.create(AppModule);\r\n \r\n-  const config = new DocumentBuild\r\n+  const config = new DocumentBuilder\r\n   await app.listen(3000);\r\n }\r\n bootstrap();\r\n"
+                },
+                {
+                    "date": 1722529635180,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -6,8 +6,8 @@\n   const app = await NestFactory.create(AppModule);\r\n \r\n   const config = new DocumentBuilder()\r\n   .setTitle('Thrive API')\r\n-  .setDescription('The endpoint for ')\r\n+  .setDescription('The endpoint for a')\r\n   await app.listen(3000);\r\n }\r\n bootstrap();\r\n"
+                }
+            ],
+            "date": 1722529566602,
+            "name": "Commit-0",
+            "content": "import { NestFactory } from '@nestjs/core';\r\nimport { AppModule } from './app.module';\r\n\r\nasync function bootstrap() {\r\n  const app = await NestFactory.create(AppModule);\r\n\r\n  const config = new DocumentBuilder\r\n  await app.listen(3000);\r\n}\r\nbootstrap();\r\n"
+        }
+    ]
+}

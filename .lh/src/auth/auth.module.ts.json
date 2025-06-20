@@ -1,0 +1,146 @@
+{
+    "sourceFile": "src/auth/auth.module.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 32,
+            "patches": [
+                {
+                    "date": 1722785158116,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1722785164241,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -2,9 +2,9 @@\n import { AuthController } from './auth.controller';\n import { AuthService } from './auth.service';\n \n @Module({\n-  \n+  imports:\n   controllers: [AuthController],\n   providers: [AuthService]\n })\n export class AuthModule {}\n"
+                },
+                {
+                    "date": 1722785169463,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,10 +1,13 @@\n import { Module } from '@nestjs/common';\n import { AuthController } from './auth.controller';\n import { AuthService } from './auth.service';\n+import { UserModule } from 'src/user/user.module';\n \n @Module({\n-  imports:\n+  imports:[\n+    UserModule\n+  ]\n   controllers: [AuthController],\n   providers: [AuthService]\n })\n export class AuthModule {}\n"
+                },
+                {
+                    "date": 1722785178079,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,12 +1,14 @@\n import { Module } from '@nestjs/common';\n import { AuthController } from './auth.controller';\n import { AuthService } from './auth.service';\n import { UserModule } from 'src/user/user.module';\n+import { PassportModule } from '@nestjs/passport';\n \n @Module({\n   imports:[\n-    UserModule\n+    UserModule,\n+    PassportModule\n   ]\n   controllers: [AuthController],\n   providers: [AuthService]\n })\n"
+                },
+                {
+                    "date": 1722785188059,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -6,10 +6,10 @@\n \n @Module({\n   imports:[\n     UserModule,\n-    PassportModule\n-  ]\n+    PassportModule,\n+  ],\n   controllers: [AuthController],\n   providers: [AuthService]\n })\n export class AuthModule {}\n"
+                },
+                {
+                    "date": 1722785194148,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -7,8 +7,9 @@\n @Module({\n   imports:[\n     UserModule,\n     PassportModule,\n+    \n   ],\n   controllers: [AuthController],\n   providers: [AuthService]\n })\n"
+                },
+                {
+                    "date": 1722785200209,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -2,14 +2,15 @@\n import { AuthController } from './auth.controller';\n import { AuthService } from './auth.service';\n import { UserModule } from 'src/user/user.module';\n import { PassportModule } from '@nestjs/passport';\n+import { JwtModule } from '@nestjs/jwt';\n \n @Module({\n   imports:[\n     UserModule,\n     PassportModule,\n-    \n+    JwtModule\n   ],\n   controllers: [AuthController],\n   providers: [AuthService]\n })\n"
+                },
+                {
+                    "date": 1722785205315,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -8,9 +8,9 @@\n @Module({\n   imports:[\n     UserModule,\n     PassportModule,\n-    JwtModule\n+    JwtModule.register({})\n   ],\n   controllers: [AuthController],\n   providers: [AuthService]\n })\n"
+                },
+                {
+                    "date": 1722785631525,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -6,8 +6,9 @@\n import { JwtModule } from '@nestjs/jwt';\n \n @Module({\n   imports:[\n+    Config\n     UserModule,\n     PassportModule,\n     JwtModule.register({})\n   ],\n"
+                },
+                {
+                    "date": 1722785637331,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,12 +3,13 @@\n import { AuthService } from './auth.service';\n import { UserModule } from 'src/user/user.module';\n import { PassportModule } from '@nestjs/passport';\n import { JwtModule } from '@nestjs/jwt';\n+import { ConfigModule } from '@nestjs/config';\n \n @Module({\n   imports:[\n-    Config\n+    ConfigModule.forRoot()\n     UserModule,\n     PassportModule,\n     JwtModule.register({})\n   ],\n"
+                },
+                {
+                    "date": 1722785643351,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -7,12 +7,14 @@\n import { ConfigModule } from '@nestjs/config';\n \n @Module({\n   imports:[\n-    ConfigModule.forRoot()\n+    ConfigModule.forRoot(),\n     UserModule,\n     PassportModule,\n-    JwtModule.register({})\n+    JwtModule.register({\n+      imp\n+    })\n   ],\n   controllers: [AuthController],\n   providers: [AuthService]\n })\n"
+                },
+                {
+                    "date": 1722785653856,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -11,9 +11,9 @@\n     ConfigModule.forRoot(),\n     UserModule,\n     PassportModule,\n     JwtModule.register({\n-      imp\n+      imports: [ConfigModule]\n     })\n   ],\n   controllers: [AuthController],\n   providers: [AuthService]\n"
+                },
+                {
+                    "date": 1722785660105,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -11,9 +11,10 @@\n     ConfigModule.forRoot(),\n     UserModule,\n     PassportModule,\n     JwtModule.register({\n-      imports: [ConfigModule]\n+      imports: [ConfigModule],\n+      inject\n     })\n   ],\n   controllers: [AuthController],\n   providers: [AuthService]\n"
+                },
+                {
+                    "date": 1722785669246,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,18 +3,18 @@\n import { AuthService } from './auth.service';\n import { UserModule } from 'src/user/user.module';\n import { PassportModule } from '@nestjs/passport';\n import { JwtModule } from '@nestjs/jwt';\n-import { ConfigModule } from '@nestjs/config';\n+import { ConfigModule, ConfigService } from '@nestjs/config';\n \n @Module({\n   imports:[\n     ConfigModule.forRoot(),\n     UserModule,\n     PassportModule,\n     JwtModule.register({\n       imports: [ConfigModule],\n-      inject\n+      inject: [ConfigService]\n     })\n   ],\n   controllers: [AuthController],\n   providers: [AuthService]\n"
+                },
+                {
+                    "date": 1722785675008,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -12,9 +12,10 @@\n     UserModule,\n     PassportModule,\n     JwtModule.register({\n       imports: [ConfigModule],\n-      inject: [ConfigService]\n+      inject: [ConfigService],\n+      user\n     })\n   ],\n   controllers: [AuthController],\n   providers: [AuthService]\n"
+                },
+                {
+                    "date": 1722785681999,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -13,9 +13,9 @@\n     PassportModule,\n     JwtModule.register({\n       imports: [ConfigModule],\n       inject: [ConfigService],\n-      user\n+      useFactory: async\n     })\n   ],\n   controllers: [AuthController],\n   providers: [AuthService]\n"
+                },
+                {
+                    "date": 1722785695496,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -13,9 +13,9 @@\n     PassportModule,\n     JwtModule.register({\n       imports: [ConfigModule],\n       inject: [ConfigService],\n-      useFactory: async\n+      useFactory: async (configService: Conf)\n     })\n   ],\n   controllers: [AuthController],\n   providers: [AuthService]\n"
+                },
+                {
+                    "date": 1722785703149,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -13,9 +13,9 @@\n     PassportModule,\n     JwtModule.register({\n       imports: [ConfigModule],\n       inject: [ConfigService],\n-      useFactory: async (configService: Conf)\n+      useFactory: async (configService: ConfigService) =>({})\n     })\n   ],\n   controllers: [AuthController],\n   providers: [AuthService]\n"
+                },
+                {
+                    "date": 1722785714024,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -13,9 +13,11 @@\n     PassportModule,\n     JwtModule.register({\n       imports: [ConfigModule],\n       inject: [ConfigService],\n-      useFactory: async (configService: ConfigService) =>({})\n+      useFactory: async (configService: ConfigService) =>({\n+        secret: cn\n+      })\n     })\n   ],\n   controllers: [AuthController],\n   providers: [AuthService]\n"
+                },
+                {
+                    "date": 1722785720189,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -14,9 +14,9 @@\n     JwtModule.register({\n       imports: [ConfigModule],\n       inject: [ConfigService],\n       useFactory: async (configService: ConfigService) =>({\n-        secret: cn\n+        secret: configService.get\n       })\n     })\n   ],\n   controllers: [AuthController],\n"
+                },
+                {
+                    "date": 1722785727177,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -14,9 +14,9 @@\n     JwtModule.register({\n       imports: [ConfigModule],\n       inject: [ConfigService],\n       useFactory: async (configService: ConfigService) =>({\n-        secret: configService.get\n+        secret: configService.get<string\n       })\n     })\n   ],\n   controllers: [AuthController],\n"
+                },
+                {
+                    "date": 1722785736419,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -14,9 +14,9 @@\n     JwtModule.register({\n       imports: [ConfigModule],\n       inject: [ConfigService],\n       useFactory: async (configService: ConfigService) =>({\n-        secret: configService.get<string\n+        secret: configService.get<string>('JWT_SECRET')\n       })\n     })\n   ],\n   controllers: [AuthController],\n"
+                },
+                {
+                    "date": 1722785742696,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -14,9 +14,10 @@\n     JwtModule.register({\n       imports: [ConfigModule],\n       inject: [ConfigService],\n       useFactory: async (configService: ConfigService) =>({\n-        secret: configService.get<string>('JWT_SECRET')\n+        secret: configService.get<string>('JWT_SECRET'),\n+        signOp\n       })\n     })\n   ],\n   controllers: [AuthController],\n"
+                },
+                {
+                    "date": 1722785748530,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -15,9 +15,9 @@\n       imports: [ConfigModule],\n       inject: [ConfigService],\n       useFactory: async (configService: ConfigService) =>({\n         secret: configService.get<string>('JWT_SECRET'),\n-        signOp\n+        signOptions\n       })\n     })\n   ],\n   controllers: [AuthController],\n"
+                },
+                {
+                    "date": 1722785753728,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -15,9 +15,9 @@\n       imports: [ConfigModule],\n       inject: [ConfigService],\n       useFactory: async (configService: ConfigService) =>({\n         secret: configService.get<string>('JWT_SECRET'),\n-        signOptions\n+        signOptions: {expi}\n       })\n     })\n   ],\n   controllers: [AuthController],\n"
+                },
+                {
+                    "date": 1722785760170,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -15,9 +15,9 @@\n       imports: [ConfigModule],\n       inject: [ConfigService],\n       useFactory: async (configService: ConfigService) =>({\n         secret: configService.get<string>('JWT_SECRET'),\n-        signOptions: {expi}\n+        signOptions: {expiresIn: ''}\n       })\n     })\n   ],\n   controllers: [AuthController],\n"
+                },
+                {
+                    "date": 1722785875258,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -11,13 +11,13 @@\n     ConfigModule.forRoot(),\n     UserModule,\n     PassportModule,\n     JwtModule.register({\n-      imports: [ConfigModule],\n+      import: [ConfigModule],\n       inject: [ConfigService],\n       useFactory: async (configService: ConfigService) =>({\n         secret: configService.get<string>('JWT_SECRET'),\n-        signOptions: {expiresIn: ''}\n+        signOptions: {expiresIn: '60m'}\n       })\n     })\n   ],\n   controllers: [AuthController],\n"
+                },
+                {
+                    "date": 1722785886508,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -10,10 +10,10 @@\n   imports:[\n     ConfigModule.forRoot(),\n     UserModule,\n     PassportModule,\n-    JwtModule.register({\n-      import: [ConfigModule],\n+    JwtModule.registerAs({\n+      imports: [ConfigModule],\n       inject: [ConfigService],\n       useFactory: async (configService: ConfigService) =>({\n         secret: configService.get<string>('JWT_SECRET'),\n         signOptions: {expiresIn: '60m'}\n"
+                },
+                {
+                    "date": 1722785977431,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -10,9 +10,9 @@\n   imports:[\n     ConfigModule.forRoot(),\n     UserModule,\n     PassportModule,\n-    JwtModule.registerAs({\n+    JwtModule.registerAsync({\n       imports: [ConfigModule],\n       inject: [ConfigService],\n       useFactory: async (configService: ConfigService) =>({\n         secret: configService.get<string>('JWT_SECRET'),\n@@ -20,7 +20,7 @@\n       })\n     })\n   ],\n   controllers: [AuthController],\n-  providers: [AuthService]\n+  providers: [AuthService, Local]\n })\n export class AuthModule {}\n"
+                },
+                {
+                    "date": 1722786005646,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -20,7 +20,7 @@\n       })\n     })\n   ],\n   controllers: [AuthController],\n-  providers: [AuthService, Local]\n+  providers: [AuthService]\n })\n export class AuthModule {}\n"
+                },
+                {
+                    "date": 1722787110493,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -4,8 +4,9 @@\n import { UserModule } from 'src/user/user.module';\n import { PassportModule } from '@nestjs/passport';\n import { JwtModule } from '@nestjs/jwt';\n import { ConfigModule, ConfigService } from '@nestjs/config';\n+import { LocalStrategy } from './local.strategy';\n \n @Module({\n   imports:[\n     ConfigModule.forRoot(),\n@@ -20,7 +21,7 @@\n       })\n     })\n   ],\n   controllers: [AuthController],\n-  providers: [AuthService]\n+  providers: [AuthService, LocalStrategy]\n })\n export class AuthModule {}\n"
+                },
+                {
+                    "date": 1722787120918,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -5,8 +5,9 @@\n import { PassportModule } from '@nestjs/passport';\n import { JwtModule } from '@nestjs/jwt';\n import { ConfigModule, ConfigService } from '@nestjs/config';\n import { LocalStrategy } from './local.strategy';\n+import { JwtStrategy } from './jwt.strategy';\n \n @Module({\n   imports:[\n     ConfigModule.forRoot(),\n@@ -21,7 +22,7 @@\n       })\n     })\n   ],\n   controllers: [AuthController],\n-  providers: [AuthService, LocalStrategy]\n+  providers: [AuthService, LocalStrategy, JwtStrategy]\n })\n export class AuthModule {}\n"
+                },
+                {
+                    "date": 1722787126389,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -22,7 +22,7 @@\n       })\n     })\n   ],\n   controllers: [AuthController],\n-  providers: [AuthService, LocalStrategy, JwtStrategy, Opt]\n+  providers: [AuthService, LocalStrategy, JwtStrategy, Op]\n })\n export class AuthModule {}\n"
+                }
+            ],
+            "date": 1722785158116,
+            "name": "Commit-0",
+            "content": "import { Module } from '@nestjs/common';\nimport { AuthController } from './auth.controller';\nimport { AuthService } from './auth.service';\n\n@Module({\n  \n  controllers: [AuthController],\n  providers: [AuthService]\n})\nexport class AuthModule {}\n"
+        }
+    ]
+}

@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/app.controller.spec.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1722762142608,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1722762142608,
+            "name": "Commit-0",
+            "content": "import { Test, TestingModule } from '@nestjs/testing';\r\nimport { AppController } from './app.controller';\r\nimport { AppService } from './app.service';\r\n\r\ndescribe('AppController', () => {\r\n  let appController: AppController;\r\n\r\n  beforeEach(async () => {\r\n    const app: TestingModule = await Test.createTestingModule({\r\n      controllers: [AppController],\r\n      providers: [AppService],\r\n    }).compile();\r\n\r\n    appController = app.get<AppController>(AppController);\r\n  });\r\n\r\n  describe('root', () => {\r\n    it('should return \"Hello World!\"', () => {\r\n      expect(appController)).toBe('Hello World!');\r\n    });\r\n  });\r\n});\r\n"
+        }
+    ]
+}
