@@ -1,13 +1,13 @@
-import { Business } from "src/entities/business.entity/Business.entity";
-import { LoginDetails } from "src/entities/login.entity/LoginDetails.entity";
-import { PasswordRest } from "src/entities/user.entity/PasswordRest.entity";
+import { LoginDetails } from "src/entities/login.entity/login-details.entity";
+import { PasswordRest } from "src/entities/user.entity/password-rest.entity";
 import { User } from "src/entities/user.entity/User.entity";
-import { ProductCategory } from "src/product-categories/entities/ProductCategory";
-import { Product } from "src/products/entities/product.entity";
+import { ProductCategory } from "src/product-categories/entities/product-category";
+import { Product } from "src/products/entities/products.entity";
 import { Purchase } from "src/purchase/entities/purchase.entity";
 import { DataSource } from "typeorm";
 import * as dotenv from "dotenv";
-import { TransactionDetail } from "src/transaction-details/entities/TransactionDetail.entity";
+import { TransactionDetail } from "src/transaction-details/entities/transaction-detail.entity";
+import { Business } from "src/entities/business.entity/business.entity";
 
 dotenv.config();
 

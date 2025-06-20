@@ -1,5 +1,5 @@
 import { ProductCategoryType } from "src/entities/enum";
-import { Product } from "src/products/entities/product.entity";
+import { Product } from "src/products/entities/products.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()

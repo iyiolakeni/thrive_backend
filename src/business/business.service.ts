@@ -5,7 +5,7 @@ import {
 	NotFoundException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Business } from "src/entities/business.entity/Business.entity";
+import { Business } from "src/entities/business.entity/business.entity";
 import { Repository } from "typeorm";
 import { CreateBusinessDto } from "./dto/create-business.dto/create-business.dto";
 import { UpdateBusinessDto } from "./dto/update-business.dto/update-business.dto";

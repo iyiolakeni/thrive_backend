@@ -1,10 +1,9 @@
-import { Business } from "src/entities/business.entity/Business.entity";
-import { ProductCategory } from "src/product-categories/entities/ProductCategory";
+import { ProductCategory } from "src/product-categories/entities/product-category";
+import { Business } from "src/entities/business.entity/business.entity";
 import {
 	Column,
 	Entity,
 	JoinColumn,
-	JoinTable,
 	ManyToOne,
 	PrimaryGeneratedColumn,
 } from "typeorm";
