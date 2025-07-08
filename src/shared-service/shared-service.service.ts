@@ -1,14 +1,18 @@
 import { Inject, Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { JwtService } from "@nestjs/jwt";
 import { InjectRepository } from "@nestjs/typeorm";
 import axios from "axios";
 import { randomBytes } from "crypto";
 import { Business } from "src/entities/business.entity/business.entity";
+import { UserType } from "src/entities/enum";
 import { User } from "src/entities/user.entity/user.entity";
 import {
 	DataResponse,
 	InvalidCredentialsResponse,
 	NotFoundResponse,
 	SuccessResponse,
+	UnauthorizedResponse,
 } from "src/models/response.dto";
 import { UserResponse } from "src/models/userResponse.dto";
 import { ProductCategory } from "src/product-categories/entities/product-category";
@@ -37,8 +41,53 @@ export class SharedService {
 		@InjectRepository(Purchase)
 		private readonly purchaseRepo: Repository<Purchase>,
 		@InjectRepository(TransactionDetail)
-		private readonly transactionDetailRepo: Repository<TransactionDetail>
+		private readonly transactionDetailRepo: Repository<TransactionDetail>,
+		private readonly jwtService: JwtService,
+		private readonly configService: ConfigService
 	) {}
+
+	async decodeToken(
+		token: string
+	): Promise<DataResponse<any> | UnauthorizedResponse> {
+		try {
+			const decoded = this.jwtService.verify(token, {
+				secret: this.configService.get<string>("JWT_SECRET"),
+			});
+			console.log("Decoded Token:", decoded);
+			this.logger.log("Token decoded successfully", decoded);
+			return decoded
+				? new DataResponse(decoded, "Token decoded successfully")
+				: new UnauthorizedResponse("Invalid token");
+		} catch (error) {
+			console.error("Token decoding error:", error);
+			return new UnauthorizedResponse("Invalid token");
+		}
+	}
+
+	async verifyUserIsAdmin(
+		username: string
+	): Promise<boolean | InvalidCredentialsResponse> {
+		console.log(`Verifying if user with username: ${username} is an admin`);
+		this.logger.log(`Verifying if user with username: ${username} is an admin`);
+		if (!username) {
+			return new InvalidCredentialsResponse(
+				"Username is required",
+				"Please provide a valid username",
+				400
+			);
+		}
+		const user = await this.userRepo.findOneBy({ username });
+		if (!user) {
+			this.logger.error(`User with username: ${username} not found`);
+			return false;
+		}
+		if (user.userType !== UserType.ADMIN) {
+			this.logger.warn(`User with username: ${username} is not an admin`);
+			return false;
+		}
+		this.logger.log(`User with username: ${username} is an admin`);
+		return true;
+	}
 
 	async findOneByEmail(
 		email: string
@@ -49,6 +98,18 @@ export class SharedService {
 			return new NotFoundResponse("User not found");
 		}
 		return new DataResponse<User>(user, "User found");
+	}
+
+	async findOneById(
+		id: string
+	): Promise<DataResponse<UserResponse> | NotFoundResponse> {
+		const user = await this.userRepo.findOneBy({ id });
+
+		if (!user) {
+			return new NotFoundResponse("User not found");
+		}
+
+		return new DataResponse<UserResponse>(user, "User Found");
 	}
 
 	async findOneByUsername(

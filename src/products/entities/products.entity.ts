@@ -36,6 +36,9 @@ export class Product {
 	@Column({ default: 0, nullable: true })
 	rating: number;
 
+	@Column()
+	createdBy: string;
+
 	@Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
 	createdAt: Date;
 

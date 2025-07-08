@@ -7,6 +7,9 @@ import { ProductCategory } from "src/product-categories/entities/product-categor
 import { Product } from "src/products/entities/products.entity";
 import { Purchase } from "src/purchase/entities/purchase.entity";
 import { TransactionDetail } from "src/transaction-details/entities/transaction-detail.entity";
+import { JwtModule } from "@nestjs/jwt";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { JwtStrategy } from "src/auth/jwt.strategy";
 
 @Global()
 @Module({
@@ -19,8 +22,16 @@ import { TransactionDetail } from "src/transaction-details/entities/transaction-
 			Purchase,
 			TransactionDetail,
 		]),
+		JwtModule.registerAsync({
+			inject: [ConfigService],
+			imports: [ConfigModule],
+			useFactory: async (configService: ConfigService) => ({
+				secret: configService.get<string>("JWT_SECRET"),
+				signOptions: { expiresIn: "30m" },
+			}),
+		}),
 	],
-	providers: [SharedService],
+	providers: [SharedService, JwtStrategy],
 	exports: [
 		SharedService,
 		TypeOrmModule.forFeature([

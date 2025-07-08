@@ -7,6 +7,7 @@ import {
 	InvalidCredentialsResponse,
 	LoginResponse,
 	NotFoundResponse,
+	UnauthorizedResponse,
 } from "src/models/response.dto";
 import { UserResponse } from "src/models/userResponse.dto";
 import { ConfigService } from "@nestjs/config";
@@ -80,6 +81,7 @@ export class AuthService {
 
 		const payload = {
 			email: user.email,
+			username: user.username,
 			sub: user.id,
 		};
 		await this.saveLoginDetails(user.id, meta, response);
@@ -113,5 +115,39 @@ export class AuthService {
 		console.log("Login details:", meta.location);
 		const loginDetailsEntity = this.loginDetailsRepo.create(loginDetails);
 		return this.loginDetailsRepo.save(loginDetailsEntity);
+	}
+
+	async logOut(
+		accessToken: string
+	): Promise<UnauthorizedResponse | DataResponse<string>> {
+		if (!accessToken) {
+			return new UnauthorizedResponse(
+				"Access token is required",
+				"Unauthorized"
+			);
+		}
+
+		try {
+			const decodedToken = await this.sharedService.decodeToken(accessToken);
+			if (decodedToken instanceof UnauthorizedResponse) {
+				return new UnauthorizedResponse(
+					"Invalid access token",
+					"Authentication Error"
+				);
+			}
+
+			const userId = decodedToken.data.sub;
+			const user = await this.sharedService.findOneById(userId);
+			if (user instanceof NotFoundResponse) {
+				return new UnauthorizedResponse(
+					"User not found",
+					"Authentication Error"
+				);
+			}
+
+			return new DataResponse<string>("Logged out successfully", "Success");
+		} catch (error) {
+			return new UnauthorizedResponse("Failed to log out", "Logout Error");
+		}
 	}
 }

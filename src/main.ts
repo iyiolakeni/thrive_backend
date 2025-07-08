@@ -23,7 +23,15 @@ async function bootstrap() {
 		.setTitle("Thrive API")
 		.setDescription("The endpoint for an eccomerce system")
 		.setVersion("1.0")
-		.addBearerAuth()
+		.addBearerAuth(
+			{
+				type: "http",
+				scheme: "bearer",
+				bearerFormat: "JWT",
+				in: "header",
+			},
+			"access-token"
+		)
 		.build();
 
 	const document = SwaggerModule.createDocument(app, config);

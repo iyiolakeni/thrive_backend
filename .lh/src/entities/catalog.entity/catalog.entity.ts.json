@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 35,
+            "activePatchIndex": 36,
             "patches": [
                 {
                     "date": 1722875701780,
@@ -148,6 +148,10 @@
                 {
                     "date": 1722876630488,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -46,19 +46,4 @@\n \r\n   @Column('text', {nullable: true})\r\n   returnPolicy: string;\r\n \r\n-  @Column('text', { array: true })\r\n-  keywords: string[];\r\n-\r\n-  @Column('text')\r\n-  metaDescription: string;\r\n-\r\n-  @Column('text', { array: true })\r\n-  tags: string[];\r\n-\r\n-  @Column('text')\r\n-  contactInformation: string;\r\n-\r\n-  @Column('text')\r\n-  faq: string;\r\n-}\r\n"
+                },
+                {
+                    "date": 1751979823654,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,49 +1,52 @@\n-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';\r\n+import { Entity, Column, PrimaryGeneratedColumn } from \"typeorm\";\r\n \r\n @Entity()\r\n export class Catalog {\r\n-  @PrimaryGeneratedColumn()\r\n-  id: number;\r\n+\t@PrimaryGeneratedColumn()\r\n+\tid: number;\r\n \r\n-  @Column()\r\n-  name: string;\r\n+\t@Column()\r\n+\tname: string;\r\n \r\n-  @Column({ unique: true })\r\n-  productTracker: string;\r\n+\t@Column({ unique: true })\r\n+\tproductTracker: string;\r\n \r\n-  @Column()\r\n-  category: string;\r\n+\t@Column()\r\n+\tcategory: string;\r\n \r\n-  @Column()\r\n-  brandName: string;\r\n+\t@Column()\r\n+\tbrandName: string;\r\n \r\n-  @Column({nullable: true})\r\n-  modelNumber: string;\r\n+\t@Column({ nullable: true })\r\n+\tmodelNumber: string;\r\n \r\n-  @Column('text')\r\n-  shortDescription: string;\r\n+\t@Column(\"text\")\r\n+\tshortDescription: string;\r\n \r\n-  @Column('text')\r\n-  longDescription: string;\r\n+\t@Column(\"text\")\r\n+\tlongDescription: string;\r\n \r\n-  @Column('text', { array: true })\r\n-  images: string[];\r\n+\t@Column(\"text\", { array: true })\r\n+\timages: string[];\r\n \r\n-  @Column('decimal')\r\n-  price: number;\r\n+\t@Column(\"decimal\")\r\n+\tprice: number;\r\n \r\n-  @Column('decimal', {nullable: true})\r\n-  discountPrice: number;\r\n+\t@Column(\"decimal\", { nullable: true })\r\n+\tdiscountPrice: number;\r\n \r\n-  @Column({default: true})\r\n-  availabilityStatus: boolean;\r\n+\t@Column({ default: true })\r\n+\tavailabilityStatus: boolean;\r\n \r\n-  @Column('decimal')\r\n-  shippingCost: number;\r\n+\t@Column(\"decimal\")\r\n+\tshippingCost: number;\r\n \r\n-  @Column('text')\r\n-  warrantyInformation: string;\r\n+\t@Column(\"text\")\r\n+\twarrantyInformation: string;\r\n \r\n-  @Column('text', {nullable: true})\r\n-  returnPolicy: string;\r\n+\t@Column(\"text\", { nullable: true })\r\n+\treturnPolicy: string;\r\n \r\n+\t@Column()\r\n+\tcreatedBy: string;\r\n+}\r\n"
                 }
             ],
             "date": 1722875701780,

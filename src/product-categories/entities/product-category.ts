@@ -20,6 +20,9 @@ export class ProductCategory {
 	})
 	categoryType: ProductCategoryType;
 
+	@Column()
+	createdBy: string;
+
 	@Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
 	createdAt: Date;
 

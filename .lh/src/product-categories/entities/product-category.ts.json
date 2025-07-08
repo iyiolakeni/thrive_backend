@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/product-categories/entities/product-category.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1751978789196,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1751978789196,
+            "name": "Commit-0",
+            "content": "import { ProductCategoryType } from \"src/entities/enum\";\r\nimport { Product } from \"src/products/entities/products.entity\";\r\nimport { Column, Entity, OneToMany, PrimaryGeneratedColumn } from \"typeorm\";\r\n\r\n@Entity()\r\nexport class ProductCategory {\r\n\t@PrimaryGeneratedColumn(\"uuid\")\r\n\tid: string;\r\n\r\n\t@Column({ unique: true })\r\n\tname: string;\r\n\r\n\t@Column({ nullable: true })\r\n\tdescription: string;\r\n\r\n\t@Column({\r\n\t\ttype: \"enum\",\r\n\t\tenum: ProductCategoryType,\r\n\t\tdefault: ProductCategoryType.DIGITAL,\r\n\t})\r\n\tcategoryType: ProductCategoryType;\r\n\r\n\t@Column()\r\n\tcreatedBy: string;\r\n\r\n\t@Column({ type: \"timestamp\", default: () => \"CURRENT_TIMESTAMP\" })\r\n\tcreatedAt: Date;\r\n\r\n\t@Column({\r\n\t\ttype: \"timestamp\",\r\n\t\tdefault: () => \"CURRENT_TIMESTAMP\",\r\n\t\tonUpdate: \"CURRENT_TIMESTAMP\",\r\n\t})\r\n\tupdatedAt: Date;\r\n\r\n\t@Column({ default: true })\r\n\tisActive: boolean;\r\n\r\n\t@Column({ default: 0 })\r\n\ttotalPurchases: number;\r\n\r\n\t@OneToMany(() => Product, (products) => products.category)\r\n\tproducts: Product[];\r\n}\r\n"
+        }
+    ]
+}

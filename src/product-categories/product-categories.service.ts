@@ -7,21 +7,27 @@ import {
 	InvalidCredentialsResponse,
 	SearchResponse,
 	SuccessResponse,
+	UnauthorizedResponse,
 } from "src/models/response.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ProductCategory } from "./entities/product-category";
 import { Repository } from "typeorm";
 import { SearchFilterDto } from "./dto/search-filter.dto";
+import { SharedService } from "src/shared-service/shared-service.service";
+import { AuthService } from "src/auth/auth.service";
+import { decode } from "punycode";
 
 @Injectable()
 export class ProductCategoriesService {
 	constructor(
 		@InjectRepository(ProductCategory)
-		private readonly productCategoryRepo: Repository<ProductCategory>
+		private readonly productCategoryRepo: Repository<ProductCategory>,
+		private readonly sharedService: SharedService
 	) {}
 
 	async create(
-		createProductCategoryDto: CreateProductCategoryDto
+		createProductCategoryDto: CreateProductCategoryDto,
+		accessToken: string
 	): Promise<SuccessResponse | ErrorResponse | InvalidCredentialsResponse> {
 		const productCategoryExists = await this.productCategoryRepo.findOne({
 			where: {
@@ -37,9 +43,30 @@ export class ProductCategoriesService {
 			);
 		}
 
-		const productCategory = this.productCategoryRepo.create(
-			createProductCategoryDto
+		const decodedToken = await this.sharedService.decodeToken(accessToken);
+		if (decodedToken instanceof UnauthorizedResponse) {
+			return new ErrorResponse(
+				"Invalid access token",
+				"Authentication Error",
+				401
+			);
+		}
+
+		const userIsAdmin = await this.sharedService.verifyUserIsAdmin(
+			decodedToken.data.username
 		);
+
+		if (!userIsAdmin) {
+			return new UnauthorizedResponse(
+				"Only admins can create product categories",
+				"Authorization Error"
+			);
+		}
+
+		const productCategory = this.productCategoryRepo.create({
+			...createProductCategoryDto,
+			createdBy: decodedToken.data.username,
+		});
 		await this.productCategoryRepo.save(productCategory);
 
 		if (!productCategory) {
@@ -51,6 +78,77 @@ export class ProductCategoriesService {
 		}
 
 		return new SuccessResponse("Product category created successfully", 201);
+	}
+
+	async createBulk(
+		createProductCategoryDtos: CreateProductCategoryDto[],
+		accessToken: string
+	): Promise<DataResponse<ProductCategory[]> | ErrorResponse> {
+		const results: ProductCategory[] = [];
+		const errors: string[] = [];
+
+		const decodedToken = await this.sharedService.decodeToken(accessToken);
+		if (decodedToken instanceof UnauthorizedResponse) {
+			return new ErrorResponse(
+				"Invalid access token",
+				"Authentication Error",
+				401
+			);
+		}
+
+		console.log("Decoded Token:", decodedToken.data);
+		const userIsAdmin = await this.sharedService.verifyUserIsAdmin(
+			decodedToken.data.username
+		);
+
+		if (!userIsAdmin) {
+			return new UnauthorizedResponse(
+				"Only admins can create product categories",
+				"Authorization Error"
+			);
+		}
+
+		for (const dto of createProductCategoryDtos) {
+			try {
+				const existingCategory = await this.productCategoryRepo.findOne({
+					where: { name: dto.name },
+				});
+
+				if (existingCategory) {
+					errors.push(`Product category '${dto.name}' already exists`);
+					continue;
+				}
+
+				const productCategory = this.productCategoryRepo.create({
+					...dto,
+					createdBy: decodedToken.data.username,
+				});
+				const savedCategory = await this.productCategoryRepo.save(
+					productCategory
+				);
+				results.push(savedCategory);
+			} catch (error) {
+				errors.push(
+					`Failed to create category '${dto.name}': ${error.message}`
+				);
+			}
+		}
+
+		if (errors.length > 0 && results.length === 0) {
+			return new ErrorResponse(
+				`All creations failed: ${errors.join(", ")}`,
+				"Bulk Product Category Creation Error",
+				400
+			);
+		}
+
+		return new DataResponse(
+			results,
+			`Created ${results.length} categories. ${
+				errors.length > 0 ? `Errors: ${errors.join(", ")}` : ""
+			}`,
+			201
+		);
 	}
 
 	async findAll(): Promise<DataResponse<ProductCategory[]> | ErrorResponse> {

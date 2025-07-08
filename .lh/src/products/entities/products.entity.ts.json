@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/products/entities/products.entity.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1751979715129,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1751979715128,
+            "name": "Commit-0",
+            "content": "import { ProductCategory } from \"src/product-categories/entities/product-category\";\r\nimport { Business } from \"src/entities/business.entity/business.entity\";\r\nimport {\r\n\tColumn,\r\n\tEntity,\r\n\tJoinColumn,\r\n\tManyToOne,\r\n\tPrimaryGeneratedColumn,\r\n} from \"typeorm\";\r\n@Entity()\r\nexport class Product {\r\n\t@PrimaryGeneratedColumn(\"uuid\")\r\n\tid: string;\r\n\r\n\t@Column()\r\n\tname: string;\r\n\r\n\t@Column()\r\n\tdescription: string;\r\n\r\n\t@Column({ type: \"decimal\", precision: 10, scale: 2 })\r\n\tunitPrice: number;\r\n\r\n\t@Column({ type: \"decimal\", precision: 10, scale: 2 })\r\n\tprice: number;\r\n\r\n\t@Column({ default: true })\r\n\tisAvailable: boolean;\r\n\r\n\t@Column({ default: 0 })\r\n\tstock: number;\r\n\r\n\t@Column({ default: 0 })\r\n\tdiscount: number;\r\n\r\n\t@Column({ default: 0, nullable: true })\r\n\trating: number;\r\n\r\n\t@Column()\r\n\tcreatedBy: string;\r\n\r\n\t@Column({ type: \"timestamp\", default: () => \"CURRENT_TIMESTAMP\" })\r\n\tcreatedAt: Date;\r\n\r\n\t@Column({\r\n\t\ttype: \"timestamp\",\r\n\t\tdefault: () => \"CURRENT_TIMESTAMP\",\r\n\t\tonUpdate: \"CURRENT_TIMESTAMP\",\r\n\t})\r\n\tupdatedAt: Date;\r\n\r\n\t@Column({ nullable: true })\r\n\timageUrl: string;\r\n\r\n\t@ManyToOne(() => Business, (business) => business.products, {\r\n\t\tonDelete: \"SET NULL\",\r\n\t})\r\n\t@JoinColumn()\r\n\tbusiness: Business;\r\n\r\n\t@ManyToOne(() => ProductCategory, (category) => category.products, {\r\n\t\tonDelete: \"SET NULL\",\r\n\t})\r\n\t@JoinColumn()\r\n\tcategory: ProductCategory;\r\n\r\n\t@Column({ default: \"a25c1f19-7a9d-44cd-b471-9a280438efa0\" })\r\n\tcategoryId: string;\r\n\r\n\t@Column({ default: \"2e0d28fb-c8c9-4790-bbd2-dfe36f3cd0f3\" })\r\n\tbusinessId: string;\r\n}\r\n"
+        }
+    ]
+}

@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 5,
+            "activePatchIndex": 6,
             "patches": [
                 {
                     "date": 1749974383902,
@@ -28,6 +28,10 @@
                 {
                     "date": 1750256902109,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -22,8 +22,15 @@\n \t],\r\n \tproviders: [SharedService],\r\n \texports: [\r\n \t\tSharedService,\r\n-\t\tTypeOrmModule.forFeature([User, Business, ProductCategory, Product]),\r\n+\t\tTypeOrmModule.forFeature([\r\n+\t\t\tUser,\r\n+\t\t\tBusiness,\r\n+\t\t\tProductCategory,\r\n+\t\t\tProduct,\r\n+\t\t\tPurchase,\r\n+\t\t\tTransactionDetail,\r\n+\t\t]),\r\n \t],\r\n })\r\n export class SharedServiceModule {}\r\n"
+                },
+                {
+                    "date": 1751980125872,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -2,12 +2,15 @@\n import { TypeOrmModule } from \"@nestjs/typeorm\";\r\n import { User } from \"src/entities/user.entity/user.entity\";\r\n import { SharedService } from \"./shared-service.service\";\r\n import { Business } from \"src/entities/business.entity/business.entity\";\r\n-import { ProductCategory } from \"src/product-categories/entities/product-category.entity\";\r\n-import { Product } from \"src/products/entities/product.entity\";\r\n+import { ProductCategory } from \"src/product-categories/entities/product-category\";\r\n+import { Product } from \"src/products/entities/products.entity\";\r\n import { Purchase } from \"src/purchase/entities/purchase.entity\";\r\n import { TransactionDetail } from \"src/transaction-details/entities/transaction-detail.entity\";\r\n+import { JwtModule } from \"@nestjs/jwt\";\r\n+import { ConfigModule, ConfigService } from \"@nestjs/config\";\r\n+import { JwtStrategy } from \"src/auth/jwt.strategy\";\r\n \r\n @Global()\r\n @Module({\r\n \timports: [\r\n@@ -18,10 +21,18 @@\n \t\t\tProduct,\r\n \t\t\tPurchase,\r\n \t\t\tTransactionDetail,\r\n \t\t]),\r\n+\t\tJwtModule.registerAsync({\r\n+\t\t\tinject: [ConfigService],\r\n+\t\t\timports: [ConfigModule],\r\n+\t\t\tuseFactory: async (configService: ConfigService) => ({\r\n+\t\t\t\tsecret: configService.get<string>(\"JWT_SECRET\"),\r\n+\t\t\t\tsignOptions: { expiresIn: \"30m\" },\r\n+\t\t\t}),\r\n+\t\t}),\r\n \t],\r\n-\tproviders: [SharedService],\r\n+\tproviders: [SharedService, JwtStrategy],\r\n \texports: [\r\n \t\tSharedService,\r\n \t\tTypeOrmModule.forFeature([\r\n \t\t\tUser,\r\n"
                 }
             ],
             "date": 1749974383902,

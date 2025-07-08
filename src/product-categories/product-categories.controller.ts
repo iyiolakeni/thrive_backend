@@ -6,23 +6,74 @@ import {
 	Patch,
 	Param,
 	Delete,
+	Headers,
 } from "@nestjs/common";
 import { ProductCategoriesService } from "./product-categories.service";
 import { CreateProductCategoryDto } from "./dto/create-product-category.dto";
 import { UpdateProductCategoryDto } from "./dto/update-product-category.dto";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiHeader, ApiTags } from "@nestjs/swagger";
 import { SearchFilterDto } from "./dto/search-filter.dto";
+import { BadRequestResponse } from "src/models/response.dto";
 
 @Controller("product-categories")
 @ApiTags("Product Category")
+// @ApiBearerAuth("access-token")
 export class ProductCategoriesController {
 	constructor(
 		private readonly productCategoriesService: ProductCategoriesService
 	) {}
 
+	private extractToken(authorization: string): string {
+		if (!authorization) {
+			throw new BadRequestResponse("Authorization header is required");
+		}
+
+		if (!authorization.startsWith("Bearer ")) {
+			throw new BadRequestResponse(
+				"Invalid authorization header format. Expected: Bearer <token>"
+			);
+		}
+
+		const token = authorization.replace("Bearer ", "").trim();
+		if (!token) {
+			throw new BadRequestResponse("Token is required");
+		}
+
+		return token;
+	}
+
 	@Post("create")
-	create(@Body() createProductCategoryDto: CreateProductCategoryDto) {
-		return this.productCategoriesService.create(createProductCategoryDto);
+	// @ApiHeader({
+	// 	name: "authorization",
+	// 	required: true,
+	// 	description: "Bearer token for authentication",
+	// })
+	create(
+		@Body() createProductCategoryDto: CreateProductCategoryDto,
+		@Headers("Authorization") authorization: string
+	) {
+		const token = this.extractToken(authorization);
+		return this.productCategoriesService.create(
+			createProductCategoryDto,
+			token
+		);
+	}
+
+	@Post("bulk-create")
+	// @ApiHeader({
+	// 	name: "authorization",
+	// 	required: true,
+	// 	description: "Bearer token for authentication",
+	// })
+	bulkCreate(
+		@Body() createProductCategoryDtos: CreateProductCategoryDto[],
+		@Headers("Authorization") authorization: string
+	) {
+		const token = this.extractToken(authorization);
+		return this.productCategoriesService.createBulk(
+			createProductCategoryDtos,
+			token
+		);
 	}
 
 	@Get("all")
