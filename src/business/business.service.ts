@@ -131,6 +131,7 @@ export class BusinessService {
 			...createBusinessDto,
 			userId: foundUser.id,
 			bankName: createSubAccountResponse.data.data.settlement_bank,
+			code: createSubAccountResponse.data.data.subaccount_code,
 		});
 
 		try {

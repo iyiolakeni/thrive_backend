@@ -72,4 +72,7 @@ export class Business {
 
 	@OneToMany(() => Product, (products) => products.business)
 	products: Product[];
+
+	@Column({ nullable: true })
+	code: string;
 }

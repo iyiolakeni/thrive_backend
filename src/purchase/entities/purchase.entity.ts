@@ -1,3 +1,4 @@
+import { Business } from "src/entities/business.entity/business.entity";
 import { User } from "src/entities/user.entity/user.entity";
 import { Product } from "src/products/entities/products.entity";
 import { TransactionDetail } from "src/transaction-details/entities/transaction-detail.entity";
@@ -7,6 +8,7 @@ import {
 	JoinColumn,
 	ManyToOne,
 	PrimaryGeneratedColumn,
+	UpdateDateColumn,
 } from "typeorm";
 
 @Entity()
@@ -20,6 +22,10 @@ export class Purchase {
 	@ManyToOne(() => Product)
 	@JoinColumn({ name: "productId" })
 	product: Product;
+
+	@ManyToOne(() => Business)
+	@JoinColumn({ name: "businessId" })
+	business: Business;
 
 	@Column({ type: "decimal", precision: 10, scale: 2 })
 	price: number;
@@ -47,4 +53,10 @@ export class Purchase {
 
 	@Column()
 	paymentReference: string;
+
+	@Column({ type: "boolean", default: false })
+	isPaidToBusiness: boolean;
+
+	@UpdateDateColumn()
+	payoutDate: Date;
 }

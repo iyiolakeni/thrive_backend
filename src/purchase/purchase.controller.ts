@@ -17,10 +17,7 @@ import { SharedService } from "src/shared-service/shared-service.service";
 @Controller("purchase")
 @ApiTags("Purchase")
 export class PurchaseController {
-	constructor(
-		private readonly purchaseService: PurchaseService,
-		private readonly sharedService: SharedService
-	) {}
+	constructor(private readonly purchaseService: PurchaseService) {}
 
 	@Post("buy/:userId")
 	@ApiBody({ type: PurchaseDto, isArray: true })
@@ -29,6 +26,16 @@ export class PurchaseController {
 		@Body() createPurchaseDto: PurchaseDto[]
 	) {
 		return this.purchaseService.create(userId, createPurchaseDto);
+	}
+
+	@Post("withdrawal/:businessId")
+	async WithdrawalDto(@Param("businessId") businessId: string) {
+		return this.purchaseService.withdrawal(businessId);
+	}
+
+	@Get("withdrawal-history/:businessId")
+	async WithdrawalHistory(@Param("businessId") businessId: string) {
+		return this.purchaseService.withdrawalHistory(businessId);
 	}
 
 	@Get()

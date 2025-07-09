@@ -8,6 +8,7 @@ import { DataSource } from "typeorm";
 import * as dotenv from "dotenv";
 import { TransactionDetail } from "src/transaction-details/entities/transaction-detail.entity";
 import { Business } from "src/entities/business.entity/business.entity";
+import { WithdrawalHistory } from "src/purchase/entities/withdrawa_history.entity";
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ export const AppDataSource = new DataSource({
 		Product,
 		Purchase,
 		TransactionDetail,
+		WithdrawalHistory,
 	],
 	migrations: ["src/migration/**/*.ts"],
 	logging: true,

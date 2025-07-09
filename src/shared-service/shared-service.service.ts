@@ -23,7 +23,7 @@ import { PaymentDto } from "src/purchase/dto/payment.dto";
 import { PurchaseDto } from "src/purchase/dto/purchase.dto";
 import { Purchase } from "src/purchase/entities/purchase.entity";
 import { TransactionDetail } from "src/transaction-details/entities/transaction-detail.entity";
-import { Repository } from "typeorm";
+import { DataSource, EntityManager, Repository } from "typeorm";
 
 @Injectable()
 export class SharedService {
@@ -46,7 +46,8 @@ export class SharedService {
 		private readonly transactionDetailRepo: Repository<TransactionDetail>,
 		private readonly jwtService: JwtService,
 		private readonly configService: ConfigService,
-		private readonly emailService: EmailService
+		private readonly emailService: EmailService,
+		private readonly dataSource: DataSource
 	) {}
 
 	async decodeToken(
@@ -220,252 +221,316 @@ export class SharedService {
 			);
 		}
 
-		let totalPrice = 0;
-		let product = [];
-		this.logger.log("Total price initialized", totalPrice);
-		this.logger.log("Purchase DTO", JSON.stringify(purchaseDto, null, 2));
 		const paymentReference = this.generatePaymentReference();
 		this.logger.log("Generated payment reference", paymentReference);
-		const transactionDetail = this.transactionDetailRepo.create({
-			paymentReference: paymentReference,
-			paymentStatus: false,
-			paymentMethod: "Online",
-			totalPrice: totalPrice,
-		});
 
-		await this.transactionDetailRepo.save(transactionDetail);
-		this.logger.log(
-			"Transaction detail created",
-			JSON.stringify(transactionDetail, null, 2)
-		);
-
-		console.log("User ID: ", userId);
-		//Check if User Exists
-		const userResponse = await this.userRepo.findOneBy({ id: userId });
-		this.logger.log("User response", JSON.stringify(userResponse, null, 2));
-
-		if (!userResponse) {
-			this.logger.error("User not found for purchase", userId);
-			return new NotFoundResponse(
-				"User not found",
-				"Please provide a valid user ID"
-			);
-		}
-		this.logger.log("User found for purchase", userResponse.username);
-
-		for (const purchase of purchaseDto) {
-			this.logger.log("Processing purchase for product ID", purchase.productId);
-			this.logger.log("Current Total Price", totalPrice);
-			//Check if Product Exist
-			this.logger.log("Checking product for purchase", purchase.productId);
-			const productResponse = await this.productRepo.findOne({
-				where: { id: purchase.productId },
-			});
-
-			this.logger.log("Product response for purchase", productResponse);
-
-			this.logger.log(
-				"Product response",
-				JSON.stringify(productResponse, null, 2)
-			);
-			if (!productResponse || productResponse instanceof NotFoundResponse) {
-				this.logger.error("Product not found for purchase", purchase.productId);
-				return new NotFoundResponse(
-					"Product not found with ID: " + purchase.productId,
-					"Please provide a valid product ID"
-				);
-			}
-			this.logger.log("Product found for purchase", productResponse.name);
-
-			this.logger.log(
-				`Processing purchase for user ${userResponse.username} of product ${productResponse.name} from business`
-			);
-			// Calculate total price (assuming productResponse has a price property)
-			const productPrice = productResponse.price || 0;
-			totalPrice += productPrice * purchase.quantity;
-
-			this.logger.log(
-				`Product price for ${productResponse.name} is ${productPrice}, quantity: ${purchase.quantity}`
-			);
-
-			this.logger.log(
-				`Total price for product ${productResponse.name} is ${totalPrice}`
-			);
-
-			//Update Stock in Product Table
-			const updateStock = await this.updateStock(
-				productResponse.id,
-				purchase.quantity
-			);
-			if (updateStock instanceof NotFoundResponse) {
-				this.logger.error(
-					"Failed to update stock for product",
-					productResponse.name
-				);
-				return updateStock;
-			}
-
-			this.logger.log(
-				`Stock updated successfully for product ${productResponse.name}`
-			);
-
-			// Push product response to the product array
-			product.push({
-				id: productResponse.id,
-				name: productResponse.name,
-				description: productResponse.description || "No description available",
-				unitPrice: productPrice,
-				quantity: purchase.quantity,
-				totalPrice: productPrice * purchase.quantity,
-			});
-
-			// Create Purchase Record
-
-			const purchaseRecord = this.purchaseRepo.create({
-				quantity: purchase.quantity,
-				product: productResponse,
-				price: productPrice * purchase.quantity,
-				paymentReference: paymentReference,
-				transactionDetail: transactionDetail,
-				user: userResponse,
-			});
-			try {
-				await this.purchaseRepo.save(purchaseRecord);
-				this.logger.log(
-					`Purchase record created successfully for product ${productResponse.name}`
-				);
-			} catch (error) {
-				this.logger.error("Failed to create purchase record", error);
-				return new InvalidCredentialsResponse(
-					"Failed to create purchase record",
-					"Please try again later",
-					500
-				);
-			}
-		}
-		// Make Transfer to Business and Save Purchase and transaction history
-		this.logger.log("Total price calculated for all purchases", totalPrice);
-		// transactionDetail.totalPrice = totalPrice;
-		// transactionDetail.paymentStatus = true;
-
-		this.logger.log(
-			"Total price set in transaction detail",
-			transactionDetail.totalPrice
-		);
-
-		this.logger.log(
-			"Creating transaction detail",
-			JSON.stringify(transactionDetail, null, 2)
-		);
-
-		const paymentDetail = new PaymentDto();
-		// paymentDetail.amount = totalPrice.toLocaleString("NGN"); // Paystack expects amount in kobo
-		paymentDetail.amount = Math.round(totalPrice * 100).toString();
-		paymentDetail.email = userResponse.email;
-		paymentDetail.reference = paymentReference;
-		this.logger.log(`Payment detail created`, paymentDetail);
-		let paymentResponse: DataResponse<any> | InvalidCredentialsResponse;
 		try {
-			paymentResponse = await this.initiatePayment(paymentDetail);
-			this.logger.log("Payment response received", paymentResponse);
+			const result = await this.dataSource.transaction(async (manager) => {
+				let totalPrice = 0;
+				let product = [];
 
-			if (paymentResponse instanceof InvalidCredentialsResponse) {
-				this.logger.error("Payment initiation failed", paymentResponse.message);
-				await this.transactionDetailRepo.update(transactionDetail.id, {
-					...transactionDetail,
+				this.logger.log("Total price initialized", totalPrice);
+				this.logger.log("Purchase DTO", JSON.stringify(purchaseDto, null, 2));
+
+				this.logger.log(
+					"Creating transaction detail with payment reference",
+					paymentReference
+				);
+				const transactionDetail = manager.create(TransactionDetail, {
+					paymentReference: paymentReference,
+					paymentStatus: false,
+					paymentMethod: "Online",
+					totalPrice: totalPrice,
+				});
+
+				await manager.save(transactionDetail);
+				this.logger.log(
+					"Transaction detail created",
+					JSON.stringify(transactionDetail, null, 2)
+				);
+
+				console.log("User ID: ", userId);
+				//Check if User Exists
+				const userResponse = await manager.findOne(User, {
+					where: { id: userId },
+				});
+				this.logger.log("User response", JSON.stringify(userResponse, null, 2));
+
+				if (!userResponse) {
+					this.logger.error("User not found for purchase", userId);
+					return new NotFoundResponse(
+						"User not found",
+						"Please provide a valid user ID"
+					);
+				}
+				this.logger.log("User found for purchase", userResponse.username);
+
+				for (const purchase of purchaseDto) {
+					this.logger.log(
+						"Processing purchase for product ID",
+						purchase.productId
+					);
+					this.logger.log("Current Total Price", totalPrice);
+					//Check if Product Exist
+					this.logger.log("Checking product for purchase", purchase.productId);
+					const productResponse = await manager.findOne(Product, {
+						where: { id: purchase.productId },
+						relations: ["business"],
+					});
+
+					this.logger.log("Product response for purchase", productResponse);
+
+					this.logger.log(
+						"Product response",
+						JSON.stringify(productResponse, null, 2)
+					);
+					if (!productResponse || productResponse instanceof NotFoundResponse) {
+						this.logger.error(
+							"Product not found for purchase",
+							purchase.productId
+						);
+						return new NotFoundResponse(
+							"Product not found with ID: " + purchase.productId,
+							"Please provide a valid product ID"
+						);
+					}
+					this.logger.log("Product found for purchase", productResponse.name);
+
+					this.logger.log(
+						`Processing purchase for user ${userResponse.username} of product ${productResponse.name} from business`
+					);
+
+					//Update Stock in Product Table
+					const updateStock = await this.updateStock(
+						productResponse.id,
+						purchase.quantity,
+						manager
+					);
+					if (updateStock instanceof NotFoundResponse) {
+						this.logger.error(
+							"Failed to update stock for product",
+							productResponse.name
+						);
+						return updateStock;
+					}
+
+					this.logger.log(
+						`Stock updated successfully for product ${productResponse.name}`
+					);
+
+					// Calculate total price (assuming productResponse has a price property)
+					const productPrice = productResponse.price || 0;
+					const productTotal = productPrice * purchase.quantity;
+					totalPrice += productTotal;
+
+					this.logger.log(
+						`Product price for ${productResponse.name} is ${productPrice}, quantity: ${purchase.quantity}`
+					);
+
+					this.logger.log(
+						`Total price for product ${productResponse.name} is ${totalPrice}`
+					);
+
+					// Push product response to the product array
+					product.push({
+						id: productResponse.id,
+						name: productResponse.name,
+						description:
+							productResponse.description || "No description available",
+						unitPrice: productPrice,
+						quantity: purchase.quantity,
+						totalPrice: productTotal,
+					});
+
+					// Create Purchase Record
+
+					const purchaseRecord = manager.create(Purchase, {
+						quantity: purchase.quantity,
+						product: productResponse,
+						price: productTotal,
+						paymentReference: paymentReference,
+						transactionDetail: transactionDetail,
+						user: userResponse,
+						business: productResponse.business,
+					});
+
+					await manager.save(purchaseRecord);
+					this.logger.log(
+						`Purchase record created successfully for product ${productResponse.name}`
+					);
+				}
+				// Make Transfer to Business and Save Purchase and transaction history
+				this.logger.log("Total price calculated for all purchases", totalPrice);
+				// transactionDetail.totalPrice = totalPrice;
+				// transactionDetail.paymentStatus = true;
+
+				this.logger.log(
+					"Total price set in transaction detail",
+					transactionDetail.totalPrice
+				);
+
+				this.logger.log(
+					"Creating transaction detail",
+					JSON.stringify(transactionDetail, null, 2)
+				);
+
+				//Update transaction detail with total price and payment status
+				await manager.update(TransactionDetail, transactionDetail.id, {
 					totalPrice: totalPrice,
 					paymentStatus: false,
 					updatedAt: new Date(),
 				});
-				return paymentResponse;
-			}
-			await this.transactionDetailRepo.update(transactionDetail.id, {
-				...transactionDetail,
-				totalPrice: totalPrice,
-				paymentStatus: true,
-				updatedAt: new Date(),
+
+				const paymentDetail = new PaymentDto();
+				paymentDetail.amount = totalPrice.toString(); // Paystack expects amount in kobo
+				// paymentDetail.amount = Math.round(totalPrice * 100).toString();
+				paymentDetail.email = userResponse.email;
+				paymentDetail.reference = paymentReference;
+				this.logger.log(`Payment detail created`, paymentDetail);
+				let paymentResponse: DataResponse<any> | InvalidCredentialsResponse;
+				paymentResponse = await this.initiatePayment(paymentDetail);
+				this.logger.log("Payment response received", paymentResponse);
+
+				if (paymentResponse instanceof InvalidCredentialsResponse) {
+					this.logger.error(
+						"Payment initiation failed",
+						paymentResponse.message
+					);
+					await manager.update(TransactionDetail, transactionDetail.id, {
+						...transactionDetail,
+						totalPrice: totalPrice,
+						paymentStatus: false,
+						updatedAt: new Date(),
+					});
+					return paymentResponse;
+				}
+				await manager.update(TransactionDetail, transactionDetail.id, {
+					...transactionDetail,
+					totalPrice: totalPrice,
+					paymentStatus: true,
+					updatedAt: new Date(),
+				});
+				this.logger.log(
+					`Transaction detail created successfully with reference ${paymentReference}`
+				);
+
+				this.logger.log(
+					`Transaction detail updated successfully with reference ${paymentReference}`
+				);
+
+				// Send Email to User
+				const emailContext = {
+					firstName: userResponse.firstName,
+					lastName: userResponse.lastName,
+					orderNumber: paymentReference,
+					orderDate: new Date().toLocaleDateString(),
+					totalItems: purchaseDto.reduce((acc, item) => acc + item.quantity, 0),
+					paymentMethod: "PAYSTACK",
+					products: product.map((item) => ({
+						name: item.name,
+						description: item.description || "No description available",
+						quantity: item.quantity,
+						unitPrice: item.unitPrice.toLocaleString("NGN"),
+						total: item.totalPrice.toLocaleString("NGN"),
+						currency: "NGN",
+					})),
+					currency: "NGN",
+					grandTotal: totalPrice.toLocaleString("NGN"),
+					supportEmail: "iyiolakeni@gmail.com",
+					supportPhone: "+234 803 123 4567",
+					currentYear: new Date().getFullYear(),
+					trackingUrl: "https://example.com/track-order",
+					companyName: "Thrive Marketplace",
+					logoUrl: "https://example.com/logo.png",
+				};
+
+				this.logger.log(
+					"User Response: ",
+					JSON.stringify(userResponse, null, 2)
+				);
+				this.logger.log("Preparing to send purchase notification email");
+				const emailResponse = await this.emailService.sendEmail({
+					to: userResponse.email,
+					subject: `Purchase Confirmation - ${paymentReference}`,
+					templateName: "purchase_notification",
+					context: emailContext,
+				});
+
+				this.logger.log("Email response", emailResponse);
+				if (emailResponse instanceof ErrorResponse) {
+					this.logger.error(
+						"Failed to send purchase notification email",
+						emailResponse
+					);
+					return new ErrorResponse(
+						emailResponse.message,
+						emailResponse.error,
+						emailResponse.statusCode
+					);
+				}
+
+				this.logger.log(
+					`Purchase notification email sent successfully to ${userResponse.email}`
+				);
+
+				this.logger.log(
+					`Purchase completed successfully for user ${userResponse.username} with payment reference ${paymentReference}`
+				);
+
+				//Log result of the transaction
+				return new DataResponse<PurchaseDto>(
+					paymentResponse.data,
+					"Purchase completed successfully"
+				);
 			});
-			this.logger.log(
-				`Transaction detail created successfully with reference ${paymentReference}`
-			);
+
+			this.logger.log(`Transaction completed successfully ${result}`);
+			return result;
 		} catch (error) {
-			this.logger.error("Failed to create transaction detail", error);
+			this.logger.error("Transaction failed and rolled back", error);
+			if (
+				error instanceof NotFoundResponse ||
+				error instanceof InvalidCredentialsResponse ||
+				error instanceof ErrorResponse
+			) {
+				return error;
+			}
 			return new InvalidCredentialsResponse(
-				"Failed to create transaction detail",
-				"Please try again later",
+				"An unexpected error occurred",
+				error.message || "Transaction failed",
 				500
 			);
 		}
-
-		this.logger.log(
-			`Transaction detail updated successfully with reference ${paymentReference}`
-		);
-
-		// Send Email to User
-		const emailContext = {
-			firstName: userResponse.firstName,
-			lastName: userResponse.lastName,
-			orderNumber: paymentReference,
-			orderDate: new Date().toLocaleDateString(),
-			totalItems: purchaseDto.reduce((acc, item) => acc + item.quantity, 0),
-			paymentMethod: "PAYSTACK",
-			products: product.map((item) => ({
-				name: item.name,
-				description: item.description || "No description available",
-				quantity: item.quantity,
-				unitPrice: item.unitPrice.toLocaleString("NGN"),
-				total: item.totalPrice.toLocaleString("NGN"),
-				currency: "NGN",
-			})),
-			currency: "NGN",
-			grandTotal: totalPrice.toLocaleString("NGN"),
-			supportEmail: "iyiolakeni@gmail.com",
-			supportPhone: "+234 803 123 4567",
-			currentYear: new Date().getFullYear(),
-			trackingUrl: "https://example.com/track-order",
-			companyName: "Thrive Marketplace",
-			logoUrl: "https://example.com/logo.png",
-		};
-
-		this.logger.log("User Response: ", JSON.stringify(userResponse, null, 2));
-		this.logger.log("Preparing to send purchase notification email");
-		const emailResponse = await this.emailService.sendEmail({
-			to: userResponse.email,
-			subject: `Purchase Confirmation - ${paymentReference}`,
-			templateName: "purchase_notification",
-			context: emailContext,
-		});
-
-		this.logger.log("Email response", emailResponse);
-		if (emailResponse instanceof ErrorResponse) {
-			this.logger.error(
-				"Failed to send purchase notification email",
-				emailResponse
-			);
-			return new ErrorResponse(
-				emailResponse.message,
-				emailResponse.error,
-				emailResponse.statusCode
-			);
-		}
-
-		this.logger.log(
-			`Purchase notification email sent successfully to ${userResponse.email}`
-		);
-
-		return new DataResponse<PurchaseDto>(
-			paymentResponse.data,
-			"Purchase completed successfully"
-		);
 	}
 
 	async updateStock(
 		id: string,
-		quantity: number
+		quantity: number,
+		manager?: EntityManager
 	): Promise<SuccessResponse | NotFoundResponse> {
 		this.logger.log(`Updating stock for id: ${id} with quantity: ${quantity}`);
 
-		const product = await this.productRepo.findOneBy({ id });
+		if (!id || !quantity) {
+			this.logger.error("ID or quantity is empty or undefined");
+			return new NotFoundResponse(
+				"Invalid ID or quantity",
+				"Please provide a valid ID and quantity"
+			);
+		}
+
+		if (quantity <= 0) {
+			this.logger.error("Quantity must be greater than zero");
+			return new NotFoundResponse(
+				"Invalid quantity",
+				"Quantity must be greater than zero"
+			);
+		}
+
+		//Check if the entity manager is provided, if not use the default repository
+		//Manager is used for transactions to ensure rollback on failure
+		const repo = manager ? manager.getRepository(Product) : this.productRepo;
+		const product = await repo.findOneBy({ id });
+
 		if (!product) {
 			this.logger.error(`Product with id ${id} not found`);
 			return new NotFoundResponse(
@@ -477,10 +542,22 @@ export class SharedService {
 		this.logger.log(
 			`Product found: ${product.name}, current stock: ${product.stock}`
 		);
+
+		if (product.stock < quantity) {
+			this.logger.error(`Insufficient stock for product ${product.name}`);
+			return new NotFoundResponse(
+				"Insufficient stock",
+				`Only ${product.stock} units available`
+			);
+		}
+
 		product.stock -= quantity;
 		this.logger.log(`Updated stock: ${product.stock}`);
-		await this.productRepo.update(id, { stock: product.stock });
+
+		await repo.update(id, { stock: product.stock });
+
 		this.logger.log(`Stock updated successfully for product: ${product.name}`);
+
 		return new SuccessResponse("Stock updated successfully", 200);
 	}
 

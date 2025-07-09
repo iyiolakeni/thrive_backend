@@ -13,6 +13,9 @@ export class TransactionDetail {
 	@Column()
 	paymentStatus: boolean;
 
+	@Column({ default: "pending" })
+	paymentStatusMessage: string;
+
 	@Column()
 	paymentMethod: string;
 
