@@ -32,6 +32,7 @@ export class PurchaseService {
 			| InvalidCredentialsResponse
 		>
 	> {
+		console.log("UserId: ", userId);
 		return this.sharedService.purchaseProduct(
 			userId,
 			createPurchaseDto

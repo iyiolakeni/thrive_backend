@@ -22,7 +22,7 @@ export class PurchaseController {
 		private readonly sharedService: SharedService
 	) {}
 
-	@Post("buy")
+	@Post("buy/:userId")
 	@ApiBody({ type: PurchaseDto, isArray: true })
 	create(
 		@Param("userId") userId: string,

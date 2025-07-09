@@ -12,6 +12,7 @@ import { UpdateBusinessDto } from "./dto/update-business.dto/update-business.dto
 import { SharedService } from "src/shared-service/shared-service.service";
 import {
 	DataResponse,
+	ErrorResponse,
 	InvalidCredentialsResponse,
 	NotFoundResponse,
 	SuccessResponse,
@@ -145,14 +146,34 @@ export class BusinessService {
 		return new SuccessResponse("Business created successfully", 200);
 	}
 
-	async getAllBusiness(): Promise<DataResponse<Business[]>> {
-		const business = await this.businessRepo.find();
+	async getAllBusiness(): Promise<DataResponse<Business[]> | ErrorResponse> {
+		try {
+			const business = await this.businessRepo.find();
 
-		return new DataResponse<Business[]>(
-			business,
-			"All Businesses fetched successfully",
-			200
-		);
+			if (!business || business.length === 0) {
+				return new ErrorResponse(
+					"No business found",
+					"Business Retrieval Error",
+					404
+				);
+			}
+
+			return new DataResponse<Business[]>(
+				business,
+				"All Businesses fetched successfully",
+				200
+			);
+		} catch (error) {
+			this.logger.error(
+				`Error fetching businesses: ${error.message}`,
+				error.stack
+			);
+			return new ErrorResponse(
+				`Error fetching businesses: ${error.message}`,
+				"Business Retrieval Error",
+				500
+			);
+		}
 	}
 
 	async getBusiness(

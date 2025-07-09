@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/shared-service/toekn-service.service.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1752062658403,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1752062658403,
+            "name": "Commit-0",
+            "content": "import { Injectable } from \"@nestjs/common\";\r\nimport { BadRequestResponse } from \"src/models/response.dto\";\r\n\r\n@Injectable()\r\nexport class TokenService {\r\n\r\n    async extractToken(authorization: string) {\r\n        if (!authorization) {\r\n            throw new BadRequestResponse(\"Authorization header is required\");\r\n        }\r\n \r\n        if (!authorization.startsWith(\"Bearer \")) {\r\n            throw new BadRequestResponse(\r\n                \"Invalid authorization header format. Expected: Bearer <token>\"\r\n            );\r\n        }\r\n \r\n        const token = authorization.replace(\"Bearer \", \"\").trim();\r\n        if (!token) {\r\n            throw new BadRequestResponse(\"Token is required\");\r\n        }\r\n \r\n        return token;\r\n    }\r\n}"
+        }
+    ]
+}

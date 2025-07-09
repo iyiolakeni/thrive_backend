@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/products/dto/create-product-business.dto.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1752062658410,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1752062658410,
+            "name": "Commit-0",
+            "content": "import { ApiProperty } from \"@nestjs/swagger\";\r\n\r\nexport class CreateBusinessProductDto {\r\n    @ApiProperty()\r\n    name: string;\r\n\r\n    @ApiProperty()\r\n    description: string;\r\n\r\n    @ApiProperty()\r\n    unitPrice: number;\r\n\r\n    @ApiProperty()\r\n    stock: number;\r\n\r\n    @ApiProperty({ required: false })\r\n    imageUrl?: string;\r\n\r\n    @ApiProperty({ required: false })\r\n    discount?: number;\r\n\r\n    @ApiProperty()\r\n    categoryId: string;\r\n}\r\n"
+        }
+    ]
+}

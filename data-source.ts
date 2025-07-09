@@ -19,6 +19,7 @@ export const AppDataSource = new DataSource({
 	password: process.env.POSTGRES_PASSWORD,
 	database: process.env.POSTGRES_DATABASE,
 	ssl: true,
+	connectTimeoutMS: 60000,
 	// url: "postgres://default:pguX9yMWco8T@ep-lucky-frost-a402y3x7-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require",
 	entities: [
 		User,

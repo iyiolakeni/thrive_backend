@@ -4,11 +4,13 @@ import { JwtService } from "@nestjs/jwt";
 import { InjectRepository } from "@nestjs/typeorm";
 import axios from "axios";
 import { randomBytes } from "crypto";
+import { EmailService } from "src/email/email.service";
 import { Business } from "src/entities/business.entity/business.entity";
 import { UserType } from "src/entities/enum";
 import { User } from "src/entities/user.entity/user.entity";
 import {
 	DataResponse,
+	ErrorResponse,
 	InvalidCredentialsResponse,
 	NotFoundResponse,
 	SuccessResponse,
@@ -43,7 +45,8 @@ export class SharedService {
 		@InjectRepository(TransactionDetail)
 		private readonly transactionDetailRepo: Repository<TransactionDetail>,
 		private readonly jwtService: JwtService,
-		private readonly configService: ConfigService
+		private readonly configService: ConfigService,
+		private readonly emailService: EmailService
 	) {}
 
 	async decodeToken(
@@ -86,6 +89,41 @@ export class SharedService {
 			return false;
 		}
 		this.logger.log(`User with username: ${username} is an admin`);
+		return true;
+	}
+
+	async verifyUserIsVendor(
+		username: string
+	): Promise<boolean | InvalidCredentialsResponse> {
+		console.log(`Verifying if user with username: ${username} is a Vendor`);
+		this.logger.log(`Verifying if user with username: ${username} is a Vendor`);
+		if (!username) {
+			return new InvalidCredentialsResponse(
+				"Username is required",
+				"Please provide a valid username",
+				400
+			);
+		}
+		const user = await this.userRepo.findOneBy({ username });
+		if (!user) {
+			this.logger.error(`User with username: ${username} not found`);
+			return false;
+		}
+		if (user.userType !== UserType.VENDOR) {
+			this.logger.warn(`User with username: ${username} is not a Vendor`);
+			return false;
+		}
+
+		if (user.isVerified === false) {
+			this.logger.warn(`User with username: ${username} is not verified`);
+			return new InvalidCredentialsResponse(
+				"User is not verified",
+				"Please verify your account to proceed",
+				403
+			);
+		}
+
+		this.logger.log(`User with username: ${username} is a Verified Vendor`);
 		return true;
 	}
 
@@ -173,7 +211,17 @@ export class SharedService {
 			);
 		}
 
+		if (!userId || userId === null || userId === undefined) {
+			this.logger.error("user Id is empty ");
+			return new InvalidCredentialsResponse(
+				"UserId is missing",
+				"Invalid UserId",
+				404
+			);
+		}
+
 		let totalPrice = 0;
+		let product = [];
 		this.logger.log("Total price initialized", totalPrice);
 		this.logger.log("Purchase DTO", JSON.stringify(purchaseDto, null, 2));
 		const paymentReference = this.generatePaymentReference();
@@ -191,9 +239,10 @@ export class SharedService {
 			JSON.stringify(transactionDetail, null, 2)
 		);
 
+		console.log("User ID: ", userId);
 		//Check if User Exists
 		const userResponse = await this.userRepo.findOneBy({ id: userId });
-		this.logger.log("User response", userResponse);
+		this.logger.log("User response", JSON.stringify(userResponse, null, 2));
 
 		if (!userResponse) {
 			this.logger.error("User not found for purchase", userId);
@@ -212,6 +261,8 @@ export class SharedService {
 			const productResponse = await this.productRepo.findOne({
 				where: { id: purchase.productId },
 			});
+
+			this.logger.log("Product response for purchase", productResponse);
 
 			this.logger.log(
 				"Product response",
@@ -258,6 +309,16 @@ export class SharedService {
 				`Stock updated successfully for product ${productResponse.name}`
 			);
 
+			// Push product response to the product array
+			product.push({
+				id: productResponse.id,
+				name: productResponse.name,
+				description: productResponse.description || "No description available",
+				unitPrice: productPrice,
+				quantity: purchase.quantity,
+				totalPrice: productPrice * purchase.quantity,
+			});
+
 			// Create Purchase Record
 
 			const purchaseRecord = this.purchaseRepo.create({
@@ -298,7 +359,8 @@ export class SharedService {
 		);
 
 		const paymentDetail = new PaymentDto();
-		paymentDetail.amount = totalPrice.toLocaleString("NGN"); // Paystack expects amount in kobo
+		// paymentDetail.amount = totalPrice.toLocaleString("NGN"); // Paystack expects amount in kobo
+		paymentDetail.amount = Math.round(totalPrice * 100).toString();
 		paymentDetail.email = userResponse.email;
 		paymentDetail.reference = paymentReference;
 		this.logger.log(`Payment detail created`, paymentDetail);
@@ -338,6 +400,59 @@ export class SharedService {
 		this.logger.log(
 			`Transaction detail updated successfully with reference ${paymentReference}`
 		);
+
+		// Send Email to User
+		const emailContext = {
+			firstName: userResponse.firstName,
+			lastName: userResponse.lastName,
+			orderNumber: paymentReference,
+			orderDate: new Date().toLocaleDateString(),
+			totalItems: purchaseDto.reduce((acc, item) => acc + item.quantity, 0),
+			paymentMethod: "PAYSTACK",
+			products: product.map((item) => ({
+				name: item.name,
+				description: item.description || "No description available",
+				quantity: item.quantity,
+				unitPrice: item.unitPrice.toLocaleString("NGN"),
+				total: item.totalPrice.toLocaleString("NGN"),
+				currency: "NGN",
+			})),
+			currency: "NGN",
+			grandTotal: totalPrice.toLocaleString("NGN"),
+			supportEmail: "iyiolakeni@gmail.com",
+			supportPhone: "+234 803 123 4567",
+			currentYear: new Date().getFullYear(),
+			trackingUrl: "https://example.com/track-order",
+			companyName: "Thrive Marketplace",
+			logoUrl: "https://example.com/logo.png",
+		};
+
+		this.logger.log("User Response: ", JSON.stringify(userResponse, null, 2));
+		this.logger.log("Preparing to send purchase notification email");
+		const emailResponse = await this.emailService.sendEmail({
+			to: userResponse.email,
+			subject: `Purchase Confirmation - ${paymentReference}`,
+			templateName: "purchase_notification",
+			context: emailContext,
+		});
+
+		this.logger.log("Email response", emailResponse);
+		if (emailResponse instanceof ErrorResponse) {
+			this.logger.error(
+				"Failed to send purchase notification email",
+				emailResponse
+			);
+			return new ErrorResponse(
+				emailResponse.message,
+				emailResponse.error,
+				emailResponse.statusCode
+			);
+		}
+
+		this.logger.log(
+			`Purchase notification email sent successfully to ${userResponse.email}`
+		);
+
 		return new DataResponse<PurchaseDto>(
 			paymentResponse.data,
 			"Purchase completed successfully"

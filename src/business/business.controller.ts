@@ -17,6 +17,7 @@ import { Business } from "src/entities/business.entity/business.entity";
 import { UpdateBusinessDto } from "./dto/update-business.dto/update-business.dto";
 import {
 	DataResponse,
+	ErrorResponse,
 	InvalidCredentialsResponse,
 	NotFoundResponse,
 	SuccessResponse,
@@ -45,7 +46,7 @@ export class BusinessController {
 	}
 
 	@Get("all")
-	getAllBusiness(): Promise<DataResponse<Business[]>> {
+	getAllBusiness(): Promise<DataResponse<Business[]> | ErrorResponse> {
 		return this.businessService.getAllBusiness();
 	}
 

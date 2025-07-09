@@ -55,7 +55,7 @@ export class Business {
 	@Column({ default: false })
 	isVerified: boolean;
 
-	@Column()
+	@Column({ nullable: true })
 	verifiedBy: string;
 
 	@Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })

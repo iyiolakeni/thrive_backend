@@ -8,10 +8,13 @@ import { SharedService } from "src/shared-service/shared-service.service";
 import {
 	ConflictResponse,
 	DataResponse,
+	ErrorResponse,
 	InvalidCredentialsResponse,
 	NotFoundResponse,
 	SuccessResponse,
+	UnauthorizedResponse,
 } from "src/models/response.dto";
+import { CreateBusinessProductDto } from "./dto/create-product-business.dto";
 
 @Injectable()
 export class ProductsService {
@@ -24,78 +27,413 @@ export class ProductsService {
 	) {}
 
 	async create(
-		createProductDto: CreateProductDto
-	): Promise<SuccessResponse | InvalidCredentialsResponse> {
-		this.logger.log("Creating a new product", createProductDto.name);
+		createProductDto: CreateProductDto,
+		accessToken: string
+	): Promise<SuccessResponse | InvalidCredentialsResponse | ErrorResponse> {
+		try {
+			const decodedToken = await this.shareService.decodeToken(accessToken);
+			if (decodedToken instanceof UnauthorizedResponse) {
+				return new ErrorResponse(
+					"Invalid access token",
+					"Authentication Error",
+					401
+				);
+			}
 
-		// Check if product name already exists
-		const existingProduct = await this.productRepo.findOneBy({
-			name: createProductDto.name,
-		});
-
-		this.logger.warn(
-			"Exisiting Business",
-			JSON.stringify(existingProduct, null, 2)
-		);
-		// this.logger.warn("Exisiting Business", existingProduct.businessId);
-
-		if (
-			existingProduct !== null &&
-			existingProduct.businessId === createProductDto.businessId
-		) {
-			this.logger.error(
-				"Product with this name already exists under the business"
+			const userIsAdmin = await this.shareService.verifyUserIsAdmin(
+				decodedToken.data.username
 			);
-			return new ConflictResponse(
-				"Product with this name already exists",
-				"Product exists"
+
+			if (!userIsAdmin) {
+				return new UnauthorizedResponse(
+					"Only admins can create product categories",
+					"Authorization Error"
+				);
+			}
+			this.logger.log("Creating a new product", createProductDto.name);
+
+			// Check if product name already exists
+			const existingProduct = await this.productRepo.findOneBy({
+				name: createProductDto.name,
+			});
+
+			this.logger.warn(
+				"Exisiting Business",
+				JSON.stringify(existingProduct, null, 2)
+			);
+			// this.logger.warn("Exisiting Business", existingProduct.businessId);
+
+			if (
+				existingProduct !== null &&
+				existingProduct.businessId === createProductDto.businessId
+			) {
+				this.logger.error(
+					"Product with this name already exists under the business"
+				);
+				return new ConflictResponse(
+					"Product with this name already exists",
+					"Product exists"
+				);
+			}
+			// Validate the business ID
+			const businessResponse = await this.shareService.findBusinessById(
+				createProductDto.businessId
+			);
+			const foundBusiness =
+				businessResponse instanceof DataResponse ? businessResponse.data : null;
+			this.logger.log("Business found", foundBusiness);
+
+			if (!foundBusiness) {
+				this.logger.error("Business not found");
+				return new InvalidCredentialsResponse("Business not found", "", 404);
+			}
+
+			const productCategoryResponse =
+				await this.shareService.findProductCategoryById(
+					createProductDto.categoryId
+				);
+			const foundProductCategory =
+				productCategoryResponse instanceof DataResponse
+					? productCategoryResponse.data
+					: null;
+
+			if (!foundProductCategory) {
+				this.logger.error("Product category not found");
+				return new InvalidCredentialsResponse(
+					"Product category not found",
+					"",
+					404
+				);
+			}
+
+			this.logger.log("Product category found", foundProductCategory);
+
+			const product = this.productRepo.create({
+				...createProductDto,
+				price:
+					createProductDto.unitPrice -
+					createProductDto.unitPrice * (createProductDto.discount / 100), // Assuming unitPrice is the price
+				createdBy: decodedToken.data.username,
+			});
+			this.logger.log("Product created", JSON.stringify(product, null, 2));
+			await this.productRepo.save(product);
+
+			this.logger.log("Product created successfully", product.name);
+
+			return new SuccessResponse("Product created successfully", 200);
+		} catch (error) {
+			this.logger.error("Error creating product", error);
+			return new ErrorResponse(
+				"An error occurred while creating the product",
+				"Product Creation Error",
+				500
 			);
 		}
-		// Validate the business ID
-		const businessResponse = await this.shareService.findBusinessById(
-			createProductDto.businessId
-		);
-		const foundBusiness =
-			businessResponse instanceof DataResponse ? businessResponse.data : null;
-		this.logger.log("Business found", foundBusiness);
+	}
 
-		if (!foundBusiness) {
-			this.logger.error("Business not found");
-			return new InvalidCredentialsResponse("Business not found", "", 404);
-		}
+	async createBUlk(
+		createProductDtos: CreateProductDto[],
+		accessToken: string
+	): Promise<SuccessResponse | InvalidCredentialsResponse | ErrorResponse> {
+		const results: Product[] = [];
+		const errors: string[] = [];
 
-		const productCategoryResponse =
-			await this.shareService.findProductCategoryById(
-				createProductDto.categoryId
+		try {
+			const decodedToken = await this.shareService.decodeToken(accessToken);
+			if (decodedToken instanceof UnauthorizedResponse) {
+				return new ErrorResponse(
+					"Invalid access token",
+					"Authentication Error",
+					401
+				);
+			}
+
+			const userIsAdmin = await this.shareService.verifyUserIsAdmin(
+				decodedToken.data.username
 			);
-		const foundProductCategory =
-			productCategoryResponse instanceof DataResponse
-				? productCategoryResponse.data
-				: null;
 
-		if (!foundProductCategory) {
-			this.logger.error("Product category not found");
-			return new InvalidCredentialsResponse(
-				"Product category not found",
-				"",
-				404
+			if (!userIsAdmin) {
+				return new UnauthorizedResponse(
+					"Only admins can create product categories",
+					"Authorization Error"
+				);
+			}
+
+			this.logger.log(
+				`Starting bulk creation of ${createProductDtos.length} products`
+			);
+
+			for (let i = 0; i < createProductDtos.length; i++) {
+				const createProductDto = createProductDtos[i];
+				try {
+					this.logger.log(
+						`Creating product ${i + 1}/${createProductDtos.length}: ${
+							createProductDto.name
+						}`
+					);
+
+					// Check if product name already exists
+					const existingProduct = await this.productRepo.findOneBy({
+						name: createProductDto.name,
+					});
+
+					if (
+						existingProduct !== null &&
+						existingProduct.businessId === createProductDto.businessId
+					) {
+						const errorMsg = `Product with name '${createProductDto.name}' already exists under the business`;
+						this.logger.error(errorMsg);
+						errors.push(errorMsg);
+						continue;
+					}
+
+					// Validate the business ID
+					const businessResponse = await this.shareService.findBusinessById(
+						createProductDto.businessId
+					);
+					const foundBusiness =
+						businessResponse instanceof DataResponse
+							? businessResponse.data
+							: null;
+
+					if (!foundBusiness) {
+						const errorMsg = `Business not found for product '${createProductDto.name}'`;
+						this.logger.error(errorMsg);
+						errors.push(errorMsg);
+						continue;
+					}
+
+					// Validate product category
+					const productCategoryResponse =
+						await this.shareService.findProductCategoryById(
+							createProductDto.categoryId
+						);
+					const foundProductCategory =
+						productCategoryResponse instanceof DataResponse
+							? productCategoryResponse.data
+							: null;
+
+					if (!foundProductCategory) {
+						const errorMsg = `Product category not found for product '${createProductDto.name}'`;
+						this.logger.error(errorMsg);
+						errors.push(errorMsg);
+						continue;
+					}
+
+					// Create and save the product
+					const product = this.productRepo.create({
+						...createProductDto,
+						price:
+							createProductDto.unitPrice -
+							createProductDto.unitPrice * (createProductDto.discount / 100),
+						createdBy: decodedToken.data.username,
+					});
+
+					const savedProduct = await this.productRepo.save(product);
+					results.push(savedProduct);
+					this.logger.log(
+						`Product '${createProductDto.name}' created successfully`
+					);
+				} catch (productError) {
+					const errorMsg = `Error creating product '${createProductDto.name}': ${productError.message}`;
+					this.logger.error(errorMsg);
+					errors.push(errorMsg);
+				}
+			}
+
+			// Return results based on success/failure counts
+			if (results.length === 0) {
+				return new ErrorResponse(
+					`Failed to create all products. Errors: ${errors.join("; ")}`,
+					"Bulk Creation Failed",
+					400
+				);
+			} else if (errors.length === 0) {
+				return new SuccessResponse(
+					`Successfully created all ${results.length} products`,
+					200
+				);
+			} else {
+				return new SuccessResponse(
+					`Partially successful: ${results.length} products created, ${
+						errors.length
+					} failed. Errors: ${errors.join("; ")}`,
+					206 // Partial Content
+				);
+			}
+		} catch (error) {
+			this.logger.error("Error during bulk product creation", error);
+			return new ErrorResponse(
+				"An error occurred while creating products in bulk",
+				"Bulk Product Creation Error",
+				500
 			);
 		}
+	}
 
-		this.logger.log("Product category found", foundProductCategory);
+	async createBulkByBusinessId(
+		createProductDtos: CreateBusinessProductDto[],
+		accessToken: string,
+		businessId: string
+	): Promise<SuccessResponse | InvalidCredentialsResponse | ErrorResponse> {
+		const results: Product[] = [];
+		const errors: string[] = [];
 
-		const product = this.productRepo.create({
-			...createProductDto,
-			price:
-				createProductDto.unitPrice -
-				createProductDto.unitPrice * (createProductDto.discount / 100), // Assuming unitPrice is the price
-		});
-		this.logger.log("Product created", JSON.stringify(product, null, 2));
-		await this.productRepo.save(product);
+		try {
+			const decodedToken = await this.shareService.decodeToken(accessToken);
+			if (decodedToken instanceof UnauthorizedResponse) {
+				return new ErrorResponse(
+					"Invalid access token",
+					"Authentication Error",
+					401
+				);
+			}
 
-		this.logger.log("Product created successfully", product.name);
+			const user = await this.shareService.findOneByUsername(
+				decodedToken.data.username
+			);
 
-		return new SuccessResponse("Product created successfully", 200);
+			if (!user || user instanceof NotFoundResponse) {
+				return new InvalidCredentialsResponse(
+					"User not found",
+					"Invalid Credentials",
+					404
+				);
+			}
+
+			const userIsAdmin = await this.shareService.verifyUserIsVendor(
+				decodedToken.data.username
+			);
+
+			if (!userIsAdmin) {
+				return new UnauthorizedResponse(
+					"Only admins can create product categories",
+					"Authorization Error"
+				);
+			}
+
+			this.logger.log(
+				`Starting bulk creation of ${createProductDtos.length} products`
+			);
+
+			// Validate the business ID
+			const businessResponse = await this.shareService.findBusinessById(
+				businessId
+			);
+			const foundBusiness =
+				businessResponse instanceof DataResponse ? businessResponse.data : null;
+
+			if (!foundBusiness) {
+				const errorMsg = `Business not found for products`;
+				this.logger.error(errorMsg);
+				return new InvalidCredentialsResponse(
+					"Business not found",
+					"Not Found",
+					404
+				);
+			}
+
+			if (foundBusiness.userId !== user.data.id) {
+				this.logger.error(
+					`User ${user.data.username} does not own the business with ID ${businessId}`
+				);
+				return new UnauthorizedResponse(
+					"User does not own the business",
+					"Unauthorized"
+				);
+			}
+
+			for (let i = 0; i < createProductDtos.length; i++) {
+				const createProductDto = createProductDtos[i];
+				try {
+					this.logger.log(
+						`Creating product ${i + 1}/${createProductDtos.length}: ${
+							createProductDto.name
+						}`
+					);
+
+					// Check if product name already exists
+					const existingProduct = await this.productRepo.findOneBy({
+						name: createProductDto.name,
+					});
+
+					if (
+						existingProduct !== null &&
+						existingProduct.businessId === businessId
+					) {
+						const errorMsg = `Product with name '${createProductDto.name}' already exists under the business`;
+						this.logger.error(errorMsg);
+						errors.push(errorMsg);
+						continue;
+					}
+
+					// Validate product category
+					const productCategoryResponse =
+						await this.shareService.findProductCategoryById(
+							createProductDto.categoryId
+						);
+					const foundProductCategory =
+						productCategoryResponse instanceof DataResponse
+							? productCategoryResponse.data
+							: null;
+
+					if (!foundProductCategory) {
+						const errorMsg = `Product category not found for product '${createProductDto.name}'`;
+						this.logger.error(errorMsg);
+						errors.push(errorMsg);
+						continue;
+					}
+
+					// Create and save the product
+					const product = this.productRepo.create({
+						...createProductDto,
+						price:
+							createProductDto.unitPrice -
+							createProductDto.unitPrice * (createProductDto.discount / 100),
+						createdBy: user.data.username,
+						businessId: businessId,
+					});
+
+					const savedProduct = await this.productRepo.save(product);
+					results.push(savedProduct);
+					this.logger.log(
+						`Product '${createProductDto.name}' created successfully`
+					);
+				} catch (productError) {
+					const errorMsg = `Error creating product '${createProductDto.name}': ${productError.message}`;
+					this.logger.error(errorMsg);
+					errors.push(errorMsg);
+				}
+			}
+
+			// Return results based on success/failure counts
+			if (results.length === 0) {
+				return new ErrorResponse(
+					`Failed to create all products. Errors: ${errors.join("; ")}`,
+					"Bulk Creation Failed",
+					400
+				);
+			} else if (errors.length === 0) {
+				return new SuccessResponse(
+					`Successfully created all ${results.length} products`,
+					200
+				);
+			} else {
+				return new SuccessResponse(
+					`Partially successful: ${results.length} products created, ${
+						errors.length
+					} failed. Errors: ${errors.join("; ")}`,
+					206 // Partial Content
+				);
+			}
+		} catch (error) {
+			this.logger.error("Error during bulk product creation", error);
+			return new ErrorResponse(
+				"An error occurred while creating products in bulk",
+				"Bulk Product Creation Error",
+				500
+			);
+		}
 	}
 
 	async findAll(): Promise<DataResponse<Product[]> | NotFoundResponse> {

@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 5,
+            "activePatchIndex": 7,
             "patches": [
                 {
                     "date": 1749974600559,
@@ -28,6 +28,14 @@
                 {
                     "date": 1750238610252,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -19,9 +19,9 @@\n } from \"src/models/response.dto\";\r\n import { Product } from \"./entities/product.entity\";\r\n \r\n @Controller(\"products\")\r\n-@ApiTags(\"Products Category\")\r\n+@ApiTags(\"Products\")\r\n export class ProductsController {\r\n \tconstructor(private readonly productsService: ProductsService) {}\r\n \r\n \t@Post(\"create\")\r\n"
+                },
+                {
+                    "date": 1752062658457,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -5,8 +5,9 @@\n \tBody,\r\n \tPatch,\r\n \tParam,\r\n \tDelete,\r\n+\tHeaders,\r\n } from \"@nestjs/common\";\r\n import { ProductsService } from \"./products.service\";\r\n import { CreateProductDto } from \"./dto/create-product.dto\";\r\n import { UpdateProductDto } from \"./dto/update-product.dto\";\r\n@@ -17,21 +18,46 @@\n \tNotFoundResponse,\r\n \tSuccessResponse,\r\n } from \"src/models/response.dto\";\r\n import { Product } from \"./entities/products.entity\";\r\n+import { TokenService } from \"src/shared-service/toekn-service.service\";\r\n \r\n @Controller(\"products\")\r\n @ApiTags(\"Products\")\r\n export class ProductsController {\r\n-\tconstructor(private readonly productsService: ProductsService) {}\r\n+\tconstructor(\r\n+\t\tprivate readonly productsService: ProductsService,\r\n+\t\tprivate readonly tokenServie: TokenService\r\n+\t) {}\r\n \r\n \t@Post(\"create\")\r\n \tasync create(\r\n-\t\t@Body() createProductDto: CreateProductDto\r\n+\t\t@Body() createProductDto: CreateProductDto,\r\n+\t\t@Headers(\"Authorization\") authorization: string\r\n \t): Promise<SuccessResponse | InvalidCredentialsResponse> {\r\n-\t\treturn this.productsService.create(createProductDto);\r\n+\t\tconst token = await this.tokenServie.extractToken(authorization);\r\n+\t\treturn this.productsService.create(createProductDto, token);\r\n \t}\r\n \r\n+\t@Post(\"create-bulk\")\r\n+\tasync createBulk(\r\n+\t\t@Body() createProductDto: CreateProductDto[],\r\n+\t\t@Headers(\"Authorization\") authorization: string\r\n+\t): Promise<SuccessResponse | InvalidCredentialsResponse> {\r\n+\t\tconst token = await this.tokenServie.extractToken(authorization);\r\n+\t\treturn this.productsService.createBUlk(createProductDto, token);\r\n+\t}\r\n+\r\n+\t@Post(\"create-bulk\")\r\n+\tasync createBusinessBulk(\r\n+\t\t@Body() createProductDto: CreateProductDto[],\r\n+\t\t@Headers(\"Authorization\") authorization: string,\r\n+\t\t@Param(\"businessId\") businessId: string\r\n+\t): Promise<SuccessResponse | InvalidCredentialsResponse> {\r\n+\t\tconst token = await this.tokenServie.extractToken(authorization);\r\n+\t\treturn this.productsService.createBulkByBusinessId(createProductDto, token, businessId);\r\n+\t}\r\n+\r\n \t@Get(\"all\")\r\n \tasync findAll(): Promise<DataResponse<Product[]> | NotFoundResponse> {\r\n \t\treturn this.productsService.findAll();\r\n \t}\r\n"
+                },
+                {
+                    "date": 1752062753607,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -46,9 +46,9 @@\n \t\tconst token = await this.tokenServie.extractToken(authorization);\r\n \t\treturn this.productsService.createBUlk(createProductDto, token);\r\n \t}\r\n \r\n-\t@Post(\"create-bulk\")\r\n+\t@Post(\"bulk-create/:businessId\")\r\n \tasync createBusinessBulk(\r\n \t\t@Body() createProductDto: CreateProductDto[],\r\n \t\t@Headers(\"Authorization\") authorization: string,\r\n \t\t@Param(\"businessId\") businessId: string\r\n"
                 }
             ],
             "date": 1749974600559,

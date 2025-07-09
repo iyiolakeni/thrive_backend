@@ -6,6 +6,7 @@ import {
 	Patch,
 	Param,
 	Delete,
+	Headers,
 } from "@nestjs/common";
 import { ProductsService } from "./products.service";
 import { CreateProductDto } from "./dto/create-product.dto";
@@ -18,17 +19,46 @@ import {
 	SuccessResponse,
 } from "src/models/response.dto";
 import { Product } from "./entities/products.entity";
+import { TokenService } from "src/shared-service/toekn-service.service";
 
 @Controller("products")
 @ApiTags("Products")
 export class ProductsController {
-	constructor(private readonly productsService: ProductsService) {}
+	constructor(
+		private readonly productsService: ProductsService,
+		private readonly tokenServie: TokenService
+	) {}
 
 	@Post("create")
 	async create(
-		@Body() createProductDto: CreateProductDto
+		@Body() createProductDto: CreateProductDto,
+		@Headers("Authorization") authorization: string
 	): Promise<SuccessResponse | InvalidCredentialsResponse> {
-		return this.productsService.create(createProductDto);
+		const token = await this.tokenServie.extractToken(authorization);
+		return this.productsService.create(createProductDto, token);
+	}
+
+	@Post("create-bulk")
+	async createBulk(
+		@Body() createProductDto: CreateProductDto[],
+		@Headers("Authorization") authorization: string
+	): Promise<SuccessResponse | InvalidCredentialsResponse> {
+		const token = await this.tokenServie.extractToken(authorization);
+		return this.productsService.createBUlk(createProductDto, token);
+	}
+
+	@Post("bulk-create/:businessId")
+	async createBusinessBulk(
+		@Body() createProductDto: CreateProductDto[],
+		@Headers("Authorization") authorization: string,
+		@Param("businessId") businessId: string
+	): Promise<SuccessResponse | InvalidCredentialsResponse> {
+		const token = await this.tokenServie.extractToken(authorization);
+		return this.productsService.createBulkByBusinessId(
+			createProductDto,
+			token,
+			businessId
+		);
 	}
 
 	@Get("all")

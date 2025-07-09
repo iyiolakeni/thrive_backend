@@ -19,6 +19,7 @@ import { UpdateUserDto } from "./dto/update-user.dto/update-user.dto";
 import { JwtAwthGuard } from "src/auth/jwt-auth.guard";
 import {
 	ErrorResponse,
+	InvalidCredentialsResponse,
 	NotFoundResponse,
 	SearchResponse,
 	SuccessResponse,
@@ -49,7 +50,7 @@ export class UserController {
 	}
 
 	@Get("all")
-	getAllusers(): Promise<UserDto[]> {
+	getAllusers(): Promise<UserDto[] | ErrorResponse | NotFoundResponse> {
 		return this.userService.getAllUsers();
 	}
 
@@ -67,14 +68,18 @@ export class UserController {
 	async updateUser(
 		@Param("username") username: string,
 		@Body() updateUserDto: UpdateUserDto
-	): Promise<User> {
+	): Promise<
+		User | NotFoundResponse | ErrorResponse | InvalidCredentialsResponse
+	> {
 		return this.userService.updateUser(username, updateUserDto);
 	}
 
 	@Delete("delete/:username")
 	@UseGuards(JwtAwthGuard)
 	// @UseGuards(LocalAuthGuard)
-	async deleteUser(@Param("username") username: string): Promise<void> {
+	async deleteUser(
+		@Param("username") username: string
+	): Promise<void | NotFoundResponse | InvalidCredentialsResponse> {
 		return this.userService.deleteUser(username);
 	}
 

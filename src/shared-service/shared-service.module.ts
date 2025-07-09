@@ -10,6 +10,8 @@ import { TransactionDetail } from "src/transaction-details/entities/transaction-
 import { JwtModule } from "@nestjs/jwt";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { JwtStrategy } from "src/auth/jwt.strategy";
+import { TokenService } from "./toekn-service.service";
+import { EmailService } from "src/email/email.service";
 
 @Global()
 @Module({
@@ -31,9 +33,10 @@ import { JwtStrategy } from "src/auth/jwt.strategy";
 			}),
 		}),
 	],
-	providers: [SharedService, JwtStrategy],
+	providers: [SharedService, JwtStrategy, TokenService, EmailService],
 	exports: [
 		SharedService,
+		TokenService,
 		TypeOrmModule.forFeature([
 			User,
 			Business,

@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { CreateProductCategoryDto } from "./dto/create-product-category.dto";
 import { UpdateProductCategoryDto } from "./dto/update-product-category.dto";
 import {
@@ -14,11 +14,10 @@ import { ProductCategory } from "./entities/product-category";
 import { Repository } from "typeorm";
 import { SearchFilterDto } from "./dto/search-filter.dto";
 import { SharedService } from "src/shared-service/shared-service.service";
-import { AuthService } from "src/auth/auth.service";
-import { decode } from "punycode";
 
 @Injectable()
 export class ProductCategoriesService {
+	private readonly logger = new Logger(ProductCategoriesService.name);
 	constructor(
 		@InjectRepository(ProductCategory)
 		private readonly productCategoryRepo: Repository<ProductCategory>,
@@ -29,55 +28,64 @@ export class ProductCategoriesService {
 		createProductCategoryDto: CreateProductCategoryDto,
 		accessToken: string
 	): Promise<SuccessResponse | ErrorResponse | InvalidCredentialsResponse> {
-		const productCategoryExists = await this.productCategoryRepo.findOne({
-			where: {
-				name: createProductCategoryDto.name,
-			},
-		});
+		try {
+			const productCategoryExists = await this.productCategoryRepo.findOne({
+				where: {
+					name: createProductCategoryDto.name,
+				},
+			});
 
-		if (productCategoryExists) {
-			return new InvalidCredentialsResponse(
-				"Product category with this name already exists",
-				"Product Category Creation Error",
-				403
+			if (productCategoryExists) {
+				return new InvalidCredentialsResponse(
+					"Product category with this name already exists",
+					"Product Category Creation Error",
+					403
+				);
+			}
+
+			const decodedToken = await this.sharedService.decodeToken(accessToken);
+			if (decodedToken instanceof UnauthorizedResponse) {
+				return new ErrorResponse(
+					"Invalid access token",
+					"Authentication Error",
+					401
+				);
+			}
+
+			const userIsAdmin = await this.sharedService.verifyUserIsAdmin(
+				decodedToken.data.username
 			);
-		}
 
-		const decodedToken = await this.sharedService.decodeToken(accessToken);
-		if (decodedToken instanceof UnauthorizedResponse) {
+			if (!userIsAdmin) {
+				return new UnauthorizedResponse(
+					"Only admins can create product categories",
+					"Authorization Error"
+				);
+			}
+
+			const productCategory = this.productCategoryRepo.create({
+				...createProductCategoryDto,
+				createdBy: decodedToken.data.username,
+			});
+			await this.productCategoryRepo.save(productCategory);
+
+			if (!productCategory) {
+				return new ErrorResponse(
+					"Product category creation failed",
+					"Product Category Creation Error",
+					500
+				);
+			}
+
+			return new SuccessResponse("Product category created successfully", 201);
+		} catch (error) {
+			this.logger.error("Error creating product category:", error);
 			return new ErrorResponse(
-				"Invalid access token",
-				"Authentication Error",
-				401
-			);
-		}
-
-		const userIsAdmin = await this.sharedService.verifyUserIsAdmin(
-			decodedToken.data.username
-		);
-
-		if (!userIsAdmin) {
-			return new UnauthorizedResponse(
-				"Only admins can create product categories",
-				"Authorization Error"
-			);
-		}
-
-		const productCategory = this.productCategoryRepo.create({
-			...createProductCategoryDto,
-			createdBy: decodedToken.data.username,
-		});
-		await this.productCategoryRepo.save(productCategory);
-
-		if (!productCategory) {
-			return new ErrorResponse(
-				"Product category creation failed",
+				"An error occurred while creating the product category",
 				"Product Category Creation Error",
 				500
 			);
 		}
-
-		return new SuccessResponse("Product category created successfully", 201);
 	}
 
 	async createBulk(

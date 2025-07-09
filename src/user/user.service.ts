@@ -45,107 +45,127 @@ export class UserService {
 	async create(
 		createUserDto: CreateUserDto
 	): Promise<User | ErrorResponse | SuccessResponse> {
-		const existingUser = await this.userRepo.findOne({
-			where: { username: createUserDto.username },
-		});
+		try {
+			const existingUser = await this.userRepo.findOne({
+				where: { username: createUserDto.username },
+			});
 
-		//Check if user is under 18 years old
-		console.log("User's date of birth: ", createUserDto.dob);
+			//Check if user is under 18 years old
+			console.log("User's date of birth: ", createUserDto.dob);
 
-		// Convert dob to Date object if it's a string
-		const dobDate =
-			createUserDto.dob instanceof Date
-				? createUserDto.dob
-				: new Date(createUserDto.dob);
+			// Convert dob to Date object if it's a string
+			const dobDate =
+				createUserDto.dob instanceof Date
+					? createUserDto.dob
+					: new Date(createUserDto.dob);
 
-		// Calculate date 18 years ago
-		const eighteenYearsAgo = new Date();
-		eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
+			// Calculate date 18 years ago
+			const eighteenYearsAgo = new Date();
+			eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
 
-		console.log("Current date minus 18 years: ", eighteenYearsAgo);
-		console.log("Parsed DOB: ", dobDate);
+			console.log("Current date minus 18 years: ", eighteenYearsAgo);
+			console.log("Parsed DOB: ", dobDate);
 
-		if (dobDate > eighteenYearsAgo) {
-			throw new ErrorResponse(
-				"User must be at least 18 years old",
-				"User is under 18 years old",
-				410
+			if (dobDate > eighteenYearsAgo) {
+				throw new ErrorResponse(
+					"User must be at least 18 years old",
+					"User is under 18 years old",
+					410
+				);
+			}
+
+			if (existingUser) {
+				throw new ConflictResponse(
+					"Username already taken, kinldy try another username"
+				);
+			}
+			const token = this.generateToken(createUserDto.email);
+			this.logger.log(
+				`Generated token for user ${createUserDto.email}: ${token}`
 			);
-		}
 
-		if (existingUser) {
-			throw new ConflictResponse(
-				"Username already taken, kinldy try another username"
+			const sendEmail = await this.emailService.sendEmail({
+				to: createUserDto.email,
+				subject: "Verify Your Email Address",
+				templateName: "verify_email",
+				context: {
+					userName: createUserDto.firstName,
+					companyName: "Thrive",
+					currentYear: new Date().getFullYear(),
+					companyAddress: "123 Thrive St, Thrive City, TC 12345",
+					supportEmail: "" + process.env.SUPPORT_EMAIL,
+					verificationUrl: `${this.url}?token=${token}`,
+				},
+			});
+
+			this.logger.log("Email sent response: ", sendEmail);
+			if (sendEmail instanceof ErrorResponse) {
+				return new ErrorResponse(
+					"Failed to send verification email",
+					"Email Sending Error",
+					500
+				);
+			}
+
+			const salt = await bcrypt.genSalt();
+			const user = this.userRepo.create(createUserDto);
+			if (createUserDto.password) {
+				user.password = await bcrypt.hash(user.password, salt);
+			}
+
+			await this.userRepo.save(user);
+			this.logger.log(`User ${user.username} created successfully`);
+
+			return new SuccessResponse(
+				"User created successfully. Please check your email to verify your account."
 			);
+		} catch (error) {
+			this.logger.error("Error: ", error);
+			if (error instanceof ConflictResponse) {
+				this.logger.error("Conflict error: ", error.message);
+				return error;
+			}
+
+			this.logger.error("Unexpected error during user creation: ", error);
+			return new ErrorResponse("User creation failed", "Unexpected Error", 500);
 		}
-		const token = this.generateToken(createUserDto.email);
-		this.logger.log(
-			`Generated token for user ${createUserDto.email}: ${token}`
-		);
+	}
 
-		const sendEmail = await this.emailService.sendEmail({
-			to: createUserDto.email,
-			subject: "Verify Your Email Address",
-			templateName: "verify_email",
-			context: {
-				userName: createUserDto.firstName,
-				companyName: "Thrive",
-				currentYear: new Date().getFullYear(),
-				companyAddress: "123 Thrive St, Thrive City, TC 12345",
-				supportEmail: "" + process.env.SUPPORT_EMAIL,
-				verificationUrl: `${this.url}?token=${token}`,
-			},
-		});
+	async getAllUsers(): Promise<UserDto[] | NotFoundResponse | ErrorResponse> {
+		try {
+			const user = await this.userRepo.find({ where: { isActive: true } });
+			if (!user || user.length === 0) {
+				this.logger.error("No active users found");
+				return new NotFoundResponse("No active users found");
+			}
 
-		this.logger.log("Email sent response: ", sendEmail);
-		if (sendEmail instanceof ErrorResponse) {
+			this.logger.log(`Found ${user} active users`);
+			const updatedUsers = user.map((user) => {
+				return {
+					id: user.id,
+					firstName: user.firstName,
+					lastName: user.lastName,
+					username: user.username,
+					email: user.email,
+					phoneNo: user.phoneNo,
+					isActive: user.isActive,
+					dob: user.dob,
+					userType: user.userType,
+					isVerified: user.isVerified,
+					registrationDate: user.registrationDate,
+				} as UserDto;
+			});
+
+			this.logger.log(`Returning ${updatedUsers.length} active users`);
+			return updatedUsers;
+		} catch (error) {
+			this.logger.error("Error retrieving users: ", error);
 			return new ErrorResponse(
-				"Failed to send verification email",
-				"Email Sending Error",
+				"Failed to retrieve users",
+				"User Retrieval Error",
 				500
 			);
 		}
-
-		const salt = await bcrypt.genSalt();
-		const user = this.userRepo.create(createUserDto);
-		if (createUserDto.password) {
-			user.password = await bcrypt.hash(user.password, salt);
-		}
-
-		await this.userRepo.save(user);
-		this.logger.log(`User ${user.username} created successfully`);
-
-		return new SuccessResponse(
-			"User created successfully. Please check your email to verify your account."
-		);
-	}
-
-	async getAllUsers(): Promise<UserDto[]> {
-		const user = await this.userRepo.find({ where: { isActive: true } });
-		if (!user) {
-			this.logger.error("No active users found");
-			return Promise.reject(new NotFoundResponse("No active users found"));
-		}
-
-		this.logger.log(`Found ${user} active users`);
-		const updatedUsers = user.map((user) => {
-			return {
-				id: user.id,
-				firstName: user.firstName,
-				lastName: user.lastName,
-				username: user.username,
-				email: user.email,
-				phoneNo: user.phoneNo,
-				isActive: user.isActive,
-				dob: user.dob,
-				userType: user.userType,
-				isVerified: user.isVerified,
-				registrationDate: user.registrationDate,
-			} as UserDto;
-		});
-
-		this.logger.log(`Returning ${updatedUsers.length} active users`);
-		return updatedUsers;
 	}
 
 	getUser(username: string): Promise<User> {
@@ -155,12 +175,45 @@ export class UserService {
 	async updateUser(
 		username: string,
 		updateuserDto: UpdateUserDto
-	): Promise<User> {
-		await this.userRepo.update(username, updateuserDto);
-		return this.userRepo.findOneBy({ username });
+	): Promise<
+		User | NotFoundResponse | ErrorResponse | InvalidCredentialsResponse
+	> {
+		if (username === undefined || username === null || username.trim() === "") {
+			this.logger.error("Invalid username provided for update");
+			return new InvalidCredentialsResponse(
+				"Invalid username",
+				"Username must be a non-empty string",
+				401
+			);
+		}
+
+		if (!updateuserDto) {
+			this.logger.error("No update data provided for user");
+			return new InvalidCredentialsResponse(
+				"No update data provided",
+				"Update data must be provided",
+				400
+			);
+		}
+
+		try {
+			const foundUser = await this.userRepo.findOneBy({ username });
+
+			if (!foundUser) {
+				throw new NotFoundResponse("User not found");
+			}
+
+			await this.userRepo.update(username, updateuserDto);
+			return this.userRepo.findOneBy({ username });
+		} catch (error) {
+			this.logger.error("Unexpected error during user update: ", error);
+			return new ErrorResponse("User update failed", "Unexpected Error", 500);
+		}
 	}
 
-	async deleteUser(username: string): Promise<void> {
+	async deleteUser(
+		username: string
+	): Promise<void | NotFoundResponse | InvalidCredentialsResponse> {
 		if (typeof username !== "string" || username.trim() === "") {
 			throw new InvalidCredentialsResponse(
 				"Invalid username",
@@ -168,14 +221,18 @@ export class UserService {
 				401
 			);
 		}
-
-		const user = await this.userRepo.findOne({ where: { username } });
-		console.log(user);
-		if (!user) {
-			throw new NotFoundResponse("User not found");
+		try {
+			const user = await this.userRepo.findOne({ where: { username } });
+			console.log(user);
+			if (!user) {
+				throw new NotFoundResponse("User not found");
+			}
+			await this.userRepo.delete({ username });
+			console.log(user);
+		} catch (error) {
+			this.logger.error("Unexpected error during user update: ", error);
+			return new ErrorResponse("User update failed", "Unexpected Error", 500);
 		}
-		await this.userRepo.delete({ username });
-		console.log(user);
 	}
 
 	async forgetPassword(
@@ -190,54 +247,60 @@ export class UserService {
 				401
 			);
 		}
-		const user = await this.userRepo.findOneBy({ email });
-		if (!user) {
-			this.logger.log(`User with email ${email} not found`);
-			return new NotFoundResponse("User not found");
+
+		try {
+			const user = await this.userRepo.findOneBy({ email });
+			if (!user) {
+				this.logger.log(`User with email ${email} not found`);
+				return new NotFoundResponse("User not found");
+			}
+
+			this.logger.log(`User with email ${email} found, sending reset email`);
+
+			const uniqueToken = this.generateToken(email);
+			this.logger.log(`Generated token for ${email}: ${uniqueToken}`);
+
+			const expirationDate = new Date();
+			expirationDate.setHours(expirationDate.getHours() + 1); // Token valid for 1 hour
+
+			const password_reset = this.passwordResetRepo.create({
+				email: email,
+				resetToken: uniqueToken,
+				expirationDate: expirationDate,
+				isUsed: false,
+				userId: user.id,
+			});
+
+			await this.passwordResetRepo.save(password_reset);
+			this.logger.log(`Password reset token saved for user ${user.username}`);
+
+			// send reset password email logic here
+
+			this.logger.log(`Sending reset password email to ${email}`);
+			const response = await this.emailService.sendEmail({
+				to: user.email,
+				subject: "Password Reset Request",
+				templateName: "password_rest",
+				context: {
+					name: user.username,
+					resetLink: `${this.url}}/reset-password?token=${uniqueToken}`,
+				},
+			});
+
+			this.logger.log("Email response received", response);
+			if (response instanceof ErrorResponse) {
+				this.logger.error(
+					`Failed to send reset password email: ${response.message}`
+				);
+				return response;
+			}
+
+			this.logger.log(`Reset password email sent to ${email}`);
+			return new SuccessResponse("Password reset email sent");
+		} catch (error) {
+			this.logger.error("Unexpected error during user update: ", error);
+			return new ErrorResponse("User update failed", "Unexpected Error", 500);
 		}
-
-		this.logger.log(`User with email ${email} found, sending reset email`);
-
-		const uniqueToken = this.generateToken(email);
-		this.logger.log(`Generated token for ${email}: ${uniqueToken}`);
-
-		const expirationDate = new Date();
-		expirationDate.setHours(expirationDate.getHours() + 1); // Token valid for 1 hour
-
-		const password_reset = this.passwordResetRepo.create({
-			email: email,
-			resetToken: uniqueToken,
-			expirationDate: expirationDate,
-			isUsed: false,
-			userId: user.id,
-		});
-
-		await this.passwordResetRepo.save(password_reset);
-		this.logger.log(`Password reset token saved for user ${user.username}`);
-
-		// send reset password email logic here
-
-		this.logger.log(`Sending reset password email to ${email}`);
-		const response = await this.emailService.sendEmail({
-			to: user.email,
-			subject: "Password Reset Request",
-			templateName: "password_rest",
-			context: {
-				name: user.username,
-				resetLink: `${this.url}}/reset-password?token=${uniqueToken}`,
-			},
-		});
-
-		this.logger.log("Email response received", response);
-		if (response instanceof ErrorResponse) {
-			this.logger.error(
-				`Failed to send reset password email: ${response.message}`
-			);
-			return response;
-		}
-
-		this.logger.log(`Reset password email sent to ${email}`);
-		return new SuccessResponse("Password reset email sent");
 	}
 
 	generateToken(email: string): string {
@@ -299,80 +362,105 @@ export class UserService {
 			`Request to reset password with token: ${resetDetails.token}`
 		);
 		const emailResult = this.verifyToken(resetDetails.token);
-		const passwordRepos = await this.passwordResetRepo.findOne({
-			where: { resetToken: resetDetails.token, isUsed: false },
-		});
 
-		if (!passwordRepos) {
-			this.logger.error("Invalid or expired token provided for password reset");
-			return new InvalidCredentialsResponse(
-				"Invalid or expired token",
-				"Token must be valid and not used",
-				401
-			);
+		try {
+			const passwordRepos = await this.passwordResetRepo.findOne({
+				where: { resetToken: resetDetails.token, isUsed: false },
+			});
+
+			if (!passwordRepos) {
+				this.logger.error(
+					"Invalid or expired token provided for password reset"
+				);
+				return new InvalidCredentialsResponse(
+					"Invalid or expired token",
+					"Token must be valid and not used",
+					401
+				);
+			}
+
+			// Check if the token has expired (expiration date is in the past)
+			if (passwordRepos.expirationDate < new Date()) {
+				this.logger.error(
+					"Token has expired - tokens are only valid for 1 hour"
+				);
+				return new InvalidCredentialsResponse(
+					"Token expired",
+					"Password reset token has expired. Please request a new one.",
+					401
+				);
+			}
+
+			if (passwordRepos.isUsed) {
+				this.logger.error("Token has already been used");
+				return new InvalidCredentialsResponse(
+					"Token already used",
+					"Token must be valid and not used",
+					401
+				);
+			}
+
+			if (emailResult instanceof InvalidCredentialsResponse) {
+				this.logger.error("Invalid token provided for password reset");
+				return emailResult;
+			}
+
+			const user = await this.userRepo.findOneBy({ email: emailResult });
+			if (!user) {
+				this.logger.log(`User with email ${emailResult} not found`);
+				return new NotFoundResponse("User not found");
+			}
+
+			const salt = await bcrypt.genSalt();
+			user.password = await bcrypt.hash(resetDetails.newPassword, salt);
+			await this.userRepo.update(user.id, { password: user.password });
+			await this.passwordResetRepo.update(passwordRepos.id, {
+				isUsed: true,
+			});
+
+			await this.emailService.sendEmail({
+				to: user.email,
+				subject: "Password Reset Confirmation",
+				templateName: "reset_successful",
+				context: {
+					userName: user.firstName,
+					companyName: "Thrive",
+					currentYear: new Date().getFullYear(),
+					companyAddress: "123 Thrive St, Thrive City, TC 12345",
+					supportEmail: "iyiolakeni@gmail.com",
+				},
+			});
+
+			this.logger.log(`Password reset successfully for user ${user.username}`);
+			return new SuccessResponse("Password reset successfully");
+		} catch (error) {
+			this.logger.error("Unexpected error during user update: ", error);
+			return new ErrorResponse("User update failed", "Unexpected Error", 500);
 		}
-
-		// Check if the token has expired (expiration date is in the past)
-		if (passwordRepos.expirationDate < new Date()) {
-			this.logger.error("Token has expired - tokens are only valid for 1 hour");
-			return new InvalidCredentialsResponse(
-				"Token expired",
-				"Password reset token has expired. Please request a new one.",
-				401
-			);
-		}
-
-		if (passwordRepos.isUsed) {
-			this.logger.error("Token has already been used");
-			return new InvalidCredentialsResponse(
-				"Token already used",
-				"Token must be valid and not used",
-				401
-			);
-		}
-
-		if (emailResult instanceof InvalidCredentialsResponse) {
-			this.logger.error("Invalid token provided for password reset");
-			return emailResult;
-		}
-
-		const user = await this.userRepo.findOneBy({ email: emailResult });
-		if (!user) {
-			this.logger.log(`User with email ${emailResult} not found`);
-			return new NotFoundResponse("User not found");
-		}
-
-		const salt = await bcrypt.genSalt();
-		user.password = await bcrypt.hash(resetDetails.newPassword, salt);
-		await this.userRepo.update(user.id, { password: user.password });
-		await this.passwordResetRepo.update(passwordRepos.id, {
-			isUsed: true,
-		});
-
-		await this.emailService.sendEmail({
-			to: user.email,
-			subject: "Password Reset Confirmation",
-			templateName: "reset_successful",
-			context: {
-				userName: user.firstName,
-				companyName: "Thrive",
-				currentYear: new Date().getFullYear(),
-				companyAddress: "123 Thrive St, Thrive City, TC 12345",
-				supportEmail: "iyiolakeni@gmail.com",
-			},
-		});
-
-		this.logger.log(`Password reset successfully for user ${user.username}`);
-		return new SuccessResponse("Password reset successfully");
 	}
 
 	async getUserById(id: string): Promise<UserResponse | NotFoundResponse> {
-		const user = await this.userRepo.findOneBy({ id });
-		if (!user) {
-			this.logger.error(`User with ID ${id} not found`);
-			return new NotFoundResponse("User not found");
+		if (!id || typeof id !== "string" || id.trim() === "") {
+			this.logger.error("Invalid ID provided for user retrieval");
+			return new InvalidCredentialsResponse(
+				"Invalid ID",
+				"ID must be a non-empty string",
+				401
+			);
 		}
-		return user;
+
+		try {
+			this.logger.log(`Fetching user with ID: ${id}`);
+			const user = await this.userRepo.findOneBy({ id });
+			if (!user) {
+				this.logger.error(`User with ID ${id} not found`);
+				return new NotFoundResponse("User not found");
+			}
+			return user;
+		} catch (error) {
+			this.logger.error("Unexpected error during user update: ", error);
+			return new ErrorResponse("User update failed", "Unexpected Error", 500);
+		}
 	}
 
 	async verifyUser(token: string): Promise<UserResponse | NotFoundResponse> {
@@ -388,36 +476,41 @@ export class UserService {
 			);
 		}
 
-		const user = await this.userRepo.findOneBy({ email });
+		try {
+			const user = await this.userRepo.findOneBy({ email });
 
-		if (user.isVerified) {
-			this.logger.warn(`User with email ${email} is already verified`);
-			return new NotFoundResponse(
-				"User already verified",
-				"User Verification Error"
-			);
+			if (user.isVerified) {
+				this.logger.warn(`User with email ${email} is already verified`);
+				return new NotFoundResponse(
+					"User already verified",
+					"User Verification Error"
+				);
+			}
+
+			if (!user) {
+				this.logger.error(`User with email ${email} not found`);
+				return new NotFoundResponse("User not found");
+			}
+
+			if (user.isVerified) {
+				this.logger.warn(`User with email ${email} is already verified`);
+				return new NotFoundResponse("User already verified");
+			}
+
+			user.isVerified = true;
+			await this.userRepo.update(user.id, { isVerified: true });
+			this.logger.log(`User with email ${email} verified successfully`);
+			return {
+				id: user.id,
+				username: user.username,
+				firstName: user.firstName,
+				lastName: user.lastName,
+				email: user.email,
+			};
+		} catch (error) {
+			this.logger.error("Unexpected error during user update: ", error);
+			return new ErrorResponse("User update failed", "Unexpected Error", 500);
 		}
-
-		if (!user) {
-			this.logger.error(`User with email ${email} not found`);
-			return new NotFoundResponse("User not found");
-		}
-
-		if (user.isVerified) {
-			this.logger.warn(`User with email ${email} is already verified`);
-			return new NotFoundResponse("User already verified");
-		}
-
-		user.isVerified = true;
-		await this.userRepo.update(user.id, { isVerified: true });
-		this.logger.log(`User with email ${email} verified successfully`);
-		return {
-			id: user.id,
-			username: user.username,
-			firstName: user.firstName,
-			lastName: user.lastName,
-			email: user.email,
-		};
 	}
 
 	async search(
@@ -493,28 +586,56 @@ export class UserService {
 	}
 
 	async activateUser(username: string): Promise<User | NotFoundResponse> {
-		this.logger.log(`Activating user with username: ${username}`);
-		const user = await this.userRepo.findOneBy({ username });
-		if (!user) {
-			this.logger.error(`User with username ${username} not found`);
-			return new NotFoundResponse("User not found");
+		if (!username || typeof username !== "string" || username.trim() === "") {
+			this.logger.error("Invalid username provided for activation");
+			return new InvalidCredentialsResponse(
+				"Invalid username",
+				"Username must be a non-empty string",
+				401
+			);
 		}
-		user.isActive = true;
-		await this.userRepo.update(user.id, { isActive: true });
-		this.logger.log(`User ${username} activated successfully`);
-		return user;
+
+		try {
+			this.logger.log(`Activating user with username: ${username}`);
+			const user = await this.userRepo.findOneBy({ username });
+			if (!user) {
+				this.logger.error(`User with username ${username} not found`);
+				return new NotFoundResponse("User not found");
+			}
+			user.isActive = true;
+			await this.userRepo.update(user.id, { isActive: true });
+			this.logger.log(`User ${username} activated successfully`);
+			return user;
+		} catch (error) {
+			this.logger.error("Unexpected error during user update: ", error);
+			return new ErrorResponse("User update failed", "Unexpected Error", 500);
+		}
 	}
 
 	async deactivateUser(username: string): Promise<User | NotFoundResponse> {
-		this.logger.log(`Deactivating user with username: ${username}`);
-		const user = await this.userRepo.findOneBy({ username });
-		if (!user) {
-			this.logger.error(`User with username ${username} not found`);
-			return new NotFoundResponse("User not found");
+		if (!username || typeof username !== "string" || username.trim() === "") {
+			this.logger.error("Invalid username provided for deactivation");
+			return new InvalidCredentialsResponse(
+				"Invalid username",
+				"Username must be a non-empty string",
+				401
+			);
 		}
-		user.isActive = false;
-		await this.userRepo.update(user.id, { isActive: false });
-		this.logger.log(`User ${username} deactivated successfully`);
-		return user;
+
+		try {
+			this.logger.log(`Deactivating user with username: ${username}`);
+			const user = await this.userRepo.findOneBy({ username });
+			if (!user) {
+				this.logger.error(`User with username ${username} not found`);
+				return new NotFoundResponse("User not found");
+			}
+			user.isActive = false;
+			await this.userRepo.update(user.id, { isActive: false });
+			this.logger.log(`User ${username} deactivated successfully`);
+			return user;
+		} catch (error) {
+			this.logger.error("Unexpected error during user update: ", error);
+			return new ErrorResponse("User update failed", "Unexpected Error", 500);
+		}
 	}
 }
