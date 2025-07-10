@@ -56,9 +56,13 @@ export class EmailService {
 		this.logger.log("Reset Link: ", context.resetLink);
 		const htmlContent = this.compileTemplate(templateName, context);
 
+		const fromDetails = {
+			name: "Thrive Incorporations",
+			email: this.fromEmail,
+		};
 		const msg = {
 			to,
-			from: this.fromEmail,
+			from: fromDetails,
 			subject,
 			html: htmlContent,
 		};
