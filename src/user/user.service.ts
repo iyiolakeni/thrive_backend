@@ -283,7 +283,7 @@ export class UserService {
 				templateName: "password_rest",
 				context: {
 					name: user.firstName,
-					resetLink: `${this.url}}/reset-password?token=${uniqueToken}`,
+					resetLink: `${this.url}/reset-password?token=${uniqueToken}`,
 					companyName: "Thrive Incorporations",
 					currentYear: new Date().getFullYear(),
 					companyAddress: "123 Thrive St, Thrive City, TC 12345",
