@@ -282,8 +282,11 @@ export class UserService {
 				subject: "Password Reset Request",
 				templateName: "password_rest",
 				context: {
-					name: user.username,
+					name: user.firstName,
 					resetLink: `${this.url}}/reset-password?token=${uniqueToken}`,
+					companyName: "Thrive Incorporations",
+					currentYear: new Date().getFullYear(),
+					companyAddress: "123 Thrive St, Thrive City, TC 12345",
 				},
 			});
 
@@ -424,7 +427,7 @@ export class UserService {
 				templateName: "reset_successful",
 				context: {
 					userName: user.firstName,
-					companyName: "Thrive",
+					companyName: "Thrive Incorporations",
 					currentYear: new Date().getFullYear(),
 					companyAddress: "123 Thrive St, Thrive City, TC 12345",
 					supportEmail: "iyiolakeni@gmail.com",
