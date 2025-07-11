@@ -1,0 +1,22 @@
+{
+    "sourceFile": "src/shared-service/dashbaord.controller.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 1,
+            "patches": [
+                {
+                    "date": 1752240466364,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1752240665336,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -2,9 +2,9 @@\n import { ApiTags } from \"@nestjs/swagger\";\r\n import { DashboardService } from \"./dashboard.service\";\r\n \r\n @Controller(\"dashboard\")\r\n-@ApiTags(\"dashboard\")\r\n+@ApiTags(\"Dashboard\")\r\n export class DashboardController {\r\n \tconstructor(private dashboardService: DashboardService) {}\r\n \r\n \t@Get(\"best-sellers\")\r\n"
+                }
+            ],
+            "date": 1752240466364,
+            "name": "Commit-0",
+            "content": "import { Controller, Get } from \"@nestjs/common\";\r\nimport { ApiTags } from \"@nestjs/swagger\";\r\nimport { DashboardService } from \"./dashboard.service\";\r\n\r\n@Controller(\"dashboard\")\r\n@ApiTags(\"dashboard\")\r\nexport class DashboardController {\r\n\tconstructor(private dashboardService: DashboardService) {}\r\n\r\n\t@Get('best-sellers')\r\n    bestSellingProduct() {\r\n        return this.dashboardService.bestSellingProduct()\r\n    }\r\n\r\n\t@Get('sponsored-product')\r\n    sponsoredProduct() {\r\n        return this.dashboardService.sponsoredProduct();\r\n    }\r\n\r\n\t@Get('product-category')\r\n    getProductCategory() {\r\n        return this.dashboardService.getProductCategory();\r\n    }\r\n}"
+        }
+    ]
+}

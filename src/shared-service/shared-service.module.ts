@@ -12,6 +12,8 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { JwtStrategy } from "src/auth/jwt.strategy";
 import { TokenService } from "./toekn-service.service";
 import { EmailService } from "src/email/email.service";
+import { DashboardService } from "./dashboard.service";
+import { DashboardController } from "./dashbaord.controller";
 
 @Global()
 @Module({
@@ -33,10 +35,18 @@ import { EmailService } from "src/email/email.service";
 			}),
 		}),
 	],
-	providers: [SharedService, JwtStrategy, TokenService, EmailService],
+	controllers: [DashboardController],
+	providers: [
+		SharedService,
+		JwtStrategy,
+		TokenService,
+		EmailService,
+		DashboardService,
+	],
 	exports: [
 		SharedService,
 		TokenService,
+		DashboardService,
 		TypeOrmModule.forFeature([
 			User,
 			Business,

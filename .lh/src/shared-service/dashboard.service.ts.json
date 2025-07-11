@@ -1,0 +1,26 @@
+{
+    "sourceFile": "src/shared-service/dashboard.service.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1752240193590,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1752240466394,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -65,9 +65,9 @@\n \t\t\treturn new ErrorResponse(error.message, \"Error\");\r\n \t\t}\r\n \t}\r\n \r\n-\tasync findAll(): Promise<\r\n+\tasync getProductCategory(): Promise<\r\n \t\tDataResponse<ProductCategory[]> | NotFoundResponse | ErrorResponse\r\n \t> {\r\n \t\ttry {\r\n \t\t\tthis.logger.log(\"Fetching all products\");\r\n"
+                },
+                {
+                    "date": 1752240860275,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -25,8 +25,9 @@\n \t> {\r\n \t\ttry {\r\n \t\t\tconst products = await this.productRepo.find({\r\n \t\t\t\twhere: { rating: MoreThan(0) },\r\n+\t\t\t\torder: { rating: 'DESC' }\r\n \t\t\t});\r\n \r\n \t\t\tif (!products || products === null || products.length === 0) {\r\n \t\t\t\treturn new NotFoundResponse(\r\n@@ -49,9 +50,10 @@\n \t\tDataResponse<Product[]> | ErrorResponse | NotFoundResponse\r\n \t> {\r\n \t\ttry {\r\n \t\t\tconst products = await this.productRepo.find({\r\n-\t\t\t\twhere: { discount: MoreThan(0) },\r\n+                where: { discount: MoreThan(0) },\r\n+                order: {rating: 'DESC'}\r\n \t\t\t});\r\n \r\n \t\t\tif (!products || products === null || products.length === 0) {\r\n \t\t\t\treturn new NotFoundResponse(\r\n"
+                }
+            ],
+            "date": 1752240193590,
+            "name": "Commit-0",
+            "content": "import { Inject, Injectable, Logger } from \"@nestjs/common\";\r\nimport { InjectRepository } from \"@nestjs/typeorm\";\r\nimport { DataResponse, ErrorResponse, NotFoundResponse } from \"src/models/response.dto\";\r\nimport { ProductCategory } from \"src/product-categories/entities/product-category\";\r\nimport { Product } from \"src/products/entities/products.entity\";\r\nimport { Repository, MoreThan } from \"typeorm\";\r\n\r\n@Injectable()\r\nexport class DashboardService {\r\n\tprivate readonly logger = new Logger(DashboardService.name);\r\n\r\n\tconstructor(\r\n\t\t@InjectRepository(Product)\r\n\t\tprivate readonly productRepo: Repository<Product>,\r\n\t\t@InjectRepository(ProductCategory)\r\n\t\tprivate readonly productCategoryRepo: Repository<ProductCategory>\r\n\t) {}\r\n\r\n\tasync bestSellingProduct(): Promise<\r\n\t\tDataResponse<Product[]> | NotFoundResponse | ErrorResponse\r\n\t> {\r\n\t\ttry {\r\n\t\t\tconst products = await this.productRepo.find({\r\n\t\t\t\twhere: { rating: MoreThan(0) },\r\n\t\t\t});\r\n\r\n\t\t\tif (!products || products === null || products.length === 0) {\r\n\t\t\t\treturn new NotFoundResponse(\r\n\t\t\t\t\t\"No sponsored products found\",\r\n\t\t\t\t\t\"No sponsored products found\"\r\n\t\t\t\t);\r\n\t\t\t}\r\n\r\n\t\t\treturn new DataResponse(products);\r\n\t\t} catch (error) {\r\n\t\t\tthis.logger.error(\"Error: \", error);\r\n\t\t\treturn new ErrorResponse(\r\n\t\t\t\t\"Error fetching best selling product\",\r\n\t\t\t\t\"Error fetching best selling product\"\r\n\t\t\t);\r\n\t\t}\r\n\t}\r\n\r\n\tasync sponsoredProduct(): Promise<\r\n\t\tDataResponse<Product[]> | ErrorResponse | NotFoundResponse\r\n\t> {\r\n\t\ttry {\r\n\t\t\tconst products = await this.productRepo.find({\r\n\t\t\t\twhere: { discount: MoreThan(0) },\r\n\t\t\t});\r\n\r\n\t\t\tif (!products || products === null || products.length === 0) {\r\n\t\t\t\treturn new NotFoundResponse(\r\n\t\t\t\t\t\"No sponsored products found\",\r\n\t\t\t\t\t\"No sponsored products found\"\r\n\t\t\t\t);\r\n\t\t\t}\r\n\t\t\treturn new DataResponse(products);\r\n\t\t} catch (error) {\r\n\t\t\tthis.logger.error(\"Error: \", error);\r\n\t\t\treturn new ErrorResponse(error.message, \"Error\");\r\n\t\t}\r\n\t}\r\n\r\n\tasync findAll(): Promise<DataResponse<ProductCategory[]> | NotFoundResponse | ErrorResponse> {\r\n\t\t\r\n        try {\r\n           \r\n            this.logger.log(\"Fetching all products\");\r\n    \r\n            const products = await this.productCategoryRepo.find();\r\n            if (!products || products.length === 0) {\r\n                this.logger.warn(\"No products found\");\r\n                return new NotFoundResponse(\"No products found\", \"404 Not Found\");\r\n            }\r\n    \r\n            this.logger.log(`Found ${products.length} products`);\r\n            return new DataResponse(products, \"Products retrieved successfully\", 200);\r\n        } catch (error) {\r\n            this.logger.error(\"Error: \", error);\r\n\t\t\t\t\t\treturn new ErrorResponse(error.message, \"Error\");\r\n        }\r\n\t}\r\n}"
+        }
+    ]
+}
