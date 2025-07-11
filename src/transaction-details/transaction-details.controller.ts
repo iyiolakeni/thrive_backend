@@ -8,10 +8,11 @@ import {
 	Delete,
 } from "@nestjs/common";
 import { TransactionDetailsService } from "./transaction-details.service";
-import { CreateTransactionDetailDto } from "./dto/create-transaction-detail.dto";
 import { UpdateTransactionDetailDto } from "./dto/update-transaction-detail.dto";
+import { ApiTags } from "@nestjs/swagger";
 
 @Controller("transaction-details")
+@ApiTags("Transaction Details")
 export class TransactionDetailsController {
 	constructor(
 		private readonly transactionDetailsService: TransactionDetailsService
