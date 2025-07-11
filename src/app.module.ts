@@ -14,6 +14,7 @@ import { ProductsModule } from "./products/products.module";
 import { SharedServiceModule } from "./shared-service/shared-service.module";
 import { PurchaseModule } from "./purchase/purchase.module";
 import { TransactionDetailsModule } from "./transaction-details/transaction-details.module";
+import { TerminusModule } from "@nestjs/terminus";
 
 @Module({
 	imports: [
@@ -44,6 +45,7 @@ import { TransactionDetailsModule } from "./transaction-details/transaction-deta
 		SharedServiceModule,
 		PurchaseModule,
 		TransactionDetailsModule,
+		TerminusModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
